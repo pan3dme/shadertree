@@ -21,12 +21,18 @@ var left;
     var LocalMd5MoveSprite = /** @class */ (function (_super) {
         __extends(LocalMd5MoveSprite, _super);
         function LocalMd5MoveSprite() {
-            return _super !== null && _super.apply(this, arguments) || this;
+            var _this = _super.call(this) || this;
+            _this.meshItem = new Array;
+            return _this;
         }
         LocalMd5MoveSprite.prototype.addLocalMeshByStr = function ($str) {
             this.md5MeshData = new Md5Analysis().addMesh($str);
             new MeshImportSort().processMesh(this.md5MeshData);
             this.md5objData = new MeshToObjUtils().getObj(this.md5MeshData);
+            var $temp = new Md5MoveSprite();
+            $temp.md5MeshData = this.md5MeshData;
+            $temp.md5objData = this.md5objData;
+            this.meshItem.push($temp);
         };
         LocalMd5MoveSprite.prototype.addLocalAdimByStr = function ($str) {
             var $matrixAry = new Md5animAnalysis().addAnim($str);
@@ -37,6 +43,15 @@ var left;
                     $frameAry[j].prepend(this.md5objData.invertAry[j]);
                 }
                 this.frameQuestArr.push(this.makeDualQuatFloat32Array($matrixAry[i]));
+            }
+        };
+        LocalMd5MoveSprite.prototype.update = function () {
+            if (this.md5objData && this.frameQuestArr) {
+                for (var i = 0; i < this.meshItem.length; i++) {
+                    this.md5MeshData = this.meshItem[i].md5MeshData;
+                    this.md5objData = this.meshItem[i].md5objData;
+                    this.updateMaterialMeshCopy();
+                }
             }
         };
         LocalMd5MoveSprite.prototype.loadBodyMesh = function () {

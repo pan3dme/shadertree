@@ -386,8 +386,7 @@
                 case this.a_input_dae:
                     console.log("inputdae")
                     this.selectInputDae(evt)
-      
-                    //ModelShowModel.getInstance().changeWebModel();
+       
                     break
                 default:
                     break
@@ -447,6 +446,8 @@
                         $reader.readAsText(simpleFile);
                         $reader.onload = ($temp: Event) => {
                             ModelShowModel.getInstance().webmd5Sprite.addLocalAdimByStr(<string>$reader.result)
+
+                            ModelShowModel.getInstance().changeWebModel();
                         }
                         return
                     } 

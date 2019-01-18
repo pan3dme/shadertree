@@ -8,11 +8,21 @@ import MeshToObjUtils = md5list.MeshToObjUtils
 module left {
     
     export class LocalMd5MoveSprite extends Md5MoveSprite {
-
+        private meshItem: Array<Md5MoveSprite>;
+        constructor() {
+            super();
+            this.meshItem = new Array;
+        }
         public addLocalMeshByStr($str: string): void {
             this.md5MeshData = new Md5Analysis().addMesh($str);
             new MeshImportSort().processMesh(this.md5MeshData);
             this.md5objData = new MeshToObjUtils().getObj(this.md5MeshData);
+
+
+            var $temp: Md5MoveSprite = new Md5MoveSprite()
+            $temp.md5MeshData = this.md5MeshData;
+            $temp.md5objData = this.md5objData;
+            this.meshItem.push($temp);
         }
         public addLocalAdimByStr($str: string): void {
             var $matrixAry: Array<Array<Matrix3D>> = new Md5animAnalysis().addAnim($str);
@@ -25,6 +35,16 @@ module left {
                 this.frameQuestArr.push(this.makeDualQuatFloat32Array($matrixAry[i]));
             }
         }
+        public update(): void {
+            if (this.md5objData && this.frameQuestArr) {
+                for (var i: number = 0; i < this.meshItem.length; i++) {
+                    this.md5MeshData = this.meshItem[i].md5MeshData;
+                    this.md5objData = this.meshItem[i].md5objData;
+                    this.updateMaterialMeshCopy();
+                }
+            }
+        }
+
         protected loadBodyMesh(): void {
         }
         protected loadAnimFrame(): void {

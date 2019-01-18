@@ -27,7 +27,6 @@ var left;
         ModelShowModel.prototype.makeMd5MoveSprite = function () {
             this.webmd5Sprite = new left.LocalMd5MoveSprite();
             this.webmd5Sprite.setMd5url("2/body.md5mesh", "2/stand.md5anim", "shuangdaonv.jpg");
-            this.webmd5Sprite.x = 20;
         };
         ModelShowModel.prototype.update = function (t) {
             if (this._bigPic && this._bigPic.textureRes) {

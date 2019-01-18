@@ -41,9 +41,8 @@
         public webmd5Sprite: LocalMd5MoveSprite;
         private makeMd5MoveSprite(): void {
             this.webmd5Sprite = new LocalMd5MoveSprite();
-           this.webmd5Sprite.setMd5url("2/body.md5mesh", "2/stand.md5anim", "shuangdaonv.jpg")
+            this.webmd5Sprite.setMd5url("2/body.md5mesh", "2/stand.md5anim", "shuangdaonv.jpg")
  
-            this.webmd5Sprite.x = 20
         }
 
         private _time: number

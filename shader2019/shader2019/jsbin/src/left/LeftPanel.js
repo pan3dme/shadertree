@@ -314,7 +314,6 @@ var left;
                 case this.a_input_dae:
                     console.log("inputdae");
                     this.selectInputDae(evt);
-                    //ModelShowModel.getInstance().changeWebModel();
                     break;
                 default:
                     break;
@@ -366,6 +365,7 @@ var left;
                         $reader.readAsText(simpleFile);
                         $reader.onload = function ($temp) {
                             left.ModelShowModel.getInstance().webmd5Sprite.addLocalAdimByStr($reader.result);
+                            left.ModelShowModel.getInstance().changeWebModel();
                         };
                         return;
                     }
