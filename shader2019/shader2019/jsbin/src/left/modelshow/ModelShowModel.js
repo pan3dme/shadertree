@@ -25,10 +25,9 @@ var left;
             this.roleSprite.changeRoleWeb(this.webmd5Sprite);
         };
         ModelShowModel.prototype.makeMd5MoveSprite = function () {
-            var $sc = new md5list.Md5MoveSprite();
-            $sc.setMd5url("2/body.md5mesh", "2/stand.md5anim", "shuangdaonv.jpg");
-            this.webmd5Sprite = $sc;
-            this.webmd5Sprite.x = 100;
+            this.webmd5Sprite = new left.LocalMd5MoveSprite();
+            this.webmd5Sprite.setMd5url("2/body.md5mesh", "2/stand.md5anim", "shuangdaonv.jpg");
+            this.webmd5Sprite.x = 20;
         };
         ModelShowModel.prototype.update = function (t) {
             if (this._bigPic && this._bigPic.textureRes) {
@@ -39,7 +38,7 @@ var left;
                 else {
                     Scene_data.focus3D.y = 0;
                 }
-                left.SceneRenderToTextrue.getInstance().renderToTexture([this.selectShowDisp]);
+                left.SceneRenderToTextrue.getInstance().renderToTexture([this.selectShowDisp, this.webmd5Sprite]);
                 if (left.SceneRenderToTextrue.getInstance().fbo) {
                     this._bigPic.textureRes.texture = left.SceneRenderToTextrue.getInstance().fbo.texture;
                 }

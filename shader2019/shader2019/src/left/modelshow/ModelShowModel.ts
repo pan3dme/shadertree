@@ -38,13 +38,12 @@
         public changeWebModel(): void {
             this.roleSprite.changeRoleWeb(this.webmd5Sprite)
         }
-        private webmd5Sprite: md5list.Md5MoveSprite;
+        public webmd5Sprite: LocalMd5MoveSprite;
         private makeMd5MoveSprite(): void {
-            var $sc: md5list.Md5MoveSprite = new md5list.Md5MoveSprite();
-            $sc.setMd5url("2/body.md5mesh", "2/stand.md5anim", "shuangdaonv.jpg")
-
-            this.webmd5Sprite = $sc
-            this.webmd5Sprite.x = 100
+            this.webmd5Sprite = new LocalMd5MoveSprite();
+           this.webmd5Sprite.setMd5url("2/body.md5mesh", "2/stand.md5anim", "shuangdaonv.jpg")
+ 
+            this.webmd5Sprite.x = 20
         }
 
         private _time: number
@@ -60,7 +59,7 @@
                     Scene_data.focus3D.y = 0
                 }
              
-                SceneRenderToTextrue.getInstance().renderToTexture([this.selectShowDisp ]);
+                SceneRenderToTextrue.getInstance().renderToTexture([this.selectShowDisp, this.webmd5Sprite ]);
                 if (SceneRenderToTextrue.getInstance().fbo) {
                     this._bigPic.textureRes.texture = SceneRenderToTextrue.getInstance().fbo.texture;
                 }

@@ -11,7 +11,7 @@ module md5list {
         }
         public md5MeshData: Md5MeshData;
         public md5objData: ObjData;
-        private loadBodyMesh(): void {
+        protected loadBodyMesh(): void {
             LoadManager.getInstance().load("res/" + this.bodyUrl, LoadManager.XML_TYPE, ($str: any) => {
                 this.md5MeshData = new Md5Analysis().addMesh($str);
                 new MeshImportSort().processMesh(this.md5MeshData);
@@ -33,7 +33,7 @@ module md5list {
             this.loadBodyMesh();
         }
         public frameQuestArr: Array<DualQuatFloat32Array>;
-        private loadAnimFrame(): void {
+        protected loadAnimFrame(): void {
             LoadManager.getInstance().load("res/"  + this.animUrl, LoadManager.XML_TYPE, ($str: any) => {
                 var $matrixAry: Array<Array<Matrix3D>> = new Md5animAnalysis().addAnim($str);
                 this.frameQuestArr = new Array;
@@ -46,7 +46,7 @@ module md5list {
                 }
             });
         }
-        private makeDualQuatFloat32Array($frameAry: Array<Matrix3D>): DualQuatFloat32Array {
+        protected makeDualQuatFloat32Array($frameAry: Array<Matrix3D>): DualQuatFloat32Array {
             var newIDBoneArr: Array<number> = this.md5MeshData.boneNewIDAry
             var baseBone: Array<Matrix3D> = $frameAry;
             var $tempDq: DualQuatFloat32Array = new DualQuatFloat32Array;

@@ -108,6 +108,7 @@
     <TypeScriptCompile Include="src\left\LeftPanel.ts" />
     <TypeScriptCompile Include="src\left\LeftProcessor.ts" />
     <TypeScriptCompile Include="src\left\modelshow\BuildMaterialShader.ts" />
+    <TypeScriptCompile Include="src\left\modelshow\LocalMd5MoveSprite.ts" />
     <TypeScriptCompile Include="src\left\modelshow\MaterialModelSprite.ts" />
     <TypeScriptCompile Include="src\left\modelshow\MaterialRoleSprite.ts" />
     <TypeScriptCompile Include="src\left\modelshow\ModelShowModel.ts" />

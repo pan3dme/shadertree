@@ -313,8 +313,8 @@ var left;
                     break;
                 case this.a_input_dae:
                     console.log("inputdae");
-                    // this.selectInputDae(evt)
-                    left.ModelShowModel.getInstance().changeWebModel();
+                    this.selectInputDae(evt);
+                    //ModelShowModel.getInstance().changeWebModel();
                     break;
                 default:
                     break;
@@ -355,8 +355,18 @@ var left;
                 var simpleFile = this._inputHtmlSprite.files[i];
                 if (!/image\/\w+/.test(simpleFile.type)) {
                     var $reader = new FileReader();
-                    if (simpleFile.name.indexOf("xxoo.txt") != -1) {
-                        this.readFeijiModel(simpleFile);
+                    if (simpleFile.name.indexOf(".md5mesh") != -1) {
+                        $reader.readAsText(simpleFile);
+                        $reader.onload = function ($temp) {
+                            left.ModelShowModel.getInstance().webmd5Sprite.addLocalMeshByStr($reader.result);
+                        };
+                        return;
+                    }
+                    if (simpleFile.name.indexOf(".md5anim") != -1) {
+                        $reader.readAsText(simpleFile);
+                        $reader.onload = function ($temp) {
+                            left.ModelShowModel.getInstance().webmd5Sprite.addLocalAdimByStr($reader.result);
+                        };
                         return;
                     }
                     if (simpleFile.name.indexOf("objs.txt") != -1) {

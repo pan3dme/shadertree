@@ -385,9 +385,9 @@
                     break
                 case this.a_input_dae:
                     console.log("inputdae")
-                   // this.selectInputDae(evt)
+                    this.selectInputDae(evt)
       
-                    ModelShowModel.getInstance().changeWebModel();
+                    //ModelShowModel.getInstance().changeWebModel();
                     break
                 default:
                     break
@@ -427,16 +427,29 @@
             }
             return $dataArr
         }
+   
         private changeFile(evt: any): void {
             for (var i: number = 0; i < this._inputHtmlSprite.files.length && i < 1; i++) {
                 var simpleFile: File = <File>this._inputHtmlSprite.files[i];
                 if (!/image\/\w+/.test(simpleFile.type)) {
                     var $reader: FileReader = new FileReader();
 
-                    if (simpleFile.name.indexOf("xxoo.txt") != -1) {
-                        this.readFeijiModel(simpleFile)
+                    if (simpleFile.name.indexOf(".md5mesh") != -1) {
+
+                        $reader.readAsText(simpleFile);
+                        $reader.onload = ($temp: Event) => {
+                            ModelShowModel.getInstance().webmd5Sprite.addLocalMeshByStr(<string>$reader.result)
+                        }
                         return
-                    }  
+                    } 
+                    if (simpleFile.name.indexOf(".md5anim") != -1) {
+
+                        $reader.readAsText(simpleFile);
+                        $reader.onload = ($temp: Event) => {
+                            ModelShowModel.getInstance().webmd5Sprite.addLocalAdimByStr(<string>$reader.result)
+                        }
+                        return
+                    } 
                     if (simpleFile.name.indexOf("objs.txt") != -1) {
                         $reader.readAsText(simpleFile);
                         $reader.onload = ($temp: Event) => {
