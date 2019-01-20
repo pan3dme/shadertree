@@ -94,7 +94,7 @@ var materialui;
                     this.labelframe.x = this._x + 20;
                 }
                 else {
-                    this.labelframe.x = this._x - 30;
+                    this.labelframe.x = this._x - 80;
                 }
             },
             enumerable: true,

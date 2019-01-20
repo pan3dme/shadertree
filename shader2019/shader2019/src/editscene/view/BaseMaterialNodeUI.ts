@@ -109,8 +109,12 @@
            
             this.a_panel_title_frame = <FrameCompenent> this._topRender.getComponent("a_panel_title_frame");
             this.a_panel_title_frame.goToAndStop(BaseMaterialNodeUI.titleFrameId++);
+            this.a_panel_title_frame.y = 5;
+            this.a_panel_title_frame.x = 20
 
-            this.a_panel_title_frame.x=20
+            this.a_panel_title_frame.width = this.a_panel_title_frame.baseRec.width * 0.6;
+            this.a_panel_title_frame.height = this.a_panel_title_frame.baseRec.height * 0.6;
+
             this.addChild(this.a_panel_title_frame);
          
 

@@ -180,7 +180,7 @@ var materialui;
             var _this = this;
             Arpg2dGameStart.stagePos = new Vector2D();
             materialui.BaseMaterialNodeUI.baseUIAtlas = new UIAtlas();
-            materialui.BaseMaterialNodeUI.baseUIAtlas.setInfo("pan/marmoset/uilist/baseui.xml", "pan/marmoset/uilist/baseui.png", function () { _this.loadConfigCom(); });
+            materialui.BaseMaterialNodeUI.baseUIAtlas.setInfo("pan/marmoset/uilist/baseui.txt", "pan/marmoset/uilist/baseui.png", function () { _this.loadConfigCom(); });
         };
         MaterialProcessor.prototype.loadConfigCom = function () {
             var _this = this;
