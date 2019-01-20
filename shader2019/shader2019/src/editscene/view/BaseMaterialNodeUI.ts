@@ -225,6 +225,7 @@
 
         public getInItem($id: number): ItemMaterialUI{
             return this.inPutItemVec[$id];
+        
         }
 
         public getOutItem($id: number): ItemMaterialUI{

@@ -34,37 +34,25 @@ var materialui;
             _this.top = 300;
             _this.gap = 30;
             _this.width = 162;
-            _this.height = 310;
+            _this.height = 180;
             _this.nodeTree = new materialui.NodeTreeOP;
             _this.nodeTree.ui = _this;
             _this.nodeTree.type = materialui.NodeTree.OP;
             _this.initItem();
-            var $a_resultNodeUItxt = _this.addChild(_this._midRender.getComponent("a_resultNodeUItxt"));
-            $a_resultNodeUItxt.x = 30;
             _this.resetBgSize();
             return _this;
         }
         ResultNodeUI.prototype.initItem = function () {
-            this.diffuseItem = new materialui.ItemMaterialUI("漫反射(Diffuse)", materialui.MaterialItemType.VEC3);
-            this.metallicItem = new materialui.ItemMaterialUI("金属(metallic)", materialui.MaterialItemType.FLOAT);
-            this.specularItem = new materialui.ItemMaterialUI("高光(Specular)", materialui.MaterialItemType.FLOAT);
-            this.specularPowerItem = new materialui.ItemMaterialUI("粗糙度(Roughness)", materialui.MaterialItemType.FLOAT);
-            this.normalItem = new materialui.ItemMaterialUI("法线(Normal)", materialui.MaterialItemType.VEC3);
-            this.reflectItem = new materialui.ItemMaterialUI("反射(Reflection)", materialui.MaterialItemType.VEC3);
-            this.subsurfaceColorItem = new materialui.ItemMaterialUI("表面散射(subsurface)", materialui.MaterialItemType.VEC3);
-            this.alphaItem = new materialui.ItemMaterialUI("透明度(alpha)", materialui.MaterialItemType.FLOAT);
-            this.killItem = new materialui.ItemMaterialUI("不透明蒙版(alphaMask)", materialui.MaterialItemType.FLOAT);
-            this.skyBoxItem = new materialui.ItemMaterialUI("天空盒(skyBox)", materialui.MaterialItemType.VEC3);
+            this.diffuseItem = new materialui.ItemMaterialUI("漫反射", materialui.MaterialItemType.VEC3);
+            this.normalItem = new materialui.ItemMaterialUI("法线", materialui.MaterialItemType.VEC3);
+            this.reflectItem = new materialui.ItemMaterialUI("反射", materialui.MaterialItemType.VEC3);
+            this.alphaItem = new materialui.ItemMaterialUI("透明度", materialui.MaterialItemType.FLOAT);
+            this.killItem = new materialui.ItemMaterialUI("不透明蒙版", materialui.MaterialItemType.FLOAT);
             this.addItems(this.diffuseItem);
-            this.addItems(this.metallicItem);
-            this.addItems(this.specularItem);
-            this.addItems(this.specularPowerItem);
             this.addItems(this.normalItem);
             this.addItems(this.reflectItem);
-            this.addItems(this.subsurfaceColorItem);
             this.addItems(this.alphaItem);
             this.addItems(this.killItem);
-            this.addItems(this.skyBoxItem);
         };
         Object.defineProperty(ResultNodeUI.prototype, "blenderMode", {
             get: function () {

@@ -636,22 +636,7 @@ var materialui;
             this.scaleLightMap = $node.scaleLightMap;
             var str = "";
             var inputDiffuse = $node.inputVec[0];
-            var inputMetallic = $node.inputVec[1];
-            var inputSpecular = $node.inputVec[2];
-            var inputRoughness = $node.inputVec[3];
-            var inputNormal = $node.inputVec[4];
-            var inputEmissive = $node.inputVec[9];
-            if (!inputDiffuse.parentNodeItem && !inputEmissive.parentNodeItem) {
-                console.log("can not find diffuse or emissive");
-                return;
-            }
-            if (inputMetallic.parentNodeItem || inputSpecular.parentNodeItem || inputRoughness.parentNodeItem) {
-                this.usePbr = true;
-                console.log("use PBR!");
-            }
-            else {
-                this.usePbr = false;
-            }
+            var inputNormal = $node.inputVec[2];
             if (inputNormal.parentNodeItem) {
                 this.useNormal = true;
             }
@@ -676,18 +661,8 @@ var materialui;
                     regtempLightMap.hasInit = true;
                 }
                 if (this.lightProbe) {
-                    //vec4 ft1 = vec4(v0*5.0,1.0);
-                    str = resultStr + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + materialui.CompileTwo.VEC4 + materialui.CompileTwo.LEFT_PARENTH + materialui.CompileTwo.VI + this.defaultLightUvReg.id + materialui.CompileTwo.MUL_MATH + "2.0" + materialui.CompileTwo.COMMA + "1.0" + materialui.CompileTwo.RIGHT_PARENTH + materialui.CompileTwo.END;
-                    //str = MOV +CompileTwo. SPACE +CompileTwo. FT+ regtempLightMap.id +CompileTwo. COMMA+CompileTwo. VI+ defaultLightUvReg.id +CompileTwo. LN; 
-                    //str += MUL +CompileTwo. SPACE +CompileTwo. FT+ regtempLightMap.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempLightMap.id +CompileTwo. XYZ+CompileTwo. COMMA+ FC + THREE + X;
-                    this.strVec.push(str);
                 }
                 else if (this.directLight) {
-                    str = resultStr + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + materialui.CompileTwo.VEC4 + materialui.CompileTwo.LEFT_PARENTH + materialui.CompileTwo.VI + this.defaultLightUvReg.id + materialui.CompileTwo.COMMA + "1.0" + materialui.CompileTwo.RIGHT_PARENTH + materialui.CompileTwo.END;
-                    //str = resultStr +CompileTwo. SPACE +CompileTwo. EQU+CompileTwo. SPACE +CompileTwo.VEC4 +CompileTwo. LEFT_PARENTH+CompileTwo. VI+ defaultLightUvReg.id +CompileTwo. COMMA+ "1.0" + RIGHT_PARENTH + END;
-                    //str = MOV +CompileTwo. SPACE +CompileTwo. FT+ regtempLightMap.id +CompileTwo. COMMA+CompileTwo. VI+ defaultLightUvReg.id; 
-                    //str += MUL +CompileTwo. SPACE +CompileTwo. FT+ regtempLightMap.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempLightMap.id +CompileTwo. XYZ+CompileTwo. COMMA+ FC + THREE + X;
-                    this.strVec.push(str);
                 }
                 else if (this.noLight) {
                 }
@@ -715,230 +690,9 @@ var materialui;
                     str = resultStr + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + materialui.CompileTwo.VEC4 + materialui.CompileTwo.LEFT_PARENTH + pNodeDiffuse.getComponentID(inputDiffuse.parentNodeItem.id) + materialui.CompileTwo.COMMA + "1.0" + materialui.CompileTwo.RIGHT_PARENTH + materialui.CompileTwo.END;
                 }
                 else {
-                    str = materialui.CompileTwo.FT + regtempLightMap.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + materialui.CompileTwo.FT + regtempLightMap.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.SPACE + materialui.CompileTwo.MUL_MATH
-                        + materialui.CompileTwo.SPACE + pNodeDiffuse.getComponentID(inputDiffuse.parentNodeItem.id) + materialui.CompileTwo.END;
                 }
                 this.strVec.push(str);
                 pNodeDiffuse.releaseUse();
-                if (this.usePbr) {
-                    var pNodeNormal;
-                    var regtempNormal;
-                    regtempNormal = this.getFragmentTemp();
-                    if (!regtempNormal.hasInit) {
-                        str = materialui.CompileTwo.VEC4 + materialui.CompileTwo.SPACE + materialui.CompileTwo.FT + regtempNormal.id + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + materialui.CompileTwo.DEFAULT_VEC4 + materialui.CompileTwo.END;
-                        regtempNormal.hasInit = true;
-                        this.strVec.push(str);
-                    }
-                    if (this.useNormal) {
-                        pNodeNormal = inputNormal.parentNodeItem.node; // normal * 2 - 1
-                        // ft0.xyz = n.xyz * 2.0 - 1.0
-                        str = materialui.CompileTwo.FT + regtempNormal.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + pNodeNormal.getComponentID(inputNormal.parentNodeItem.id) + materialui.CompileTwo.SPACE +
-                            materialui.CompileTwo.MUL_MATH + materialui.CompileTwo.SPACE + materialui.CompileTwo.TWO_FLOAT + materialui.CompileTwo.SPACE + materialui.CompileTwo.SUB_MATH + materialui.CompileTwo.SPACE + materialui.CompileTwo.ONE_FLOAT + materialui.CompileTwo.END;
-                        //str = MUL +CompileTwo. SPACE +CompileTwo. FT+ regtempNormal.id +CompileTwo. XYZ+CompileTwo. COMMA+ pNodeNormal.getComponentID(inputNormal.parentNodeItem.id) +CompileTwo. COMMA+ FC + ZERO +CompileTwo. Y+CompileTwo. LN;
-                        //str += SUB +CompileTwo. SPACE +CompileTwo. FT+  regtempNormal.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempNormal.id +CompileTwo. XYZ+CompileTwo. COMMA+ FC + ZERO + X;
-                        this.strVec.push(str);
-                        str = materialui.CompileTwo.FT + regtempNormal.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + materialui.CompileTwo.VI + this.defaultTangent.id + materialui.CompileTwo.SPACE + materialui.CompileTwo.MUL_MATH + materialui.CompileTwo.SPACE + materialui.CompileTwo.FT + regtempNormal.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.END + materialui.CompileTwo.LN;
-                        str += materialui.CompileTwo.FT + regtempNormal.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + materialui.CompileTwo.NRM + materialui.CompileTwo.LEFT_PARENTH + materialui.CompileTwo.FT + regtempNormal.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.RIGHT_PARENTH + materialui.CompileTwo.END;
-                        this.strVec.push(str);
-                        //						var regtempNormalMap:RegisterItem;
-                        //						regtempNormalMap = getFragmentTemp();
-                        //						if(!regtempNormalMap.hasInit){
-                        //							str =CompileTwo.VEC4 +CompileTwo. SPACE +CompileTwo. FT+ regtempNormalMap.id +CompileTwo. SPACE +CompileTwo. EQU+CompileTwo. SPACE + CompileTwo.DEFAULT_VEC4 + END;
-                        //							regtempNormalMap.hasInit = true;
-                        //							strVec.push(str);
-                        //						}
-                        //						str =CompileTwo. FT+ regtempNormalMap.id +CompileTwo. X+CompileTwo. SPACE +CompileTwo. EQU+CompileTwo. SPACE +CompileTwo. DOT+CompileTwo. LEFT_PARENTH+CompileTwo. FT+ regtempNormal.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. VI+ defatultV5.id +CompileTwo. XYZ+ RIGHT_PARENTH + END;
-                        //						strVec.push(str);
-                        //						
-                        //						str =CompileTwo. FT+ regtempNormalMap.id +CompileTwo. Y+CompileTwo. SPACE +CompileTwo. EQU+CompileTwo. SPACE +CompileTwo. DOT+CompileTwo. LEFT_PARENTH+CompileTwo. FT+ regtempNormal.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. VI+ defatultV6.id +CompileTwo. XYZ+ RIGHT_PARENTH + END;
-                        //						strVec.push(str);
-                        //						
-                        //						str =CompileTwo. FT+ regtempNormalMap.id + Z +CompileTwo. SPACE +CompileTwo. EQU+CompileTwo. SPACE +CompileTwo. DOT+CompileTwo. LEFT_PARENTH+CompileTwo. FT+ regtempNormal.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. VI+ defaultTangent.id +CompileTwo. XYZ+ RIGHT_PARENTH + END;
-                        //						strVec.push(str);
-                        //						
-                        //						str =CompileTwo. FT+ regtempNormal.id +CompileTwo. XYZ+CompileTwo. SPACE +CompileTwo. EQU+CompileTwo. SPACE +CompileTwo. NRM+CompileTwo. LEFT_PARENTH+CompileTwo. FT+ regtempNormalMap.id +CompileTwo. XYZ+ RIGHT_PARENTH + END;
-                        //str = M33 +CompileTwo. SPACE +CompileTwo. FT+  regtempNormal.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+  regtempNormal.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. VI+ defaultTangent.id +CompileTwo. LN;
-                        //str +=CompileTwo.NRM+CompileTwo. SPACE +CompileTwo. FT+ regtempNormal.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempNormal.id + XYZ;
-                        //						strVec.push(str);
-                        //						regtempNormalMap.inUse = false;
-                        inputNormal.hasCompiled = true;
-                        pNodeNormal.releaseUse();
-                    }
-                    else {
-                        //ft0.xyz = vi3.xyz
-                        str = materialui.CompileTwo.FT + regtempNormal.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + materialui.CompileTwo.VI + this.defaultTangent.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.END;
-                        //str = MOV +CompileTwo. SPACE +CompileTwo. FT+ regtempNormal.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. VI+ defaultTangent.id + XYZ;
-                        this.strVec.push(str);
-                    }
-                    //trace(str);
-                    //traceFt();
-                    var regtempPbr = this.getFragmentTemp();
-                    if (!regtempPbr.hasInit) {
-                        str = materialui.CompileTwo.VEC4 + materialui.CompileTwo.SPACE + materialui.CompileTwo.FT + regtempPbr.id + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + materialui.CompileTwo.DEFAULT_VEC4 + materialui.CompileTwo.END;
-                        regtempPbr.hasInit = true;
-                        this.strVec.push(str);
-                    }
-                    //SpecularColor = 0.08 * SpecularScale * (1-metallic) + basecolor * metallic
-                    // SpecularColor = mix(0.08 * SpecularScale,basecolor,metallic);
-                    str = materialui.CompileTwo.FT + regtempPbr.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + materialui.CompileTwo.MIX + materialui.CompileTwo.LEFT_PARENTH;
-                    var pNodeSpecular;
-                    if (inputSpecular.parentNodeItem) {
-                        pNodeSpecular = inputSpecular.parentNodeItem.node;
-                        //vec3(ft0,ft0,ft0) * 0.08
-                        str += materialui.CompileTwo.VEC3 + materialui.CompileTwo.LEFT_PARENTH + pNodeSpecular.getComponentID(inputSpecular.parentNodeItem.id) + materialui.CompileTwo.COMMA
-                            + pNodeSpecular.getComponentID(inputSpecular.parentNodeItem.id) + materialui.CompileTwo.COMMA
-                            + pNodeSpecular.getComponentID(inputSpecular.parentNodeItem.id) + materialui.CompileTwo.RIGHT_PARENTH + materialui.CompileTwo.SPACE + materialui.CompileTwo.MUL_MATH + materialui.CompileTwo.SPACE + "0.08" + materialui.CompileTwo.COMMA;
-                        //str += "0.08" +CompileTwo. SPACE +CompileTwo. MUL_MATH+CompileTwo. SPACE + pNodeSpecular.getComponentID(inputSpecular.parentNodeItem.id) + COMMA;
-                        //str = MUL +CompileTwo. SPACE +CompileTwo. FT+ regtempMetallic.id +CompileTwo. X+CompileTwo. COMMA+CompileTwo. FT+ regtempMetallic.id +CompileTwo. X+CompileTwo. COMMA+ pNodeSpecular.getComponentID(inputSpecular.parentNodeItem.id);
-                        inputSpecular.hasCompiled = true;
-                    }
-                    else {
-                        str += "0.04" + materialui.CompileTwo.COMMA;
-                        //str = MUL +CompileTwo. SPACE +CompileTwo. FT+ regtempMetallic.id +CompileTwo. X+CompileTwo. COMMA+CompileTwo. FT+ regtempMetallic.id +CompileTwo. X+CompileTwo. COMMA+ FC + ONE + Y;
-                    }
-                    str += materialui.CompileTwo.FT + regtempLightMap.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.COMMA;
-                    var pNodeMetallic;
-                    if (inputMetallic.parentNodeItem) { //basecolor * metallic
-                        pNodeMetallic = inputMetallic.parentNodeItem.node;
-                        str += pNodeMetallic.getComponentID(inputMetallic.parentNodeItem.id) + materialui.CompileTwo.RIGHT_PARENTH + materialui.CompileTwo.END;
-                        //str = MUL +CompileTwo. SPACE +CompileTwo. FT+ regtempPbr.id +CompileTwo. XYZ+CompileTwo. COMMA+ pNodeDiffuse.getComponentID(inputDiffuse.parentNodeItem.id) +CompileTwo. COMMA+ pNodeMetallic.getComponentID(inputMetallic.parentNodeItem.id);
-                    }
-                    else {
-                        str += "0.5" + materialui.CompileTwo.RIGHT_PARENTH + materialui.CompileTwo.END;
-                        //str = MUL +CompileTwo. SPACE +CompileTwo. FT+ regtempPbr.id +CompileTwo. XYZ+CompileTwo. COMMA+ pNodeDiffuse.getComponentID(inputDiffuse.parentNodeItem.id) +CompileTwo. XYZ+CompileTwo. COMMA+ FC + ONE + Y;
-                    }
-                    this.strVec.push(str);
-                    this.traceFt();
-                    var regtempEnvBRDF = this.getFragmentTemp(); //defaultLutReg
-                    if (!regtempEnvBRDF.hasInit) {
-                        str = materialui.CompileTwo.VEC4 + materialui.CompileTwo.SPACE + materialui.CompileTwo.FT + regtempEnvBRDF.id + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + materialui.CompileTwo.DEFAULT_VEC4 + materialui.CompileTwo.END;
-                        regtempEnvBRDF.hasInit = true;
-                        this.strVec.push(str);
-                    }
-                    this.traceFt();
-                    // ft0.xyz= fc0.xyz - vi1.xyz;
-                    //str =CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. XYZ+CompileTwo. SPACE +CompileTwo. EQU+CompileTwo. SPACE + FC + ONE +CompileTwo. XYZ+CompileTwo. SPACE +CompileTwo. SUB_MATH+CompileTwo. SPACE +CompileTwo. VI+ defaultPtReg.id +CompileTwo. XYZ+CompileTwo. END+CompileTwo. LN;
-                    str = materialui.CompileTwo.FT + regtempEnvBRDF.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + this.camposStr + materialui.CompileTwo.SPACE + materialui.CompileTwo.SUB_MATH + materialui.CompileTwo.SPACE + materialui.CompileTwo.VI + this.defaultPtReg.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.END + materialui.CompileTwo.LN;
-                    str += materialui.CompileTwo.FT + regtempEnvBRDF.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + materialui.CompileTwo.NRM + materialui.CompileTwo.LEFT_PARENTH + materialui.CompileTwo.FT + regtempEnvBRDF.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.RIGHT_PARENTH + materialui.CompileTwo.END + materialui.CompileTwo.LN;
-                    str += materialui.CompileTwo.FT + regtempEnvBRDF.id + materialui.CompileTwo.Y + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + materialui.CompileTwo.DOT + materialui.CompileTwo.LEFT_PARENTH + materialui.CompileTwo.FT + regtempEnvBRDF.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.COMMA + materialui.CompileTwo.FT + regtempNormal.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.RIGHT_PARENTH + materialui.CompileTwo.END + materialui.CompileTwo.LN;
-                    //"mov vt3.x,vc13.y\n" + //粗糙度
-                    //"sub vt1,vc12,vt0\n" + //cos = dot(N,V)
-                    //"nrm vt1.xyz,vt1.xyz\n" +
-                    //"mov ft1.x,fc7.z\n" + 
-                    //"dp3 ft1.y,vi2.xyz,ft3.xyz \n"+
-                    //str = SUB +CompileTwo. SPACE +CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. XYZ+CompileTwo. COMMA+ FC + TWO +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. VI+ defaultPtReg.id +CompileTwo. XYZ+CompileTwo. LN;
-                    //str +=CompileTwo.NRM+CompileTwo. SPACE +CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. XYZ+CompileTwo. LN;
-                    //str += DP3 +CompileTwo. SPACE +CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. Y+CompileTwo. COMMA+CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempNormal.id +CompileTwo.XYZ +CompileTwo. LN; 
-                    var pNodeRoughness;
-                    if (inputRoughness.parentNodeItem) {
-                        pNodeRoughness = inputRoughness.parentNodeItem.node;
-                        if (pNodeRoughness instanceof materialui.NodeTreeFloat) {
-                            this.roughness = pNodeRoughness.constValue;
-                        }
-                        else {
-                            this.roughness = 0.5;
-                        }
-                        str += materialui.CompileTwo.FT + regtempEnvBRDF.id + materialui.CompileTwo.X + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + pNodeRoughness.getComponentID(inputRoughness.parentNodeItem.id) + materialui.CompileTwo.END + materialui.CompileTwo.LN;
-                        //str += MOV +CompileTwo. SPACE +CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. X+CompileTwo. COMMA+  pNodeRoughness.getComponentID(inputRoughness.parentNodeItem.id) +CompileTwo. LN;
-                        inputRoughness.hasCompiled = true;
-                        pNodeRoughness.releaseUse();
-                    }
-                    else {
-                        this.roughness = 0.5;
-                        str += materialui.CompileTwo.FT + regtempEnvBRDF.id + materialui.CompileTwo.X + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + "0.5" + materialui.CompileTwo.END + materialui.CompileTwo.LN;
-                        //str += MOV +CompileTwo. SPACE +CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. X+CompileTwo. COMMA+ FC + TWO + W +CompileTwo. LN;
-                    }
-                    // tex envBrdf
-                    var regtexEnvBRDF = this.getFragmentTex();
-                    str += materialui.CompileTwo.FT + regtempEnvBRDF.id + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + materialui.CompileTwo.texture2D + materialui.CompileTwo.LEFT_PARENTH + materialui.CompileTwo.FS + regtexEnvBRDF.id + materialui.CompileTwo.COMMA + materialui.CompileTwo.FT + regtempEnvBRDF.id + materialui.CompileTwo.XY + materialui.CompileTwo.RIGHT_PARENTH + materialui.CompileTwo.END;
-                    //str += TEX +CompileTwo. SPACE +CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. COMMA+CompileTwo. FT+ regtempEnvBRDF.id + XY +CompileTwo. COMMA+ FS + regtexEnvBRDF.id +CompileTwo. SPACE + texType;
-                    this.strVec.push(str);
-                    texItem = new TexItem;
-                    texItem.id = regtexEnvBRDF.id;
-                    texItem.type = TexItem.LTUMAP;
-                    this.texVec.push(texItem);
-                    //SpecularColor * envBrdf.x + envBrdf.y
-                    str = materialui.CompileTwo.FT + regtempPbr.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + materialui.CompileTwo.FT + regtempPbr.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.SPACE + materialui.CompileTwo.MUL_MATH + materialui.CompileTwo.SPACE + materialui.CompileTwo.FT + regtempEnvBRDF.id + materialui.CompileTwo.X + materialui.CompileTwo.SPACE;
-                    str += materialui.CompileTwo.ADD_MATH + materialui.CompileTwo.SPACE + materialui.CompileTwo.FT + regtempEnvBRDF.id + materialui.CompileTwo.Y + materialui.CompileTwo.END + materialui.CompileTwo.LN;
-                    //str = MUL +CompileTwo. SPACE +CompileTwo. FT+ regtempPbr.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempPbr.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. X+CompileTwo. LN;
-                    //str += ADD +CompileTwo. SPACE +CompileTwo. FT+ regtempPbr.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempPbr.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. Y+CompileTwo. LN;
-                    if (regtempEnvBRDF) {
-                        regtempEnvBRDF.inUse = false;
-                    }
-                    if (pNodeSpecular) {
-                        //str += MUL +CompileTwo. SPACE +CompileTwo. FT+ regtempPbr.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempPbr.id +CompileTwo. XYZ+CompileTwo. COMMA+ pNodeSpecular.getComponentID(inputSpecular.parentNodeItem.id);
-                        str += materialui.CompileTwo.FT + regtempPbr.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + materialui.CompileTwo.FT + regtempPbr.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.SPACE + materialui.CompileTwo.MUL_MATH + materialui.CompileTwo.SPACE + pNodeSpecular.getComponentID(inputSpecular.parentNodeItem.id) + materialui.CompileTwo.END;
-                        pNodeSpecular.releaseUse();
-                    }
-                    else {
-                        str += materialui.CompileTwo.FT + regtempPbr.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + materialui.CompileTwo.FT + regtempPbr.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.SPACE + materialui.CompileTwo.MUL_MATH + materialui.CompileTwo.SPACE + "0.5" + materialui.CompileTwo.END + materialui.CompileTwo.LN;
-                        //str += MUL +CompileTwo. SPACE +CompileTwo. FT+ regtempPbr.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempPbr.id +CompileTwo. XYZ+CompileTwo. COMMA+ FC + ONE + Y;
-                    }
-                    //trace(str);
-                    this.strVec.push(str);
-                    //specularIBL prefilteredColor * (SpecularColor * envBrdf.x + envBrdf.y) ;
-                    // tex prefilteredColor
-                    var regtexIBL = this.getFragmentTex();
-                    //reflect(I,N)
-                    //"sub vt1,vt0,vc12 \n" + //反射方向  reflect = I - 2 * dot(N,I) * N
-                    //"nrm vt1.xyz,vt1.xyz\n" + 
-                    //"dp3 ft0.x,vi1.xyz,ft3.xyz \n"+//反射方向  reflect = I - 2 * dot(N,I) * N
-                    //	"mul ft0.xyz,ft3.xyz,ft0.x \n" +
-                    //	"mul ft0.xyz,ft0.xyz,fc7.y\n" +
-                    //	"sub ft0.xyz,vi1.xyz,ft0.xyz\n" +
-                    var regtempIBL = this.getFragmentTemp();
-                    if (!regtempIBL.hasInit) {
-                        str = materialui.CompileTwo.VEC4 + materialui.CompileTwo.SPACE + materialui.CompileTwo.FT + regtempIBL.id + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + materialui.CompileTwo.DEFAULT_VEC4 + materialui.CompileTwo.END;
-                        regtempIBL.hasInit = true;
-                        this.strVec.push(str);
-                    }
-                    if (this.useDynamicIBL) {
-                        /**
-                        str = MOV +CompileTwo. SPACE +CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. COMMA+CompileTwo. VI+ defaultLutReg.id +CompileTwo. LN;
-                        str += DIV +CompileTwo. SPACE +CompileTwo. FT+ regtempEnvBRDF.id + XY +CompileTwo. COMMA+CompileTwo. FT+ regtempEnvBRDF.id + XY +CompileTwo. COMMA+CompileTwo. FT+ regtempEnvBRDF.id + Z +CompileTwo. LN;
-                        str += ADD +CompileTwo. SPACE +CompileTwo. FT+ regtempEnvBRDF.id + XY +CompileTwo. COMMA+CompileTwo. FT+ regtempEnvBRDF.id + XY +CompileTwo. COMMA+ FC + FOUR + XY +CompileTwo. LN;
-                        str += DIV +CompileTwo. SPACE +CompileTwo. FT+ regtempEnvBRDF.id + XY +CompileTwo. COMMA+CompileTwo. FT+ regtempEnvBRDF.id + XY +CompileTwo. COMMA+ FC + FOUR + ZW +CompileTwo. LN;
-                        
-                        str += MUL +CompileTwo. SPACE +CompileTwo. FT+ regtempIBL.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempNormal.id +CompileTwo. XYZ+CompileTwo. COMMA+ FC + ONE + W +CompileTwo. LN;
-                        
-                        str += ADD +CompileTwo. SPACE +CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. X+CompileTwo. COMMA+CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. X+CompileTwo. COMMA+CompileTwo. FT+ regtempIBL.id +CompileTwo. X+CompileTwo. LN;
-                        str += ADD +CompileTwo. SPACE +CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. Y+CompileTwo. COMMA+CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. Y+CompileTwo. COMMA+CompileTwo. FT+ regtempIBL.id + Z +CompileTwo. LN;
-                        
-                        str += TEX +CompileTwo. SPACE +CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. COMMA+CompileTwo. FT+ regtempEnvBRDF.id + XY +CompileTwo. COMMA+ FS + regtexIBL.id +CompileTwo. SPACE + getTexType(1,0);
-                        */
-                    }
-                    else {
-                        //
-                        //str =CompileTwo. FT+ regtempIBL.id +CompileTwo. XYZ+CompileTwo. SPACE +CompileTwo. EQU+CompileTwo. SPACE +CompileTwo. VI+ defaultPtReg.id +CompileTwo. XYZ+CompileTwo. SPACE +CompileTwo. SUB_MATH+CompileTwo. SPACE + FC + ONE +CompileTwo. XYZ+CompileTwo. END+CompileTwo. LN;
-                        str = materialui.CompileTwo.FT + regtempIBL.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + materialui.CompileTwo.VI + this.defaultPtReg.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.SPACE + materialui.CompileTwo.SUB_MATH + materialui.CompileTwo.SPACE + this.camposStr + materialui.CompileTwo.END + materialui.CompileTwo.LN;
-                        str += materialui.CompileTwo.FT + regtempIBL.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + materialui.CompileTwo.NRM + materialui.CompileTwo.LEFT_PARENTH + materialui.CompileTwo.FT + regtempIBL.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.RIGHT_PARENTH + materialui.CompileTwo.END + materialui.CompileTwo.LN;
-                        str += materialui.CompileTwo.FT + regtempIBL.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + materialui.CompileTwo.REFLECT + materialui.CompileTwo.LEFT_PARENTH + materialui.CompileTwo.FT + regtempIBL.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.COMMA + materialui.CompileTwo.FT + regtempNormal.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.RIGHT_PARENTH + materialui.CompileTwo.END + materialui.CompileTwo.LN;
-                        str += materialui.CompileTwo.FT + regtempIBL.id + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + materialui.CompileTwo.textureCube + materialui.CompileTwo.LEFT_PARENTH + materialui.CompileTwo.FS + regtexIBL.id + materialui.CompileTwo.COMMA + materialui.CompileTwo.FT + regtempIBL.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.RIGHT_PARENTH + materialui.CompileTwo.END;
-                        //str = SUB +CompileTwo. SPACE +CompileTwo. FT+ regtempIBL.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. VI+ defaultPtReg.id +CompileTwo. XYZ+CompileTwo. COMMA+ FC + TWO +CompileTwo. XYZ+CompileTwo. LN;
-                        //str +=CompileTwo.NRM+CompileTwo. SPACE +CompileTwo. FT+ regtempIBL.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempIBL.id +CompileTwo. XYZ+CompileTwo. LN;
-                        //str += DP3 +CompileTwo. SPACE +CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. X+CompileTwo. COMMA+CompileTwo. FT+ regtempIBL.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempNormal.id +CompileTwo.XYZ +CompileTwo. LN;
-                        //str += MUL +CompileTwo. SPACE +CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempNormal.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. X+CompileTwo. LN;
-                        //str += MUL +CompileTwo. SPACE +CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. XYZ+CompileTwo. COMMA+ FC + ZERO +CompileTwo. Y+CompileTwo. LN;
-                        //str += SUB +CompileTwo. SPACE +CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempIBL.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. XYZ+CompileTwo. LN;
-                        //str += TEX +CompileTwo. SPACE +CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. COMMA+CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. XYZ+CompileTwo. COMMA+ FS + regtexIBL.id +CompileTwo. SPACE + texCubeType;
-                    }
-                    //trace(str);
-                    //trace(str);
-                    this.strVec.push(str);
-                    texItem = new TexItem;
-                    texItem.id = regtexIBL.id;
-                    texItem.type = TexItem.CUBEMAP;
-                    this.texVec.push(texItem);
-                    //str =CompileTwo. FT+ regtempIBL.id +CompileTwo. XYZ+CompileTwo. SPACE +CompileTwo. EQU+CompileTwo. SPACE +CompileTwo. FT+ regtempIBL.id +CompileTwo. XYZ+CompileTwo. SPACE +  MUL_MATH +CompileTwo. SPACE + FC + ZERO +CompileTwo. X+ END;
-                    //strVec.push(str);
-                    str = materialui.CompileTwo.FT + regtempPbr.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + materialui.CompileTwo.FT + regtempPbr.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.SPACE + materialui.CompileTwo.MUL_MATH + materialui.CompileTwo.SPACE + materialui.CompileTwo.FT + regtempIBL.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.END;
-                    //str = MUL +CompileTwo. SPACE +CompileTwo. FT+ regtempPbr.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempPbr.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempEnvBRDF.id + XYZ;
-                    //trace(str);
-                    this.strVec.push(str);
-                    regtempIBL.inUse = false;
-                    //console.log(str)
-                    //regtempEnvBRDF.inUse = false;
-                }
                 regOp = this.getFragmentTemp(); //输出用临时寄存器
                 if (!regOp.hasInit) {
                     str = materialui.CompileTwo.VEC4 + materialui.CompileTwo.SPACE + materialui.CompileTwo.FT + regOp.id + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + materialui.CompileTwo.DEFAULT_VEC4 + materialui.CompileTwo.END;
@@ -946,27 +700,6 @@ var materialui;
                     this.strVec.push(str);
                 }
                 if (this.usePbr) {
-                    //diffuseColor = basecolor * (1-metallic) 
-                    //f0.xyz = fc0.xyz * 
-                    //str =CompileTwo. FT+ regOp.id +CompileTwo. XYZ+CompileTwo. SPACE +CompileTwo. EQU+CompileTwo. SPACE + pNodeDiffuse.getComponentID(inputDiffuse.parentNodeItem.id) +CompileTwo. SPACE +CompileTwo. MUL_MATH+CompileTwo. SPACE +CompileTwo. FT+ regtempLightMap.id +CompileTwo. XYZ+CompileTwo. END+CompileTwo. LN;
-                    //var regtempMetallic:RegisterItem = getFragmentTemp();
-                    //str = MOV +CompileTwo. SPACE +CompileTwo. FT+ regtempMetallic.id +CompileTwo. X+CompileTwo. COMMA+ FC + ZERO +CompileTwo. X+CompileTwo. LN;
-                    if (pNodeMetallic) {
-                        str = materialui.CompileTwo.FT + regOp.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + materialui.CompileTwo.FT + regtempLightMap.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.SPACE + materialui.CompileTwo.MUL_MATH + materialui.CompileTwo.SPACE + materialui.CompileTwo.LEFT_PARENTH
-                            + materialui.CompileTwo.ONE_FLOAT + materialui.CompileTwo.SUB_MATH + pNodeMetallic.getComponentID(inputMetallic.parentNodeItem.id) + materialui.CompileTwo.RIGHT_PARENTH + materialui.CompileTwo.END + materialui.CompileTwo.LN;
-                        //str += SUB +CompileTwo. SPACE +CompileTwo. FT+ regtempMetallic.id +CompileTwo. X+CompileTwo. COMMA+CompileTwo. FT+ regtempMetallic.id +CompileTwo. X+CompileTwo. COMMA+ pNodeMetallic.getComponentID(inputMetallic.parentNodeItem.id);
-                        inputMetallic.hasCompiled = true;
-                        pNodeMetallic.releaseUse();
-                    }
-                    else {
-                        str = materialui.CompileTwo.FT + regOp.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + materialui.CompileTwo.FT + regtempLightMap.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.SPACE + materialui.CompileTwo.MUL_MATH + materialui.CompileTwo.SPACE + "0.5" + materialui.CompileTwo.END + materialui.CompileTwo.LN;
-                        //str += SUB +CompileTwo. SPACE +CompileTwo. FT+ regtempMetallic.id +CompileTwo. X+CompileTwo. COMMA+CompileTwo. FT+ regtempMetallic.id +CompileTwo. X+CompileTwo. COMMA+ FC + ONE + Y;
-                    }
-                    str += materialui.CompileTwo.FT + regOp.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + materialui.CompileTwo.FT + regOp.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.SPACE + materialui.CompileTwo.ADD_MATH + materialui.CompileTwo.SPACE + materialui.CompileTwo.FT + regtempPbr.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.END;
-                    //str = MUL +CompileTwo. SPACE +CompileTwo. FT+ regOp.id +CompileTwo. XYZ+CompileTwo. COMMA+ pNodeDiffuse.getComponentID(inputDiffuse.parentNodeItem.id) +CompileTwo. COMMA+CompileTwo. FT+ regtempMetallic.id +CompileTwo. X+CompileTwo. LN;
-                    //str += MUL +CompileTwo. SPACE +CompileTwo. FT+ regOp.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regOp.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempLightMap.id +CompileTwo.XYZ +CompileTwo. LN;
-                    //str += ADD +CompileTwo. SPACE +CompileTwo. FT+ regOp.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regOp.id +CompileTwo. XYZ+CompileTwo. COMMA+ CompileTwo. FT+ regtempPbr.id + XYZ;
-                    //regtempMetallic.inUse = false;
                 }
                 else {
                     //ft2.xyz = ft0.xyz * ft1.xyz
@@ -979,33 +712,6 @@ var materialui;
                 //pNodeDiffuse.releaseUse();
                 this.strVec.push(str);
                 regtempLightMap.inUse = false;
-                if (regtempPbr) {
-                    regtempPbr.inUse = false;
-                }
-            }
-            if (inputEmissive.parentNodeItem) { //自发光部分
-                var pNodeEmissive = inputEmissive.parentNodeItem.node; //emissive输入节点
-                if (!regOp) {
-                    regOp = this.getFragmentTemp();
-                    if (!regOp.hasInit) {
-                        str = materialui.CompileTwo.VEC4 + materialui.CompileTwo.SPACE + materialui.CompileTwo.FT + regOp.id + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + materialui.CompileTwo.DEFAULT_VEC4 + materialui.CompileTwo.END;
-                        regOp.hasInit = true;
-                        this.strVec.push(str);
-                    }
-                }
-                if (hasDiffuse) {
-                    //op.xyz = op.xyz + ft0.xyz
-                    //str =  ADD +CompileTwo. SPACE +CompileTwo. FT+ regOp.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regOp.id +CompileTwo. XYZ+CompileTwo. COMMA+ pNodeEmissive.getComponentID(inputEmissive.parentNodeItem.id);
-                    //op.xyz = op.xyz + ft0.xyz
-                    str = materialui.CompileTwo.FT + regOp.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + materialui.CompileTwo.FT + regOp.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.SPACE + materialui.CompileTwo.ADD_MATH + materialui.CompileTwo.SPACE + pNodeEmissive.getComponentID(inputEmissive.parentNodeItem.id) + materialui.CompileTwo.END;
-                }
-                else {
-                    //str =  MOV +CompileTwo. SPACE +CompileTwo. FT+ regOp.id +CompileTwo. XYZ+CompileTwo. COMMA+ pNodeEmissive.getComponentID(inputEmissive.parentNodeItem.id);
-                    //op.xyz = ft0.xyz
-                    str = materialui.CompileTwo.FT + regOp.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + pNodeEmissive.getComponentID(inputEmissive.parentNodeItem.id) + materialui.CompileTwo.END;
-                }
-                this.strVec.push(str);
-                pNodeEmissive.releaseUse();
             }
             //alpha
             str = "";
@@ -1016,62 +722,11 @@ var materialui;
                 str = materialui.CompileTwo.FT + regOp.id + materialui.CompileTwo.W + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + materialui.CompileTwo.ONE_FLOAT + materialui.CompileTwo.END;
             }
             else {
-                var pNodeAlpha = inputAlpha.parentNodeItem.node;
-                //str = MOV +CompileTwo. SPACE +CompileTwo. FT+ regOp.id + W +CompileTwo. COMMA+ pNodeAlpha.getComponentID(inputAlpha.parentNodeItem.id);
-                //op.w = ft0.w
-                str = materialui.CompileTwo.FT + regOp.id + materialui.CompileTwo.W + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + pNodeAlpha.getComponentID(inputAlpha.parentNodeItem.id) + materialui.CompileTwo.END + materialui.CompileTwo.LN;
-                str += materialui.CompileTwo.FT + regOp.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + materialui.CompileTwo.FT + regOp.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.SPACE + materialui.CompileTwo.MUL_MATH + materialui.CompileTwo.SPACE + materialui.CompileTwo.FT + regOp.id + materialui.CompileTwo.W + materialui.CompileTwo.END;
-                pNodeAlpha.releaseUse();
             }
             this.strVec.push(str);
             //kill
             str = "";
-            var inputKill = $node.inputVec[8];
-            if (inputKill.parentNodeItem) {
-                var pNodeKill = inputKill.parentNodeItem.node;
-                this.killNum = $node.killNum;
-                //if(ft0.x < ft1.x){discard;}
-                //str = IF +CompileTwo. LEFT_PARENTH+ pNodeKill.getComponentID(inputKill.parentNodeItem.id) + LEFT_BRACKET + FC + ZERO + Z + RIGHT_PARENTH + DISCARD;
-                str = materialui.CompileTwo.IF + materialui.CompileTwo.LEFT_PARENTH + pNodeKill.getComponentID(inputKill.parentNodeItem.id) + materialui.CompileTwo.LEFT_BRACKET + this.killStr + materialui.CompileTwo.RIGHT_PARENTH + materialui.CompileTwo.DISCARD;
-                this.strVec.push(str);
-                this.useKill = true;
-            }
             var regtempFog;
-            if (this.fogMode == 1) {
-                regtempFog = this.getFragmentTemp();
-                // sub ft0.xyz,fc3.xyz,vi4.xyz
-                // dp3 ft0.x,ft0.xyz,ft0.xyz;
-                // mul ft0.x,ft0.x,fc4.y
-                //div ft0.x,fc4.z,ft0.x
-                //mul ft0.xyz,fc4.xyz,ft0.x
-                //str += CompileTwo. FT+ regtempFog.id +CompileTwo. X+CompileTwo. SPACE +CompileTwo. EQU+CompileTwo. SPACE + "distance("  +VI + defaultPtReg.id + XYZ+"*0.01" +CompileTwo. COMMA+ FC + ONE +CompileTwo. XYZ+")*100.0" +CompileTwo. END+CompileTwo. LN;
-                str = materialui.CompileTwo.FT + regtempFog.id + materialui.CompileTwo.X + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + "distance(" + materialui.CompileTwo.VI + this.defaultPtReg.id + materialui.CompileTwo.XYZ + "*0.01" + materialui.CompileTwo.COMMA + this.camposStr + ")*100.0" + materialui.CompileTwo.END + materialui.CompileTwo.LN;
-                //str +=CompileTwo. FT+ regtempFog.id +CompileTwo. X+CompileTwo. SPACE +CompileTwo. EQU+CompileTwo. SPACE +CompileTwo. FT+ regtempFog.id +CompileTwo. X+CompileTwo. SPACE +CompileTwo. SUB_MATH+CompileTwo. SPACE + fogdata +CompileTwo. X+CompileTwo. END+CompileTwo. LN;
-                str += materialui.CompileTwo.FT + regtempFog.id + materialui.CompileTwo.X + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + materialui.CompileTwo.FT + regtempFog.id + materialui.CompileTwo.X + materialui.CompileTwo.SPACE + materialui.CompileTwo.SUB_MATH + materialui.CompileTwo.SPACE + this.fogdataXStr + materialui.CompileTwo.END + materialui.CompileTwo.LN;
-                //str +=CompileTwo. FT+ regtempFog.id +CompileTwo. X+CompileTwo. SPACE +CompileTwo. EQU+CompileTwo. SPACE + fogdata +CompileTwo. Y+CompileTwo. SPACE +CompileTwo. MUL_MATH+CompileTwo. SPACE +CompileTwo. FT+ regtempFog.id +CompileTwo. X+CompileTwo. END+CompileTwo. LN;
-                str += materialui.CompileTwo.FT + regtempFog.id + materialui.CompileTwo.X + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + this.fogdataYStr + materialui.CompileTwo.SPACE + materialui.CompileTwo.MUL_MATH + materialui.CompileTwo.SPACE + materialui.CompileTwo.FT + regtempFog.id + materialui.CompileTwo.X + materialui.CompileTwo.END + materialui.CompileTwo.LN;
-                str += materialui.CompileTwo.FT + regtempFog.id + materialui.CompileTwo.X + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + materialui.CompileTwo.TEX_WRAP_CLAMP + materialui.CompileTwo.LEFT_PARENTH + materialui.CompileTwo.FT + regtempFog.id + materialui.CompileTwo.X + materialui.CompileTwo.COMMA + "0.0" + materialui.CompileTwo.COMMA + "1.0" + materialui.CompileTwo.RIGHT_PARENTH + materialui.CompileTwo.END + materialui.CompileTwo.LN;
-                //str +=CompileTwo. FT+ regOp.id +CompileTwo. XYZ+CompileTwo. SPACE +CompileTwo. EQU+CompileTwo. SPACE + MIX + LEFT_PARENTH+CompileTwo. FT+ regOp.id +CompileTwo. XYZ+CompileTwo. COMMA+   fogcolor+CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempFog.id +CompileTwo. X+ RIGHT_PARENTH + END;
-                str += materialui.CompileTwo.FT + regOp.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + materialui.CompileTwo.MIX + materialui.CompileTwo.LEFT_PARENTH + materialui.CompileTwo.FT + regOp.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.COMMA + this.fogcolorStr + materialui.CompileTwo.COMMA + materialui.CompileTwo.FT + regtempFog.id + materialui.CompileTwo.X + materialui.CompileTwo.RIGHT_PARENTH + materialui.CompileTwo.END;
-                this.strVec.push(str);
-            }
-            else if (this.fogMode == 2) {
-                regtempFog = this.getFragmentTemp();
-                //				"ft1.x = distance(v1.xyz*0.01, fc2.xyz)*100.0;\n" +
-                //				"ft1.x = ft1.x - fogdata.x;\n"+
-                //				"ft1.x = fogdata.y * ft1.x;\n" +
-                //				"ft1.x = clamp(ft1.x,0.0,1.0);\n"+
-                //				"ft2.xyz = mix(ft2.xyz,fogcolor.xyz,ft1.x);\n" +
-                //str =CompileTwo. FT+ regtempFog.id +CompileTwo. X+CompileTwo. SPACE +CompileTwo. EQU+CompileTwo. SPACE +CompileTwo. VI+ defaultPtReg.id +CompileTwo. Y+CompileTwo. SPACE +CompileTwo. SUB_MATH+CompileTwo. SPACE + fogdata +CompileTwo. X+CompileTwo. END+CompileTwo. LN;
-                str = materialui.CompileTwo.FT + regtempFog.id + materialui.CompileTwo.X + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + materialui.CompileTwo.VI + this.defaultPtReg.id + materialui.CompileTwo.Y + materialui.CompileTwo.SPACE + materialui.CompileTwo.SUB_MATH + materialui.CompileTwo.SPACE + this.fogdataXStr + materialui.CompileTwo.END + materialui.CompileTwo.LN;
-                //str +=CompileTwo. FT+ regtempFog.id +CompileTwo. X+CompileTwo. SPACE +CompileTwo. EQU+CompileTwo. SPACE +CompileTwo. FT+ regtempFog.id +CompileTwo. X+CompileTwo. SPACE +CompileTwo. MUL_MATH+CompileTwo. SPACE + fogdata +CompileTwo. Y+CompileTwo. END+CompileTwo. LN;
-                str += materialui.CompileTwo.FT + regtempFog.id + materialui.CompileTwo.X + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + materialui.CompileTwo.FT + regtempFog.id + materialui.CompileTwo.X + materialui.CompileTwo.SPACE + materialui.CompileTwo.MUL_MATH + materialui.CompileTwo.SPACE + this.fogdataYStr + materialui.CompileTwo.END + materialui.CompileTwo.LN;
-                str += materialui.CompileTwo.FT + regtempFog.id + materialui.CompileTwo.X + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + materialui.CompileTwo.FT + regtempFog.id + materialui.CompileTwo.X + materialui.CompileTwo.SPACE + materialui.CompileTwo.ADD_MATH + materialui.CompileTwo.SPACE + "1.0" + materialui.CompileTwo.END + materialui.CompileTwo.LN;
-                str += materialui.CompileTwo.FT + regtempFog.id + materialui.CompileTwo.X + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + materialui.CompileTwo.TEX_WRAP_CLAMP + materialui.CompileTwo.LEFT_PARENTH + materialui.CompileTwo.FT + regtempFog.id + materialui.CompileTwo.X + materialui.CompileTwo.COMMA + "0.0" + materialui.CompileTwo.COMMA + "1.0" + materialui.CompileTwo.RIGHT_PARENTH + materialui.CompileTwo.END + materialui.CompileTwo.LN;
-                //str +=CompileTwo. FT+ regOp.id +CompileTwo. XYZ+CompileTwo. SPACE +CompileTwo. EQU+CompileTwo. SPACE + MIX +CompileTwo. LEFT_PARENTH+ fogcolor +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regOp.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempFog.id +CompileTwo. X+ RIGHT_PARENTH + END;
-                str += materialui.CompileTwo.FT + regOp.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + materialui.CompileTwo.MIX + materialui.CompileTwo.LEFT_PARENTH + this.fogcolorStr + materialui.CompileTwo.COMMA + materialui.CompileTwo.FT + regOp.id + materialui.CompileTwo.XYZ + materialui.CompileTwo.COMMA + materialui.CompileTwo.FT + regtempFog.id + materialui.CompileTwo.X + materialui.CompileTwo.RIGHT_PARENTH + materialui.CompileTwo.END;
-                this.strVec.push(str);
-            }
             str = "";
             //"gl_FragColor = infoUv;\n" +
             str = materialui.CompileTwo.FO + materialui.CompileTwo.SPACE + materialui.CompileTwo.EQU + materialui.CompileTwo.SPACE + materialui.CompileTwo.FT + regOp.id + materialui.CompileTwo.END;
@@ -1097,15 +752,6 @@ var materialui;
                         var opnode = node;
                         $fogMode = opnode.fogMode;
                         $scaleLightMap = opnode.scaleLightMap;
-                        if (opnode.inputVec[8].parentNodeItem) {
-                            $useKill = true;
-                        }
-                        var inputMetallic = opnode.inputVec[1];
-                        var inputSpecular = opnode.inputVec[2];
-                        var inputRoughness = opnode.inputVec[3];
-                        if (inputMetallic.parentNodeItem || inputSpecular.parentNodeItem || inputRoughness.parentNodeItem) {
-                            $usePbr = true;
-                        }
                     }
                     else if (node.type == materialui.NodeTree.TIME || node.type == materialui.NodeTree.PANNER) {
                         $hasTime = true;

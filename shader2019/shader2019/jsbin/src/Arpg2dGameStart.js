@@ -19,6 +19,7 @@ var Arpg2dGameStart = /** @class */ (function (_super) {
     Arpg2dGameStart.prototype.init = function () {
         var _this = this;
         Scene_data.fileRoot = "https://webpan.oss-cn-shanghai.aliyuncs.com/upfile/shadertree/";
+        Scene_data.fileuiRoot = "res/";
         ModuleList.startup(); //启动所有模块
         Pan3d.UIData.Scale = 1;
         materialui.MtlUiData.Scale = 1;

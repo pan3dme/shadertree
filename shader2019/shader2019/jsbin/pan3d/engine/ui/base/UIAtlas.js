@@ -21,7 +21,7 @@ var Pan3d;
             var _this = this;
             if (useImgUrl === void 0) { useImgUrl = null; }
             this._useImgUrl = useImgUrl;
-            Pan3d.LoadManager.getInstance().load(Pan3d.Scene_data.fileRoot + configUrl, Pan3d.LoadManager.XML_TYPE, function ($str) {
+            Pan3d.LoadManager.getInstance().load(Pan3d.Scene_data.fileuiRoot + configUrl, Pan3d.LoadManager.XML_TYPE, function ($str) {
                 var obj = JSON.parse($str);
                 _this.configData = obj.uiArr;
                 _this.layoutData = obj.panelArr;
@@ -30,7 +30,7 @@ var Pan3d;
         };
         UIAtlas.prototype.loadConfig = function (configUrl, $fun) {
             var _this = this;
-            Pan3d.LoadManager.getInstance().load(Pan3d.Scene_data.fileRoot + configUrl, Pan3d.LoadManager.XML_TYPE, function ($str) {
+            Pan3d.LoadManager.getInstance().load(Pan3d.Scene_data.fileuiRoot + configUrl, Pan3d.LoadManager.XML_TYPE, function ($str) {
                 var obj = JSON.parse($str);
                 _this.configData = obj.uiArr;
                 $fun();
@@ -38,7 +38,7 @@ var Pan3d;
         };
         UIAtlas.prototype.loadImgUrl = function (imgUrl, $fun) {
             var _this = this;
-            Pan3d.TextureManager.getInstance().getTexture(Pan3d.Scene_data.fileRoot + imgUrl, function ($texture) {
+            Pan3d.TextureManager.getInstance().getTexture(Pan3d.Scene_data.fileuiRoot + imgUrl, function ($texture) {
                 //this.texture = $texture.texture;
                 _this.textureRes = $texture;
                 ////console.log(imgUrl);

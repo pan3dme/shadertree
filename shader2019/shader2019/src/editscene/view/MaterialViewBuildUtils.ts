@@ -50,6 +50,7 @@
                     }
                     var endNode: ItemMaterialUI = this.getUIbyID(this._dataAry[i].id, inAry[j].id, true);
                     var startNode: ItemMaterialUI = this.getUIbyID(inAry[j].parentObj.pid, inAry[j].parentObj.id, false);
+                 
                     if (endNode.typets == MaterialItemType.UNDEFINE) {
                         endNode.changeType(startNode.typets);
        

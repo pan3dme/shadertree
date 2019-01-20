@@ -15,6 +15,7 @@ var Pan3d;
         });
         Scene_data.sceneViewHW = 500;
         Scene_data.fileRoot = "res/";
+        Scene_data.fileuiRoot = "res/";
         Scene_data.verticalScene = false;
         Scene_data.effectsLev = 2; //2高配1中配0低配
         Scene_data.camFar = 1000; //镜头最远距离

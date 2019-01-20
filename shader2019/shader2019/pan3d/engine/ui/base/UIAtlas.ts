@@ -35,7 +35,7 @@ module Pan3d {
 
         public setInfo(configUrl: string, imgUrl: string, $fun: Function, useImgUrl: string = null): void {
             this._useImgUrl = useImgUrl;
-            LoadManager.getInstance().load(Scene_data.fileRoot + configUrl, LoadManager.XML_TYPE, ($str: any) => {
+            LoadManager.getInstance().load(Scene_data.fileuiRoot + configUrl, LoadManager.XML_TYPE, ($str: any) => {
                 var obj: any = JSON.parse($str);
                 this.configData = obj.uiArr;
                 this.layoutData = obj.panelArr;
@@ -44,7 +44,7 @@ module Pan3d {
         }
 
         public loadConfig(configUrl: string, $fun: Function): void {
-            LoadManager.getInstance().load(Scene_data.fileRoot + configUrl, LoadManager.XML_TYPE, ($str: any) => {
+            LoadManager.getInstance().load(Scene_data.fileuiRoot + configUrl, LoadManager.XML_TYPE, ($str: any) => {
                 var obj: any = JSON.parse($str);
                 this.configData = obj.uiArr;
                 $fun();
@@ -53,7 +53,7 @@ module Pan3d {
         }
 
         public loadImgUrl(imgUrl: string, $fun: Function): void {
-            TextureManager.getInstance().getTexture(Scene_data.fileRoot + imgUrl, ($texture: TextureRes) => {
+            TextureManager.getInstance().getTexture(Scene_data.fileuiRoot + imgUrl, ($texture: TextureRes) => {
                 //this.texture = $texture.texture;
                 this.textureRes = $texture;
                 ////console.log(imgUrl);

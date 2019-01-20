@@ -704,23 +704,11 @@
 
             var str: string = "";
             var inputDiffuse: NodeTreeInputItem = $node.inputVec[0];
-            var inputMetallic: NodeTreeInputItem = $node.inputVec[1];
-            var inputSpecular: NodeTreeInputItem = $node.inputVec[2];
-            var inputRoughness: NodeTreeInputItem = $node.inputVec[3];
-            var inputNormal: NodeTreeInputItem = $node.inputVec[4];
-            var inputEmissive: NodeTreeInputItem = $node.inputVec[9];
+    
+            var inputNormal: NodeTreeInputItem = $node.inputVec[2];
+       
 
-            if (!inputDiffuse.parentNodeItem && !inputEmissive.parentNodeItem) {
-                console.log("can not find diffuse or emissive");
-                return;
-            }
-
-            if (inputMetallic.parentNodeItem || inputSpecular.parentNodeItem || inputRoughness.parentNodeItem) {
-                this.usePbr = true;
-                console.log("use PBR!");
-            } else {
-                this.usePbr = false;
-            }
+       
 
             if (inputNormal.parentNodeItem) {
                 this.useNormal = true;
@@ -752,17 +740,9 @@
                 }
 
                 if (this.lightProbe) {
-                    //vec4 ft1 = vec4(v0*5.0,1.0);
-                    str = resultStr + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + CompileTwo.VEC4 + CompileTwo.LEFT_PARENTH + CompileTwo.VI + this.defaultLightUvReg.id + CompileTwo.MUL_MATH + "2.0" + CompileTwo.COMMA + "1.0" + CompileTwo.RIGHT_PARENTH + CompileTwo.END;
-                    //str = MOV +CompileTwo. SPACE +CompileTwo. FT+ regtempLightMap.id +CompileTwo. COMMA+CompileTwo. VI+ defaultLightUvReg.id +CompileTwo. LN; 
-                    //str += MUL +CompileTwo. SPACE +CompileTwo. FT+ regtempLightMap.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempLightMap.id +CompileTwo. XYZ+CompileTwo. COMMA+ FC + THREE + X;
-                    this.strVec.push(str);
+               
                 } else if (this.directLight) {
-                    str = resultStr + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + CompileTwo.VEC4 + CompileTwo.LEFT_PARENTH + CompileTwo.VI + this.defaultLightUvReg.id + CompileTwo.COMMA + "1.0" + CompileTwo.RIGHT_PARENTH + CompileTwo.END;
-                    //str = resultStr +CompileTwo. SPACE +CompileTwo. EQU+CompileTwo. SPACE +CompileTwo.VEC4 +CompileTwo. LEFT_PARENTH+CompileTwo. VI+ defaultLightUvReg.id +CompileTwo. COMMA+ "1.0" + RIGHT_PARENTH + END;
-                    //str = MOV +CompileTwo. SPACE +CompileTwo. FT+ regtempLightMap.id +CompileTwo. COMMA+CompileTwo. VI+ defaultLightUvReg.id; 
-                    //str += MUL +CompileTwo. SPACE +CompileTwo. FT+ regtempLightMap.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempLightMap.id +CompileTwo. XYZ+CompileTwo. COMMA+ FC + THREE + X;
-                    this.strVec.push(str);
+               
                 } else if (this.noLight) {
 
                 } else {
@@ -789,263 +769,13 @@
                 if (this.noLight && !this.directLight) {
                     str = resultStr + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + CompileTwo.VEC4 + CompileTwo.LEFT_PARENTH + pNodeDiffuse.getComponentID(inputDiffuse.parentNodeItem.id) + CompileTwo.COMMA + "1.0" + CompileTwo.RIGHT_PARENTH + CompileTwo.END;
                 } else {
-                    str = CompileTwo.FT + regtempLightMap.id + CompileTwo.XYZ + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + CompileTwo.FT + regtempLightMap.id + CompileTwo.XYZ + CompileTwo.SPACE + CompileTwo.MUL_MATH
-                        + CompileTwo.SPACE + pNodeDiffuse.getComponentID(inputDiffuse.parentNodeItem.id) + CompileTwo.END;
+          
                 }
                 this.strVec.push(str);
 
                 pNodeDiffuse.releaseUse();
 
-                if (this.usePbr) {
-
-                    var pNodeNormal: NodeTree;
-                    var regtempNormal: RegisterItem;
-                    regtempNormal = this.getFragmentTemp();
-                    if (!regtempNormal.hasInit) {
-                        str = CompileTwo.VEC4 + CompileTwo.SPACE + CompileTwo.FT + regtempNormal.id + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + CompileTwo.DEFAULT_VEC4 + CompileTwo.END;
-                        regtempNormal.hasInit = true;
-                        this.strVec.push(str);
-                    }
-
-
-                    if (this.useNormal) {
-                        pNodeNormal = inputNormal.parentNodeItem.node; // normal * 2 - 1
-                        // ft0.xyz = n.xyz * 2.0 - 1.0
-                        str = CompileTwo.FT + regtempNormal.id + CompileTwo.XYZ + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + pNodeNormal.getComponentID(inputNormal.parentNodeItem.id) + CompileTwo.SPACE +
-                            CompileTwo.MUL_MATH + CompileTwo.SPACE + CompileTwo.TWO_FLOAT + CompileTwo.SPACE + CompileTwo.SUB_MATH + CompileTwo.SPACE + CompileTwo.ONE_FLOAT + CompileTwo.END;
-                        //str = MUL +CompileTwo. SPACE +CompileTwo. FT+ regtempNormal.id +CompileTwo. XYZ+CompileTwo. COMMA+ pNodeNormal.getComponentID(inputNormal.parentNodeItem.id) +CompileTwo. COMMA+ FC + ZERO +CompileTwo. Y+CompileTwo. LN;
-                        //str += SUB +CompileTwo. SPACE +CompileTwo. FT+  regtempNormal.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempNormal.id +CompileTwo. XYZ+CompileTwo. COMMA+ FC + ZERO + X;
-                        this.strVec.push(str);
-
-                        str = CompileTwo.FT + regtempNormal.id + CompileTwo.XYZ + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + CompileTwo.VI + this.defaultTangent.id + CompileTwo.SPACE + CompileTwo.MUL_MATH + CompileTwo.SPACE + CompileTwo.FT + regtempNormal.id + CompileTwo.XYZ + CompileTwo.END + CompileTwo.LN;
-                        str += CompileTwo.FT + regtempNormal.id + CompileTwo.XYZ + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + CompileTwo.NRM + CompileTwo.LEFT_PARENTH + CompileTwo.FT + regtempNormal.id + CompileTwo.XYZ + CompileTwo.RIGHT_PARENTH + CompileTwo.END;
-                        this.strVec.push(str);
-
-                        //						var regtempNormalMap:RegisterItem;
-                        //						regtempNormalMap = getFragmentTemp();
-                        //						if(!regtempNormalMap.hasInit){
-                        //							str =CompileTwo.VEC4 +CompileTwo. SPACE +CompileTwo. FT+ regtempNormalMap.id +CompileTwo. SPACE +CompileTwo. EQU+CompileTwo. SPACE + CompileTwo.DEFAULT_VEC4 + END;
-                        //							regtempNormalMap.hasInit = true;
-                        //							strVec.push(str);
-                        //						}
-                        //						str =CompileTwo. FT+ regtempNormalMap.id +CompileTwo. X+CompileTwo. SPACE +CompileTwo. EQU+CompileTwo. SPACE +CompileTwo. DOT+CompileTwo. LEFT_PARENTH+CompileTwo. FT+ regtempNormal.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. VI+ defatultV5.id +CompileTwo. XYZ+ RIGHT_PARENTH + END;
-                        //						strVec.push(str);
-                        //						
-                        //						str =CompileTwo. FT+ regtempNormalMap.id +CompileTwo. Y+CompileTwo. SPACE +CompileTwo. EQU+CompileTwo. SPACE +CompileTwo. DOT+CompileTwo. LEFT_PARENTH+CompileTwo. FT+ regtempNormal.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. VI+ defatultV6.id +CompileTwo. XYZ+ RIGHT_PARENTH + END;
-                        //						strVec.push(str);
-                        //						
-                        //						str =CompileTwo. FT+ regtempNormalMap.id + Z +CompileTwo. SPACE +CompileTwo. EQU+CompileTwo. SPACE +CompileTwo. DOT+CompileTwo. LEFT_PARENTH+CompileTwo. FT+ regtempNormal.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. VI+ defaultTangent.id +CompileTwo. XYZ+ RIGHT_PARENTH + END;
-                        //						strVec.push(str);
-                        //						
-                        //						str =CompileTwo. FT+ regtempNormal.id +CompileTwo. XYZ+CompileTwo. SPACE +CompileTwo. EQU+CompileTwo. SPACE +CompileTwo. NRM+CompileTwo. LEFT_PARENTH+CompileTwo. FT+ regtempNormalMap.id +CompileTwo. XYZ+ RIGHT_PARENTH + END;
-
-                        //str = M33 +CompileTwo. SPACE +CompileTwo. FT+  regtempNormal.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+  regtempNormal.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. VI+ defaultTangent.id +CompileTwo. LN;
-                        //str +=CompileTwo.NRM+CompileTwo. SPACE +CompileTwo. FT+ regtempNormal.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempNormal.id + XYZ;
-                        //						strVec.push(str);
-                        //						regtempNormalMap.inUse = false;
-
-                        inputNormal.hasCompiled = true;
-                        pNodeNormal.releaseUse();
-                    } else {
-                        //ft0.xyz = vi3.xyz
-                        str = CompileTwo.FT + regtempNormal.id + CompileTwo.XYZ + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + CompileTwo.VI + this.defaultTangent.id + CompileTwo.XYZ + CompileTwo.END;
-                        //str = MOV +CompileTwo. SPACE +CompileTwo. FT+ regtempNormal.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. VI+ defaultTangent.id + XYZ;
-                        this.strVec.push(str);
-                    }
-                    //trace(str);
-                    //traceFt();
-
-                    var regtempPbr: RegisterItem = this.getFragmentTemp();
-
-                    if (!regtempPbr.hasInit) {
-                        str = CompileTwo.VEC4 + CompileTwo.SPACE + CompileTwo.FT + regtempPbr.id + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + CompileTwo.DEFAULT_VEC4 + CompileTwo.END;
-                        regtempPbr.hasInit = true;
-                        this.strVec.push(str);
-                    }
-                    //SpecularColor = 0.08 * SpecularScale * (1-metallic) + basecolor * metallic
-                    // SpecularColor = mix(0.08 * SpecularScale,basecolor,metallic);
-                    str = CompileTwo.FT + regtempPbr.id + CompileTwo.XYZ + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + CompileTwo.MIX + CompileTwo.LEFT_PARENTH;
-
-                    var pNodeSpecular: NodeTree;
-                    if (inputSpecular.parentNodeItem) {
-                        pNodeSpecular = inputSpecular.parentNodeItem.node;
-                        //vec3(ft0,ft0,ft0) * 0.08
-                        str += CompileTwo.VEC3 + CompileTwo.LEFT_PARENTH + pNodeSpecular.getComponentID(inputSpecular.parentNodeItem.id) + CompileTwo.COMMA
-                            + pNodeSpecular.getComponentID(inputSpecular.parentNodeItem.id) + CompileTwo.COMMA
-                            + pNodeSpecular.getComponentID(inputSpecular.parentNodeItem.id) + CompileTwo.RIGHT_PARENTH + CompileTwo.SPACE + CompileTwo.MUL_MATH + CompileTwo.SPACE + "0.08" + CompileTwo.COMMA;
-                        //str += "0.08" +CompileTwo. SPACE +CompileTwo. MUL_MATH+CompileTwo. SPACE + pNodeSpecular.getComponentID(inputSpecular.parentNodeItem.id) + COMMA;
-                        //str = MUL +CompileTwo. SPACE +CompileTwo. FT+ regtempMetallic.id +CompileTwo. X+CompileTwo. COMMA+CompileTwo. FT+ regtempMetallic.id +CompileTwo. X+CompileTwo. COMMA+ pNodeSpecular.getComponentID(inputSpecular.parentNodeItem.id);
-                        inputSpecular.hasCompiled = true;
-                    } else {
-                        str += "0.04" + CompileTwo.COMMA;
-                        //str = MUL +CompileTwo. SPACE +CompileTwo. FT+ regtempMetallic.id +CompileTwo. X+CompileTwo. COMMA+CompileTwo. FT+ regtempMetallic.id +CompileTwo. X+CompileTwo. COMMA+ FC + ONE + Y;
-                    }
-
-                    str += CompileTwo.FT + regtempLightMap.id + CompileTwo.XYZ + CompileTwo.COMMA;
-
-                    var pNodeMetallic: NodeTree;
-                    if (inputMetallic.parentNodeItem) {//basecolor * metallic
-                        pNodeMetallic = inputMetallic.parentNodeItem.node;
-                        str += pNodeMetallic.getComponentID(inputMetallic.parentNodeItem.id) + CompileTwo.RIGHT_PARENTH + CompileTwo.END;
-                        //str = MUL +CompileTwo. SPACE +CompileTwo. FT+ regtempPbr.id +CompileTwo. XYZ+CompileTwo. COMMA+ pNodeDiffuse.getComponentID(inputDiffuse.parentNodeItem.id) +CompileTwo. COMMA+ pNodeMetallic.getComponentID(inputMetallic.parentNodeItem.id);
-                    } else {
-                        str += "0.5" + CompileTwo.RIGHT_PARENTH + CompileTwo.END;
-                        //str = MUL +CompileTwo. SPACE +CompileTwo. FT+ regtempPbr.id +CompileTwo. XYZ+CompileTwo. COMMA+ pNodeDiffuse.getComponentID(inputDiffuse.parentNodeItem.id) +CompileTwo. XYZ+CompileTwo. COMMA+ FC + ONE + Y;
-                    }
-                    this.strVec.push(str);
-
-                    this.traceFt();
-
-                    var regtempEnvBRDF: RegisterItem = this.getFragmentTemp();//defaultLutReg
-                    if (!regtempEnvBRDF.hasInit) {
-                        str = CompileTwo.VEC4 + CompileTwo.SPACE + CompileTwo.FT + regtempEnvBRDF.id + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + CompileTwo.DEFAULT_VEC4 + CompileTwo.END;
-                        regtempEnvBRDF.hasInit = true;
-                        this.strVec.push(str);
-                    }
-                    this.traceFt();
-                    // ft0.xyz= fc0.xyz - vi1.xyz;
-                    //str =CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. XYZ+CompileTwo. SPACE +CompileTwo. EQU+CompileTwo. SPACE + FC + ONE +CompileTwo. XYZ+CompileTwo. SPACE +CompileTwo. SUB_MATH+CompileTwo. SPACE +CompileTwo. VI+ defaultPtReg.id +CompileTwo. XYZ+CompileTwo. END+CompileTwo. LN;
-                    str = CompileTwo.FT + regtempEnvBRDF.id + CompileTwo.XYZ + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + this.camposStr + CompileTwo.SPACE + CompileTwo.SUB_MATH + CompileTwo.SPACE + CompileTwo.VI + this.defaultPtReg.id + CompileTwo.XYZ + CompileTwo.END + CompileTwo.LN;
-                    str += CompileTwo.FT + regtempEnvBRDF.id + CompileTwo.XYZ + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + CompileTwo.NRM + CompileTwo.LEFT_PARENTH + CompileTwo.FT + regtempEnvBRDF.id + CompileTwo.XYZ + CompileTwo.RIGHT_PARENTH + CompileTwo.END + CompileTwo.LN;
-                    str += CompileTwo.FT + regtempEnvBRDF.id + CompileTwo.Y + CompileTwo.EQU + CompileTwo.SPACE + CompileTwo.DOT + CompileTwo.LEFT_PARENTH + CompileTwo.FT + regtempEnvBRDF.id + CompileTwo.XYZ + CompileTwo.COMMA + CompileTwo.FT + regtempNormal.id + CompileTwo.XYZ + CompileTwo.RIGHT_PARENTH + CompileTwo.END + CompileTwo.LN;
-
-                    //"mov vt3.x,vc13.y\n" + //粗糙度
-                    //"sub vt1,vc12,vt0\n" + //cos = dot(N,V)
-                    //"nrm vt1.xyz,vt1.xyz\n" +
-                    //"mov ft1.x,fc7.z\n" + 
-                    //"dp3 ft1.y,vi2.xyz,ft3.xyz \n"+
-
-                    //str = SUB +CompileTwo. SPACE +CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. XYZ+CompileTwo. COMMA+ FC + TWO +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. VI+ defaultPtReg.id +CompileTwo. XYZ+CompileTwo. LN;
-                    //str +=CompileTwo.NRM+CompileTwo. SPACE +CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. XYZ+CompileTwo. LN;
-                    //str += DP3 +CompileTwo. SPACE +CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. Y+CompileTwo. COMMA+CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempNormal.id +CompileTwo.XYZ +CompileTwo. LN; 
-
-                    var pNodeRoughness: NodeTree;
-                    if (inputRoughness.parentNodeItem) {
-                        pNodeRoughness = inputRoughness.parentNodeItem.node;
-                        if (pNodeRoughness instanceof NodeTreeFloat) {
-                            this.roughness = (<NodeTreeFloat>pNodeRoughness).constValue;
-                        } else {
-                            this.roughness = 0.5;
-                        }
-                        str += CompileTwo.FT + regtempEnvBRDF.id + CompileTwo.X + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + pNodeRoughness.getComponentID(inputRoughness.parentNodeItem.id) + CompileTwo.END + CompileTwo.LN;
-                        //str += MOV +CompileTwo. SPACE +CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. X+CompileTwo. COMMA+  pNodeRoughness.getComponentID(inputRoughness.parentNodeItem.id) +CompileTwo. LN;
-                        inputRoughness.hasCompiled = true;
-                        pNodeRoughness.releaseUse();
-                    } else {
-                        this.roughness = 0.5;
-                        str += CompileTwo.FT + regtempEnvBRDF.id + CompileTwo.X + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + "0.5" + CompileTwo.END + CompileTwo.LN;
-                        //str += MOV +CompileTwo. SPACE +CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. X+CompileTwo. COMMA+ FC + TWO + W +CompileTwo. LN;
-                    }
-
-                    // tex envBrdf
-                    var regtexEnvBRDF: RegisterItem = this.getFragmentTex();
-
-                    str += CompileTwo.FT + regtempEnvBRDF.id + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + CompileTwo.texture2D + CompileTwo.LEFT_PARENTH + CompileTwo.FS + regtexEnvBRDF.id + CompileTwo.COMMA + CompileTwo.FT + regtempEnvBRDF.id + CompileTwo.XY + CompileTwo.RIGHT_PARENTH + CompileTwo.END;
-                    //str += TEX +CompileTwo. SPACE +CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. COMMA+CompileTwo. FT+ regtempEnvBRDF.id + XY +CompileTwo. COMMA+ FS + regtexEnvBRDF.id +CompileTwo. SPACE + texType;
-
-                    this.strVec.push(str);
-                    texItem = new TexItem;
-                    texItem.id = regtexEnvBRDF.id;
-                    texItem.type = TexItem.LTUMAP;
-                    this.texVec.push(texItem);
-
-                    //SpecularColor * envBrdf.x + envBrdf.y
-                    str = CompileTwo.FT + regtempPbr.id + CompileTwo.XYZ + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + CompileTwo.FT + regtempPbr.id + CompileTwo.XYZ + CompileTwo.SPACE + CompileTwo.MUL_MATH + CompileTwo.SPACE + CompileTwo.FT + regtempEnvBRDF.id + CompileTwo.X + CompileTwo.SPACE;
-                    str += CompileTwo.ADD_MATH + CompileTwo.SPACE + CompileTwo.FT + regtempEnvBRDF.id + CompileTwo.Y + CompileTwo.END + CompileTwo.LN;
-                    //str = MUL +CompileTwo. SPACE +CompileTwo. FT+ regtempPbr.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempPbr.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. X+CompileTwo. LN;
-                    //str += ADD +CompileTwo. SPACE +CompileTwo. FT+ regtempPbr.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempPbr.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. Y+CompileTwo. LN;
-
-                    if (regtempEnvBRDF) {
-                        regtempEnvBRDF.inUse = false;
-                    }
-
-                    if (pNodeSpecular) {
-                        //str += MUL +CompileTwo. SPACE +CompileTwo. FT+ regtempPbr.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempPbr.id +CompileTwo. XYZ+CompileTwo. COMMA+ pNodeSpecular.getComponentID(inputSpecular.parentNodeItem.id);
-                        str += CompileTwo.FT + regtempPbr.id + CompileTwo.XYZ + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + CompileTwo.FT + regtempPbr.id + CompileTwo.XYZ + CompileTwo.SPACE + CompileTwo.MUL_MATH + CompileTwo.SPACE + pNodeSpecular.getComponentID(inputSpecular.parentNodeItem.id) + CompileTwo.END;
-                        pNodeSpecular.releaseUse();
-                    } else {
-                        str += CompileTwo.FT + regtempPbr.id + CompileTwo.XYZ + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + CompileTwo.FT + regtempPbr.id + CompileTwo.XYZ + CompileTwo.SPACE + CompileTwo.MUL_MATH + CompileTwo.SPACE + "0.5" + CompileTwo.END + CompileTwo.LN;
-                        //str += MUL +CompileTwo. SPACE +CompileTwo. FT+ regtempPbr.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempPbr.id +CompileTwo. XYZ+CompileTwo. COMMA+ FC + ONE + Y;
-                    }
-
-                    //trace(str);
-                    this.strVec.push(str);
-
-                    //specularIBL prefilteredColor * (SpecularColor * envBrdf.x + envBrdf.y) ;
-                    // tex prefilteredColor
-                    var regtexIBL: RegisterItem = this.getFragmentTex();
-
-                    //reflect(I,N)
-
-                    //"sub vt1,vt0,vc12 \n" + //反射方向  reflect = I - 2 * dot(N,I) * N
-                    //"nrm vt1.xyz,vt1.xyz\n" + 
-                    //"dp3 ft0.x,vi1.xyz,ft3.xyz \n"+//反射方向  reflect = I - 2 * dot(N,I) * N
-                    //	"mul ft0.xyz,ft3.xyz,ft0.x \n" +
-                    //	"mul ft0.xyz,ft0.xyz,fc7.y\n" +
-                    //	"sub ft0.xyz,vi1.xyz,ft0.xyz\n" +
-                    var regtempIBL: RegisterItem = this.getFragmentTemp();
-
-                    if (!regtempIBL.hasInit) {
-                        str = CompileTwo.VEC4 + CompileTwo.SPACE + CompileTwo.FT + regtempIBL.id + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + CompileTwo.DEFAULT_VEC4 + CompileTwo.END;
-                        regtempIBL.hasInit = true;
-                        this.strVec.push(str);
-                    }
-
-                    if (this.useDynamicIBL) {
-                        /**
-                        str = MOV +CompileTwo. SPACE +CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. COMMA+CompileTwo. VI+ defaultLutReg.id +CompileTwo. LN;
-                        str += DIV +CompileTwo. SPACE +CompileTwo. FT+ regtempEnvBRDF.id + XY +CompileTwo. COMMA+CompileTwo. FT+ regtempEnvBRDF.id + XY +CompileTwo. COMMA+CompileTwo. FT+ regtempEnvBRDF.id + Z +CompileTwo. LN;
-                        str += ADD +CompileTwo. SPACE +CompileTwo. FT+ regtempEnvBRDF.id + XY +CompileTwo. COMMA+CompileTwo. FT+ regtempEnvBRDF.id + XY +CompileTwo. COMMA+ FC + FOUR + XY +CompileTwo. LN;
-                        str += DIV +CompileTwo. SPACE +CompileTwo. FT+ regtempEnvBRDF.id + XY +CompileTwo. COMMA+CompileTwo. FT+ regtempEnvBRDF.id + XY +CompileTwo. COMMA+ FC + FOUR + ZW +CompileTwo. LN;
-                    	
-                        str += MUL +CompileTwo. SPACE +CompileTwo. FT+ regtempIBL.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempNormal.id +CompileTwo. XYZ+CompileTwo. COMMA+ FC + ONE + W +CompileTwo. LN;
-                    	
-                        str += ADD +CompileTwo. SPACE +CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. X+CompileTwo. COMMA+CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. X+CompileTwo. COMMA+CompileTwo. FT+ regtempIBL.id +CompileTwo. X+CompileTwo. LN;
-                        str += ADD +CompileTwo. SPACE +CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. Y+CompileTwo. COMMA+CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. Y+CompileTwo. COMMA+CompileTwo. FT+ regtempIBL.id + Z +CompileTwo. LN;
-                    	
-                        str += TEX +CompileTwo. SPACE +CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. COMMA+CompileTwo. FT+ regtempEnvBRDF.id + XY +CompileTwo. COMMA+ FS + regtexIBL.id +CompileTwo. SPACE + getTexType(1,0);
-                        */
-                    } else {
-                        //
-                        //str =CompileTwo. FT+ regtempIBL.id +CompileTwo. XYZ+CompileTwo. SPACE +CompileTwo. EQU+CompileTwo. SPACE +CompileTwo. VI+ defaultPtReg.id +CompileTwo. XYZ+CompileTwo. SPACE +CompileTwo. SUB_MATH+CompileTwo. SPACE + FC + ONE +CompileTwo. XYZ+CompileTwo. END+CompileTwo. LN;
-                        str = CompileTwo.FT + regtempIBL.id + CompileTwo.XYZ + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + CompileTwo.VI + this.defaultPtReg.id + CompileTwo.XYZ + CompileTwo.SPACE + CompileTwo.SUB_MATH + CompileTwo.SPACE + this.camposStr + CompileTwo.END + CompileTwo.LN;
-                        str += CompileTwo.FT + regtempIBL.id + CompileTwo.XYZ + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + CompileTwo.NRM + CompileTwo.LEFT_PARENTH + CompileTwo.FT + regtempIBL.id + CompileTwo.XYZ + CompileTwo.RIGHT_PARENTH + CompileTwo.END + CompileTwo.LN;
-                        str += CompileTwo.FT + regtempIBL.id + CompileTwo.XYZ + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + CompileTwo.REFLECT + CompileTwo.LEFT_PARENTH + CompileTwo.FT + regtempIBL.id + CompileTwo.XYZ + CompileTwo.COMMA + CompileTwo.FT + regtempNormal.id + CompileTwo.XYZ + CompileTwo.RIGHT_PARENTH + CompileTwo.END + CompileTwo.LN;
-                        str += CompileTwo.FT + regtempIBL.id + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + CompileTwo.textureCube + CompileTwo.LEFT_PARENTH + CompileTwo.FS + regtexIBL.id + CompileTwo.COMMA + CompileTwo.FT + regtempIBL.id + CompileTwo.XYZ + CompileTwo.RIGHT_PARENTH + CompileTwo.END;
-                        //str = SUB +CompileTwo. SPACE +CompileTwo. FT+ regtempIBL.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. VI+ defaultPtReg.id +CompileTwo. XYZ+CompileTwo. COMMA+ FC + TWO +CompileTwo. XYZ+CompileTwo. LN;
-                        //str +=CompileTwo.NRM+CompileTwo. SPACE +CompileTwo. FT+ regtempIBL.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempIBL.id +CompileTwo. XYZ+CompileTwo. LN;
-                        //str += DP3 +CompileTwo. SPACE +CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. X+CompileTwo. COMMA+CompileTwo. FT+ regtempIBL.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempNormal.id +CompileTwo.XYZ +CompileTwo. LN;
-                        //str += MUL +CompileTwo. SPACE +CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempNormal.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. X+CompileTwo. LN;
-                        //str += MUL +CompileTwo. SPACE +CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. XYZ+CompileTwo. COMMA+ FC + ZERO +CompileTwo. Y+CompileTwo. LN;
-                        //str += SUB +CompileTwo. SPACE +CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempIBL.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. XYZ+CompileTwo. LN;
-                        //str += TEX +CompileTwo. SPACE +CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. COMMA+CompileTwo. FT+ regtempEnvBRDF.id +CompileTwo. XYZ+CompileTwo. COMMA+ FS + regtexIBL.id +CompileTwo. SPACE + texCubeType;
-                    }
-
-                    //trace(str);
-
-                    //trace(str);
-                    this.strVec.push(str);
-                    texItem = new TexItem;
-                    texItem.id = regtexIBL.id;
-                    texItem.type = TexItem.CUBEMAP;
-                    this.texVec.push(texItem);
-
-                    //str =CompileTwo. FT+ regtempIBL.id +CompileTwo. XYZ+CompileTwo. SPACE +CompileTwo. EQU+CompileTwo. SPACE +CompileTwo. FT+ regtempIBL.id +CompileTwo. XYZ+CompileTwo. SPACE +  MUL_MATH +CompileTwo. SPACE + FC + ZERO +CompileTwo. X+ END;
-                    //strVec.push(str);
-
-                    str = CompileTwo.FT + regtempPbr.id + CompileTwo.XYZ + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + CompileTwo.FT + regtempPbr.id + CompileTwo.XYZ + CompileTwo.SPACE + CompileTwo.MUL_MATH + CompileTwo.SPACE + CompileTwo.FT + regtempIBL.id + CompileTwo.XYZ + CompileTwo.END;
-
-                    //str = MUL +CompileTwo. SPACE +CompileTwo. FT+ regtempPbr.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempPbr.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempEnvBRDF.id + XYZ;
-                    //trace(str);
-                    this.strVec.push(str);
-
-                    regtempIBL.inUse = false;
-
-                    //console.log(str)
-
-                    //regtempEnvBRDF.inUse = false;
-                }
-
+             
 
 
                 regOp = this.getFragmentTemp();//输出用临时寄存器
@@ -1057,31 +787,7 @@
                 }
 
                 if (this.usePbr) {
-                    //diffuseColor = basecolor * (1-metallic) 
-                    //f0.xyz = fc0.xyz * 
-                    //str =CompileTwo. FT+ regOp.id +CompileTwo. XYZ+CompileTwo. SPACE +CompileTwo. EQU+CompileTwo. SPACE + pNodeDiffuse.getComponentID(inputDiffuse.parentNodeItem.id) +CompileTwo. SPACE +CompileTwo. MUL_MATH+CompileTwo. SPACE +CompileTwo. FT+ regtempLightMap.id +CompileTwo. XYZ+CompileTwo. END+CompileTwo. LN;
-
-
-                    //var regtempMetallic:RegisterItem = getFragmentTemp();
-                    //str = MOV +CompileTwo. SPACE +CompileTwo. FT+ regtempMetallic.id +CompileTwo. X+CompileTwo. COMMA+ FC + ZERO +CompileTwo. X+CompileTwo. LN;
-                    if (pNodeMetallic) {
-                        str = CompileTwo.FT + regOp.id + CompileTwo.XYZ + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + CompileTwo.FT + regtempLightMap.id + CompileTwo.XYZ + CompileTwo.SPACE + CompileTwo.MUL_MATH + CompileTwo.SPACE + CompileTwo.LEFT_PARENTH
-                            + CompileTwo.ONE_FLOAT + CompileTwo.SUB_MATH + pNodeMetallic.getComponentID(inputMetallic.parentNodeItem.id) + CompileTwo.RIGHT_PARENTH + CompileTwo.END + CompileTwo.LN;
-                        //str += SUB +CompileTwo. SPACE +CompileTwo. FT+ regtempMetallic.id +CompileTwo. X+CompileTwo. COMMA+CompileTwo. FT+ regtempMetallic.id +CompileTwo. X+CompileTwo. COMMA+ pNodeMetallic.getComponentID(inputMetallic.parentNodeItem.id);
-                        inputMetallic.hasCompiled = true;
-                        pNodeMetallic.releaseUse();
                     } else {
-                        str = CompileTwo.FT + regOp.id + CompileTwo.XYZ + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + CompileTwo.FT + regtempLightMap.id + CompileTwo.XYZ + CompileTwo.SPACE + CompileTwo.MUL_MATH + CompileTwo.SPACE + "0.5" + CompileTwo.END + CompileTwo.LN;
-                        //str += SUB +CompileTwo. SPACE +CompileTwo. FT+ regtempMetallic.id +CompileTwo. X+CompileTwo. COMMA+CompileTwo. FT+ regtempMetallic.id +CompileTwo. X+CompileTwo. COMMA+ FC + ONE + Y;
-                    }
-                    str += CompileTwo.FT + regOp.id + CompileTwo.XYZ + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + CompileTwo.FT + regOp.id + CompileTwo.XYZ + CompileTwo.SPACE + CompileTwo.ADD_MATH + CompileTwo.SPACE + CompileTwo.FT + regtempPbr.id + CompileTwo.XYZ + CompileTwo.END;
-
-                    //str = MUL +CompileTwo. SPACE +CompileTwo. FT+ regOp.id +CompileTwo. XYZ+CompileTwo. COMMA+ pNodeDiffuse.getComponentID(inputDiffuse.parentNodeItem.id) +CompileTwo. COMMA+CompileTwo. FT+ regtempMetallic.id +CompileTwo. X+CompileTwo. LN;
-                    //str += MUL +CompileTwo. SPACE +CompileTwo. FT+ regOp.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regOp.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempLightMap.id +CompileTwo.XYZ +CompileTwo. LN;
-                    //str += ADD +CompileTwo. SPACE +CompileTwo. FT+ regOp.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regOp.id +CompileTwo. XYZ+CompileTwo. COMMA+ CompileTwo. FT+ regtempPbr.id + XYZ;
-
-                    //regtempMetallic.inUse = false;
-                } else {
                     //ft2.xyz = ft0.xyz * ft1.xyz
                     //str =  MUL +CompileTwo. SPACE +CompileTwo. FT+ regOp.id +CompileTwo. XYZ+CompileTwo. COMMA+ pNodeDiffuse.getComponentID(inputDiffuse.parentNodeItem.id) +CompileTwo. COMMA+CompileTwo. FT+ regtempLightMap.id + XYZ;
                     //str =CompileTwo. FT+ regOp.id +CompileTwo. XYZ+CompileTwo. SPACE +CompileTwo. EQU+CompileTwo. SPACE +CompileTwo. FT+ regtempLightMap.id +CompileTwo. XYZ+CompileTwo. SPACE +CompileTwo. MUL_MATH+CompileTwo. SPACE +CompileTwo. FT+ regtempLightMap.id +CompileTwo. XYZ+ END;
@@ -1095,40 +801,11 @@
                 this.strVec.push(str);
 
                 regtempLightMap.inUse = false;
-                if (regtempPbr) {
-                    regtempPbr.inUse = false;
-                }
+            
 
 
             }
 
-            if (inputEmissive.parentNodeItem) {//自发光部分
-                var pNodeEmissive: NodeTree = inputEmissive.parentNodeItem.node;//emissive输入节点
-
-                if (!regOp) {
-                    regOp = this.getFragmentTemp();
-
-                    if (!regOp.hasInit) {
-                        str = CompileTwo.VEC4 + CompileTwo.SPACE + CompileTwo.FT + regOp.id + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + CompileTwo.DEFAULT_VEC4 + CompileTwo.END;
-                        regOp.hasInit = true;
-                        this.strVec.push(str);
-                    }
-                }
-
-                if (hasDiffuse) {
-                    //op.xyz = op.xyz + ft0.xyz
-                    //str =  ADD +CompileTwo. SPACE +CompileTwo. FT+ regOp.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regOp.id +CompileTwo. XYZ+CompileTwo. COMMA+ pNodeEmissive.getComponentID(inputEmissive.parentNodeItem.id);
-                    //op.xyz = op.xyz + ft0.xyz
-                    str = CompileTwo.FT + regOp.id + CompileTwo.XYZ + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + CompileTwo.FT + regOp.id + CompileTwo.XYZ + CompileTwo.SPACE + CompileTwo.ADD_MATH + CompileTwo.SPACE + pNodeEmissive.getComponentID(inputEmissive.parentNodeItem.id) + CompileTwo.END;
-                } else {
-                    //str =  MOV +CompileTwo. SPACE +CompileTwo. FT+ regOp.id +CompileTwo. XYZ+CompileTwo. COMMA+ pNodeEmissive.getComponentID(inputEmissive.parentNodeItem.id);
-                    //op.xyz = ft0.xyz
-                    str = CompileTwo.FT + regOp.id + CompileTwo.XYZ + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + pNodeEmissive.getComponentID(inputEmissive.parentNodeItem.id) + CompileTwo.END;
-                }
-                this.strVec.push(str);
-
-                pNodeEmissive.releaseUse();
-            }
 
             //alpha
             str = "";
@@ -1138,75 +815,15 @@
                 //op.w = 1
                 str = CompileTwo.FT + regOp.id + CompileTwo.W + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + CompileTwo.ONE_FLOAT + CompileTwo.END;
             } else {
-                var pNodeAlpha: NodeTree = inputAlpha.parentNodeItem.node;
-                //str = MOV +CompileTwo. SPACE +CompileTwo. FT+ regOp.id + W +CompileTwo. COMMA+ pNodeAlpha.getComponentID(inputAlpha.parentNodeItem.id);
-                //op.w = ft0.w
-                str = CompileTwo.FT + regOp.id + CompileTwo.W + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + pNodeAlpha.getComponentID(inputAlpha.parentNodeItem.id) + CompileTwo.END + CompileTwo.LN;
-                str += CompileTwo.FT + regOp.id + CompileTwo.XYZ + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + CompileTwo.FT + regOp.id + CompileTwo.XYZ + CompileTwo.SPACE + CompileTwo.MUL_MATH + CompileTwo.SPACE + CompileTwo.FT + regOp.id + CompileTwo.W + CompileTwo.END;
-                pNodeAlpha.releaseUse();
+       
             }
             this.strVec.push(str);
 
             //kill
             str = "";
-            var inputKill: NodeTreeInputItem = $node.inputVec[8];
-            if (inputKill.parentNodeItem) {
-                var pNodeKill: NodeTree = inputKill.parentNodeItem.node;
-                this.killNum = (<NodeTreeOP>$node).killNum;
-
-                //if(ft0.x < ft1.x){discard;}
-                //str = IF +CompileTwo. LEFT_PARENTH+ pNodeKill.getComponentID(inputKill.parentNodeItem.id) + LEFT_BRACKET + FC + ZERO + Z + RIGHT_PARENTH + DISCARD;
-
-                str = CompileTwo.IF + CompileTwo.LEFT_PARENTH + pNodeKill.getComponentID(inputKill.parentNodeItem.id) + CompileTwo.LEFT_BRACKET + this.killStr + CompileTwo.RIGHT_PARENTH + CompileTwo.DISCARD;
-
-                this.strVec.push(str);
-
-                this.useKill = true;
-            }
-
+        
             var regtempFog: RegisterItem;
-            if (this.fogMode == 1) {
-                regtempFog = this.getFragmentTemp();
-                // sub ft0.xyz,fc3.xyz,vi4.xyz
-                // dp3 ft0.x,ft0.xyz,ft0.xyz;
-                // mul ft0.x,ft0.x,fc4.y
-                //div ft0.x,fc4.z,ft0.x
-                //mul ft0.xyz,fc4.xyz,ft0.x
-
-
-                //str += CompileTwo. FT+ regtempFog.id +CompileTwo. X+CompileTwo. SPACE +CompileTwo. EQU+CompileTwo. SPACE + "distance("  +VI + defaultPtReg.id + XYZ+"*0.01" +CompileTwo. COMMA+ FC + ONE +CompileTwo. XYZ+")*100.0" +CompileTwo. END+CompileTwo. LN;
-                str = CompileTwo.FT + regtempFog.id + CompileTwo.X + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + "distance(" + CompileTwo.VI + this.defaultPtReg.id + CompileTwo.XYZ + "*0.01" + CompileTwo.COMMA + this.camposStr + ")*100.0" + CompileTwo.END + CompileTwo.LN;
-
-
-                //str +=CompileTwo. FT+ regtempFog.id +CompileTwo. X+CompileTwo. SPACE +CompileTwo. EQU+CompileTwo. SPACE +CompileTwo. FT+ regtempFog.id +CompileTwo. X+CompileTwo. SPACE +CompileTwo. SUB_MATH+CompileTwo. SPACE + fogdata +CompileTwo. X+CompileTwo. END+CompileTwo. LN;
-                str += CompileTwo.FT + regtempFog.id + CompileTwo.X + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + CompileTwo.FT + regtempFog.id + CompileTwo.X + CompileTwo.SPACE + CompileTwo.SUB_MATH + CompileTwo.SPACE + this.fogdataXStr + CompileTwo.END + CompileTwo.LN;
-                //str +=CompileTwo. FT+ regtempFog.id +CompileTwo. X+CompileTwo. SPACE +CompileTwo. EQU+CompileTwo. SPACE + fogdata +CompileTwo. Y+CompileTwo. SPACE +CompileTwo. MUL_MATH+CompileTwo. SPACE +CompileTwo. FT+ regtempFog.id +CompileTwo. X+CompileTwo. END+CompileTwo. LN;
-                str += CompileTwo.FT + regtempFog.id + CompileTwo.X + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + this.fogdataYStr + CompileTwo.SPACE + CompileTwo.MUL_MATH + CompileTwo.SPACE + CompileTwo.FT + regtempFog.id + CompileTwo.X + CompileTwo.END + CompileTwo.LN;
-                str += CompileTwo.FT + regtempFog.id + CompileTwo.X + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + CompileTwo.TEX_WRAP_CLAMP + CompileTwo.LEFT_PARENTH + CompileTwo.FT + regtempFog.id + CompileTwo.X + CompileTwo.COMMA + "0.0" + CompileTwo.COMMA + "1.0" + CompileTwo.RIGHT_PARENTH + CompileTwo.END + CompileTwo.LN;
-                //str +=CompileTwo. FT+ regOp.id +CompileTwo. XYZ+CompileTwo. SPACE +CompileTwo. EQU+CompileTwo. SPACE + MIX + LEFT_PARENTH+CompileTwo. FT+ regOp.id +CompileTwo. XYZ+CompileTwo. COMMA+   fogcolor+CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempFog.id +CompileTwo. X+ RIGHT_PARENTH + END;
-                str += CompileTwo.FT + regOp.id + CompileTwo.XYZ + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + CompileTwo.MIX + CompileTwo.LEFT_PARENTH + CompileTwo.FT + regOp.id + CompileTwo.XYZ + CompileTwo.COMMA + this.fogcolorStr + CompileTwo.COMMA + CompileTwo.FT + regtempFog.id + CompileTwo.X + CompileTwo.RIGHT_PARENTH + CompileTwo.END;
-
-                this.strVec.push(str);
-            } else if (this.fogMode == 2) {
-                regtempFog = this.getFragmentTemp();
-                //				"ft1.x = distance(v1.xyz*0.01, fc2.xyz)*100.0;\n" +
-                //				"ft1.x = ft1.x - fogdata.x;\n"+
-                //				"ft1.x = fogdata.y * ft1.x;\n" +
-                //				"ft1.x = clamp(ft1.x,0.0,1.0);\n"+
-                //				"ft2.xyz = mix(ft2.xyz,fogcolor.xyz,ft1.x);\n" +
-
-                //str =CompileTwo. FT+ regtempFog.id +CompileTwo. X+CompileTwo. SPACE +CompileTwo. EQU+CompileTwo. SPACE +CompileTwo. VI+ defaultPtReg.id +CompileTwo. Y+CompileTwo. SPACE +CompileTwo. SUB_MATH+CompileTwo. SPACE + fogdata +CompileTwo. X+CompileTwo. END+CompileTwo. LN;
-                str = CompileTwo.FT + regtempFog.id + CompileTwo.X + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + CompileTwo.VI + this.defaultPtReg.id + CompileTwo.Y + CompileTwo.SPACE + CompileTwo.SUB_MATH + CompileTwo.SPACE + this.fogdataXStr + CompileTwo.END + CompileTwo.LN;
-                //str +=CompileTwo. FT+ regtempFog.id +CompileTwo. X+CompileTwo. SPACE +CompileTwo. EQU+CompileTwo. SPACE +CompileTwo. FT+ regtempFog.id +CompileTwo. X+CompileTwo. SPACE +CompileTwo. MUL_MATH+CompileTwo. SPACE + fogdata +CompileTwo. Y+CompileTwo. END+CompileTwo. LN;
-                str += CompileTwo.FT + regtempFog.id + CompileTwo.X + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + CompileTwo.FT + regtempFog.id + CompileTwo.X + CompileTwo.SPACE + CompileTwo.MUL_MATH + CompileTwo.SPACE + this.fogdataYStr + CompileTwo.END + CompileTwo.LN;
-                str += CompileTwo.FT + regtempFog.id + CompileTwo.X + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + CompileTwo.FT + regtempFog.id + CompileTwo.X + CompileTwo.SPACE + CompileTwo.ADD_MATH + CompileTwo.SPACE + "1.0" + CompileTwo.END + CompileTwo.LN;
-                str += CompileTwo.FT + regtempFog.id + CompileTwo.X + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + CompileTwo.TEX_WRAP_CLAMP + CompileTwo.LEFT_PARENTH + CompileTwo.FT + regtempFog.id + CompileTwo.X + CompileTwo.COMMA + "0.0" + CompileTwo.COMMA + "1.0" + CompileTwo.RIGHT_PARENTH + CompileTwo.END + CompileTwo.LN;
-
-                //str +=CompileTwo. FT+ regOp.id +CompileTwo. XYZ+CompileTwo. SPACE +CompileTwo. EQU+CompileTwo. SPACE + MIX +CompileTwo. LEFT_PARENTH+ fogcolor +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regOp.id +CompileTwo. XYZ+CompileTwo. COMMA+CompileTwo. FT+ regtempFog.id +CompileTwo. X+ RIGHT_PARENTH + END;
-                str += CompileTwo.FT + regOp.id + CompileTwo.XYZ + CompileTwo.SPACE + CompileTwo.EQU + CompileTwo.SPACE + CompileTwo.MIX + CompileTwo.LEFT_PARENTH + this.fogcolorStr + CompileTwo.COMMA + CompileTwo.FT + regOp.id + CompileTwo.XYZ + CompileTwo.COMMA + CompileTwo.FT + regtempFog.id + CompileTwo.X + CompileTwo.RIGHT_PARENTH + CompileTwo.END;
-                this.strVec.push(str);
-
-            }
+         
 
             str = "";
             //"gl_FragColor = infoUv;\n" +
@@ -1242,17 +859,8 @@
 
                         $fogMode = opnode.fogMode;
                         $scaleLightMap = opnode.scaleLightMap;
-                        if (opnode.inputVec[8].parentNodeItem) {
-                            $useKill = true;
-                        }
-
-                        var inputMetallic: NodeTreeInputItem = opnode.inputVec[1];
-                        var inputSpecular: NodeTreeInputItem = opnode.inputVec[2];
-                        var inputRoughness: NodeTreeInputItem = opnode.inputVec[3];
-
-                        if (inputMetallic.parentNodeItem || inputSpecular.parentNodeItem || inputRoughness.parentNodeItem) {
-                            $usePbr = true;
-                        }
+                     
+                   
 
                     } else if (node.type == NodeTree.TIME || node.type == NodeTree.PANNER) {
                         $hasTime = true;

@@ -40,7 +40,7 @@
         {
 
             var id: number = Number(getUrlParam("id"))
-            if (!isNaN(id)) {
+            if (id>0) {
                 filemodel.FileModel.getInstance().selectFileById(id)
             }
 

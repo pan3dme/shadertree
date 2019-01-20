@@ -4,7 +4,8 @@
     public static altKey: boolean
     public init(): void {
 
-        Scene_data.fileRoot ="https://webpan.oss-cn-shanghai.aliyuncs.com/upfile/shadertree/"
+        Scene_data.fileRoot = "https://webpan.oss-cn-shanghai.aliyuncs.com/upfile/shadertree/"
+        Scene_data.fileuiRoot = "res/"
         ModuleList.startup();//启动所有模块
 
         Pan3d.UIData.Scale = 1

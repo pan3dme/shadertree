@@ -39,26 +39,10 @@ var materialui;
             }
             var $num = PanelContainer.strItem.indexOf($ui.titleLabeltext);
             if ($num == -1) {
-                switch ($ui.titleLabeltext) {
-                    case "漫反射(Diffuse)":
-                    case "金属(metallic)":
-                    case "高光(Specular)":
-                    case "粗糙度(Roughness)":
-                    case "法线(Normal)":
-                    case "反射(Reflection)":
-                    case "表面散射(subsurface)":
-                    case "透明度(alpha)":
-                    case "不透明蒙版(alphaMask)":
-                    case "天空盒(skyBox)":
-                        $num = $ui.labelframe.totalcurrent - 1;
-                        break;
-                    default:
-                        PanelContainer.strItem.push($ui.titleLabeltext);
-                        $num = PanelContainer.strItem.indexOf($ui.titleLabeltext);
-                        $ui.labelframe.goToAndStop($num);
-                        this.drawTextToName($ui.labelframe, $ui.titleLabeltext);
-                        break;
-                }
+                PanelContainer.strItem.push($ui.titleLabeltext);
+                $num = PanelContainer.strItem.indexOf($ui.titleLabeltext);
+                $ui.labelframe.goToAndStop($num);
+                this.drawTextToName($ui.labelframe, $ui.titleLabeltext);
             }
             $ui.labelframe.goToAndStop($num);
             $ui.drawSp();

@@ -64,7 +64,7 @@ var left;
         };
         LeftProcessor.prototype.showReflactionView = function () {
             var id = Number(getUrlParam("id"));
-            if (!isNaN(id)) {
+            if (id > 0) {
                 filemodel.FileModel.getInstance().selectFileById(id);
             }
         };
