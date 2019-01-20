@@ -112,7 +112,7 @@
         public butClik(evt: InteractiveEvent): void {
             if (this.itdata && this.downTarget == evt.target && this.lastMouseV2d && this.lastMouseV2d.x == evt.x && this.lastMouseV2d.y == evt.y) {
                 var $vo: FileMeshVo = this.itdata.data
-                FileModel.getInstance().selectFileMeshVo = $vo
+       
 
                 FileModel.getInstance().selectFileById($vo.id)
             }

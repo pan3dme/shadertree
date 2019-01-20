@@ -63,6 +63,10 @@ var left;
             }
         };
         LeftProcessor.prototype.showReflactionView = function () {
+            var id = Number(getUrlParam("id"));
+            if (!isNaN(id)) {
+                filemodel.FileModel.getInstance().selectFileById(id);
+            }
         };
         LeftProcessor.prototype.hideLeftPanel = function () {
             if (this.leftPanel) {

@@ -83,7 +83,6 @@ var filemodel;
         SkinListRender.prototype.butClik = function (evt) {
             if (this.itdata && this.downTarget == evt.target && this.lastMouseV2d && this.lastMouseV2d.x == evt.x && this.lastMouseV2d.y == evt.y) {
                 var $vo = this.itdata.data;
-                filemodel.FileModel.getInstance().selectFileMeshVo = $vo;
                 filemodel.FileModel.getInstance().selectFileById($vo.id);
             }
         };

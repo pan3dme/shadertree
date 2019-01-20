@@ -20,6 +20,7 @@ D:\work\shader2019\shader2019\shader2019\obj\Debug\shader2019.csproj.CoreCompile
 D:\github\shadertree\shader2019\shader2019\bin\shader2019.dll.config
 D:\github\shadertree\shader2019\shader2019\bin\shader2019.dll
 D:\github\shadertree\shader2019\shader2019\bin\shader2019.pdb
+D:\github\shadertree\shader2019\shader2019\obj\Debug\shader2019.csprojAssemblyReference.cache
 D:\github\shadertree\shader2019\shader2019\obj\Debug\shader2019.csproj.CoreCompileInputs.cache
 D:\github\shadertree\shader2019\shader2019\obj\Debug\shader2019.dll
 D:\github\shadertree\shader2019\shader2019\obj\Debug\shader2019.pdb

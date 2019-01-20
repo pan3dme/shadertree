@@ -29,7 +29,8 @@ var filemodel;
         };
         FileModel.prototype.selectFileById = function (value) {
             var _this = this;
-            var $texturl = "texturelist/" + value + ".txt";
+            this.fileid = value;
+            var $texturl = "texturelist/" + this.fileid + ".txt";
             Pan3d.LoadManager.getInstance().load(Scene_data.fileRoot + $texturl, Pan3d.LoadManager.BYTE_TYPE, function ($dtstr) {
                 var $byte = new Pan3d.Pan3dByteArray($dtstr);
                 $byte.position = 0;
@@ -41,7 +42,7 @@ var filemodel;
                 var $materialEvent = new MaterialEvent(MaterialEvent.INUPT_NEW_MATERIAL_FILE);
                 $materialEvent.materailTree = $tempMaterial;
                 ModuleEventManager.dispatchEvent($materialEvent);
-                Pan3d.LoadManager.getInstance().load(Scene_data.fileRoot + "texturelist/config/" + _this.selectFileMeshVo.id + ".txt", Pan3d.LoadManager.XML_TYPE, function ($configStr) {
+                Pan3d.LoadManager.getInstance().load(Scene_data.fileRoot + "texturelist/config/" + _this.fileid + ".txt", Pan3d.LoadManager.XML_TYPE, function ($configStr) {
                     var $config = JSON.parse($configStr);
                     if ($config.showType == 0) {
                         Pan3d.LoadManager.getInstance().load(Scene_data.fileRoot + "texturelist/model_" + value + "_objs.txt", Pan3d.LoadManager.XML_TYPE, function ($modelxml) {
@@ -50,7 +51,7 @@ var filemodel;
                         });
                     }
                     if ($config.showType == 1) {
-                        filemodel.RoleChangeModel.getInstance().changeRoleModel(_this.selectFileMeshVo.id);
+                        filemodel.RoleChangeModel.getInstance().changeRoleModel(_this.fileid);
                         Scene_data.cam3D.distance = 100;
                         left.SceneRenderToTextrue.getInstance().viweLHnumber = 300;
                     }
@@ -70,7 +71,7 @@ var filemodel;
                 var $modelStr = JSON.stringify($objInfo);
                 if ($modelStr) {
                     var $file = new File([$modelStr], "ossfile.txt");
-                    this.upOssFile($file, "shadertree/texturelist/model_" + this.selectFileMeshVo.id + "_objs.txt", function () {
+                    this.upOssFile($file, "shadertree/texturelist/model_" + this.fileid + "_objs.txt", function () {
                         console.log("文件上传成功");
                     });
                 }
@@ -82,7 +83,7 @@ var filemodel;
                 var $roleStr = filemodel.RoleChangeModel.getInstance().getChangeRoleStr();
                 if ($roleStr) {
                     var $file = new File([$roleStr], "ossfile.txt");
-                    this.upOssFile($file, "shadertree/texturelist/role_" + this.selectFileMeshVo.id + "_str.txt", function () {
+                    this.upOssFile($file, "shadertree/texturelist/role_" + this.fileid + "_str.txt", function () {
                         console.log("文件上传成功");
                     });
                 }
@@ -112,7 +113,7 @@ var filemodel;
             tempCanvas.height = height;
             tempCanvas.getContext('2d').putImageData(imageData, 0, 0);
             var $img = this.convertCanvasToImage(tempCanvas);
-            var $upfile = this.dataURLtoFile($img.src, this.selectFileMeshVo.id + ".jpg");
+            var $upfile = this.dataURLtoFile($img.src, this.fileid + ".jpg");
             var $newUrl = $upfile.name;
             filemodel.FileModel.getInstance().upOssFile($upfile, "shadertree/ui/filelist/pic/" + $newUrl, function () {
                 console.log("文件上传成功");
@@ -125,7 +126,7 @@ var filemodel;
         };
         FileModel.prototype.saveConfigToWeb = function () {
             var $temp = {};
-            $temp.id = this.selectFileMeshVo.id;
+            $temp.id = this.fileid;
             if (left.ModelShowModel.getInstance().selectShowDisp instanceof left.MaterialModelSprite) {
                 $temp.showType = 0;
             }
@@ -133,12 +134,12 @@ var filemodel;
                 $temp.showType = 1;
             }
             var $file = new File([JSON.stringify($temp)], "ossfile.txt");
-            this.upOssFile($file, "shadertree/texturelist/config/" + this.selectFileMeshVo.id + ".txt", function () {
+            this.upOssFile($file, "shadertree/texturelist/config/" + this.fileid + ".txt", function () {
                 console.log("文件上传成功", $file.name);
             });
         };
         FileModel.prototype.upMaterialTreeToWeb = function ($temp) {
-            if (this.selectFileMeshVo) {
+            if (this.fileid) {
                 this.saveConfigToWeb();
                 this.upListIcon();
                 this.saveModelToWeb();
@@ -149,7 +150,7 @@ var filemodel;
                         var $img = TextureManager.getInstance().getImgResByurl(Scene_data.fileRoot + $vo.data.url);
                         if ($img) { //新加的图
                             var $upfile = this.dataURLtoFile($img.src, $vo.data.url);
-                            var $newUrl = "uppic/" + this.selectFileMeshVo.id + "/" + $upfile.name;
+                            var $newUrl = "uppic/" + this.fileid + "/" + $upfile.name;
                             filemodel.FileModel.getInstance().upOssFile($upfile, "shadertree/" + $newUrl, function () {
                                 console.log("文件上传成功");
                             });
@@ -162,7 +163,7 @@ var filemodel;
                 var $byte = new Pan3d.Pan3dByteArray();
                 $byte.writeUTF(JSON.stringify({ data: $temp.data }));
                 var $file = new File([$byte.buffer], "ossfile.txt");
-                this.upOssFile($file, "shadertree/texturelist/" + this.selectFileMeshVo.id + ".txt", function () {
+                this.upOssFile($file, "shadertree/texturelist/" + this.fileid + ".txt", function () {
                     console.log("文件上传成功");
                 });
             }

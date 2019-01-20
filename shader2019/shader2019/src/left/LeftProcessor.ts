@@ -38,8 +38,11 @@
         }
         private showReflactionView(): void
         {
-          
 
+            var id: number = Number(getUrlParam("id"))
+            if (!isNaN(id)) {
+                filemodel.FileModel.getInstance().selectFileById(id)
+            }
 
         }
         private hideLeftPanel(): void {
