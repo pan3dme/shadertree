@@ -51,7 +51,7 @@ module Pan3d {
     }
 
     //用于显示同屏2D容器，
-    export   class Dis2DUIContianerPanel extends Dis2DUIContianerBase {
+    export class Dis2DUIContianerPanel extends Dis2DUIContianerBase {
         protected _baseRender: UIRenderComponent;
         public constructor($classVo: any, $rect: Rectangle, $num: number) {
             super();
@@ -59,6 +59,7 @@ module Pan3d {
             this.height = UIData.designHeight;
             this.creatBaseRender()
             this.addRender(this._baseRender);
+            this.mathSize($rect, $num)
             this.initData($classVo, $rect, $num)
         }
         protected creatBaseRender(): void {
@@ -66,10 +67,34 @@ module Pan3d {
 
         }
         //显示单元类, 尺寸，数量
+        private mathSize($rect: Rectangle, $num: number): void {
+            $rect.x = 0
+            $rect.y = 0
+
+            while ($rect.x * $rect.y < $num) {
+                if ($rect.x * $rect.width > $rect.y * $rect.height) {
+                    $rect.y++
+                } else {
+                    $rect.x++
+                }
+
+            }
+
+
+        }
         private initData($classVo: any, $rect: Rectangle, $num: number): void {
             this._voNum = Math.floor($num)
             this._voRect = $rect;
-            this._textureRect = new Rectangle(0, 0, Math.pow(2, Math.ceil(Math.log($rect.width) / Math.log(2))), Math.pow(2, Math.ceil(Math.log($rect.height * this._voNum) / Math.log(2))));
+
+
+            var kkwA: number = Math.pow(2, Math.ceil(Math.log($rect.x * $rect.width) / Math.log(2)))
+            var kkhB: number = Math.pow(2, Math.ceil(Math.log($rect.x * $rect.width) / Math.log(2)))
+
+
+            this._textureRect = new Rectangle(0, 0, kkwA, kkhB);
+
+
+
 
             this._baseRender.uiAtlas = new UIAtlas();
             var $uiAtlas: UIAtlas = this._baseRender.uiAtlas;
@@ -92,16 +117,19 @@ module Pan3d {
             this._uiItem = new Array();
             this._lostItem = new Array();
 
-            for (var i: number = 0; i < this._voNum; i++) {
-                var $disp2DBaseText: Disp2DBaseText = new $classVo()
-                this._uiItem.push($disp2DBaseText);
-                $disp2DBaseText.parent = this._baseRender;
-                $disp2DBaseText.voRect = this._voRect;
-                $disp2DBaseText.textureStr = "id" + i;
-                $uiAtlas.configData.push($uiAtlas.getObject($disp2DBaseText.textureStr, 0, i * this._voRect.height, this._voRect.width, this._voRect.height, this._textureRect.width, this._textureRect.height));
-                $disp2DBaseText.ui = <UICompenent>this._baseRender.creatBaseComponent($disp2DBaseText.textureStr);
-                $disp2DBaseText.ui.width *= 1.0;
-                $disp2DBaseText.ui.height *= 1.0;
+            for (var i: number = 0; i < this._voRect.x; i++) {
+                for (var j: number = 0; j < this._voRect.y; j++) {
+
+                    var $disp2DBaseText: Disp2DBaseText = new $classVo()
+                    this._uiItem.push($disp2DBaseText);
+                    $disp2DBaseText.parent = this._baseRender;
+                    $disp2DBaseText.voRect = this._voRect;
+                    $disp2DBaseText.textureStr = "id_" + i + "_" + j;
+                    $uiAtlas.configData.push($uiAtlas.getObject($disp2DBaseText.textureStr, i * this._voRect.width, j * this._voRect.height, this._voRect.width, this._voRect.height, this._textureRect.width, this._textureRect.height));
+                    $disp2DBaseText.ui = <UICompenent>this._baseRender.creatBaseComponent($disp2DBaseText.textureStr);
+                }
+
+
             }
         }
         //找到可用的单元 找到后赋值并添加ui到显示队列
@@ -129,6 +157,7 @@ module Pan3d {
             } else {
                 this._lostItem.push($data)
             }
+
             return empty
         }
         private clearLostItem(): void {
@@ -180,11 +209,6 @@ module Pan3d {
                     this._uiItem[i].update();
                 }
             }
-            /*
-            if (this.getUiItemLen() <( this._uiItem.length-1)) {
-                this.playLost()
-            }
-            */
 
         }
         public getUiItemLen(): number {

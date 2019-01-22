@@ -31,12 +31,17 @@
         private labelNameMeshVo: TextLabelUIMeshVo
         public makeData(): void {
             if (this._data) {
+         
+               
                 this.labelNameMeshVo = <TextLabelUIMeshVo>this.data;
+                if (this.labelNameMeshVo) {
+                  //  this.labelNameMeshVo.name = "1234456778899"
+                }
                 if (this.lastKey != this.labelNameMeshVo.name) {
-                    this.ui.width = 128 * 0.7;
-                    this.ui.height = 22 * 0.7;
+                    this.ui.width = 256 * 0.5;
+                    this.ui.height = 30 * 0.5;
                     this.lastKey = this.labelNameMeshVo.name
-                    LabelTextFont.writeSingleLabel(this.parent.uiAtlas, this.textureStr, this.labelNameMeshVo.name, 20, TextAlign.LEFT, "#ffffff", "#27262e");
+                    LabelTextFont.writeSingleLabel(this.parent.uiAtlas, this.textureStr, this.labelNameMeshVo.name, 30, TextAlign.LEFT, "#ffffff", "#27262e");
                 }
                 this.labelNameMeshVo.needDraw = false;
             }
@@ -76,7 +81,7 @@
         public constructor() {
             super();
             if (!TextLabelUI._dis2DUIContianer) {
-                TextLabelUI._dis2DUIContianer = new Dis2DUIContianerPanel(TextLabelUIDisp2D, new Rectangle(0, 0, 128, 24), 50);
+                TextLabelUI._dis2DUIContianer = new Dis2DUIContianerPanel(TextLabelUIDisp2D, new Rectangle(0, 0, 256, 30), 60);
                 TextLabelUI._dis2DUIContianer.left = 0;
                 TextLabelUI._dis2DUIContianer.top = 0;
                 TextLabelUI._dis2DUIContianer.layer = 101;

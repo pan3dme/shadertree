@@ -69,6 +69,7 @@ var Pan3d;
             _this.height = Pan3d.UIData.designHeight;
             _this.creatBaseRender();
             _this.addRender(_this._baseRender);
+            _this.mathSize($rect, $num);
             _this.initData($classVo, $rect, $num);
             return _this;
         }
@@ -76,10 +77,24 @@ var Pan3d;
             this._baseRender = new Pan3d.UIRenderComponent;
         };
         //显示单元类, 尺寸，数量
+        Dis2DUIContianerPanel.prototype.mathSize = function ($rect, $num) {
+            $rect.x = 0;
+            $rect.y = 0;
+            while ($rect.x * $rect.y < $num) {
+                if ($rect.x * $rect.width > $rect.y * $rect.height) {
+                    $rect.y++;
+                }
+                else {
+                    $rect.x++;
+                }
+            }
+        };
         Dis2DUIContianerPanel.prototype.initData = function ($classVo, $rect, $num) {
             this._voNum = Math.floor($num);
             this._voRect = $rect;
-            this._textureRect = new Pan3d.Rectangle(0, 0, Math.pow(2, Math.ceil(Math.log($rect.width) / Math.log(2))), Math.pow(2, Math.ceil(Math.log($rect.height * this._voNum) / Math.log(2))));
+            var kkwA = Math.pow(2, Math.ceil(Math.log($rect.x * $rect.width) / Math.log(2)));
+            var kkhB = Math.pow(2, Math.ceil(Math.log($rect.x * $rect.width) / Math.log(2)));
+            this._textureRect = new Pan3d.Rectangle(0, 0, kkwA, kkhB);
             this._baseRender.uiAtlas = new Pan3d.UIAtlas();
             var $uiAtlas = this._baseRender.uiAtlas;
             $uiAtlas.configData = new Array();
@@ -93,16 +108,16 @@ var Pan3d;
             var $uiAtlas = this._baseRender.uiAtlas;
             this._uiItem = new Array();
             this._lostItem = new Array();
-            for (var i = 0; i < this._voNum; i++) {
-                var $disp2DBaseText = new $classVo();
-                this._uiItem.push($disp2DBaseText);
-                $disp2DBaseText.parent = this._baseRender;
-                $disp2DBaseText.voRect = this._voRect;
-                $disp2DBaseText.textureStr = "id" + i;
-                $uiAtlas.configData.push($uiAtlas.getObject($disp2DBaseText.textureStr, 0, i * this._voRect.height, this._voRect.width, this._voRect.height, this._textureRect.width, this._textureRect.height));
-                $disp2DBaseText.ui = this._baseRender.creatBaseComponent($disp2DBaseText.textureStr);
-                $disp2DBaseText.ui.width *= 1.0;
-                $disp2DBaseText.ui.height *= 1.0;
+            for (var i = 0; i < this._voRect.x; i++) {
+                for (var j = 0; j < this._voRect.y; j++) {
+                    var $disp2DBaseText = new $classVo();
+                    this._uiItem.push($disp2DBaseText);
+                    $disp2DBaseText.parent = this._baseRender;
+                    $disp2DBaseText.voRect = this._voRect;
+                    $disp2DBaseText.textureStr = "id_" + i + "_" + j;
+                    $uiAtlas.configData.push($uiAtlas.getObject($disp2DBaseText.textureStr, i * this._voRect.width, j * this._voRect.height, this._voRect.width, this._voRect.height, this._textureRect.width, this._textureRect.height));
+                    $disp2DBaseText.ui = this._baseRender.creatBaseComponent($disp2DBaseText.textureStr);
+                }
             }
         };
         //找到可用的单元 找到后赋值并添加ui到显示队列
@@ -178,11 +193,6 @@ var Pan3d;
                     this._uiItem[i].update();
                 }
             }
-            /*
-            if (this.getUiItemLen() <( this._uiItem.length-1)) {
-                this.playLost()
-            }
-            */
         };
         Dis2DUIContianerPanel.prototype.getUiItemLen = function () {
             var $num = 0;
