@@ -52,16 +52,11 @@ var materialui;
             }
             this.txt.goToAndStop($frameId);
             this.bottomRender = $bottomRender;
-            this.drawFrontToFrame(this.txt, ColorType.Black000000 + $data.label);
-            this.bg = this.panel.addChild($bottomRender.getComponent("b_menu_color"));
-            this.bg.goToAndStop(0);
-            this.bg.width = this.txt.width;
-            this.bg.height = this.txt.height;
-            this.bg.addEventListener(InteractiveEvent.Move, this.butMove, this);
+            this.drawFrontToFrame(ColorType.Black000000 + $data.label, "#6c6c6c");
+            this.txt.addEventListener(InteractiveEvent.Move, this.butMove, this);
         };
         RightMenuVo.prototype.removeStage = function () {
             this.panel.removeChild(this.txt);
-            this.panel.removeChild(this.bg);
         };
         RightMenuVo.prototype.butMove = function (evt) {
             this.panel.moseMoveTo(evt.target);
@@ -69,7 +64,6 @@ var materialui;
         Object.defineProperty(RightMenuVo.prototype, "x", {
             set: function (value) {
                 this._x = value;
-                this.bg.x = this._x;
                 this.txt.x = this._x;
             },
             enumerable: true,
@@ -78,18 +72,20 @@ var materialui;
         Object.defineProperty(RightMenuVo.prototype, "y", {
             set: function (value) {
                 this._y = value;
-                this.bg.y = this._y;
                 this.txt.y = this._y;
             },
             enumerable: true,
             configurable: true
         });
-        RightMenuVo.prototype.drawFrontToFrame = function ($ui, $str, $align) {
-            if ($align === void 0) { $align = TextAlign.CENTER; }
-            var $toRect = $ui.getSkinCtxRect();
+        RightMenuVo.prototype.drawFrontToFrame = function ($str, backColor) {
+            var $toRect = this.txt.getSkinCtxRect();
             var $ctx = UIManager.getInstance().getContext2D($toRect.width, $toRect.height, false);
-            LabelTextFont.writeSingleLabelToCtx($ctx, $str, 12, 0, 0, $align);
-            $ui.drawToCtx(this.bottomRender.uiAtlas, $ctx);
+            $ctx.fillStyle = "#1d1f1d"; // text color
+            $ctx.fillRect(0, 0, $toRect.width, $toRect.height);
+            $ctx.fillStyle = backColor; // text color
+            $ctx.fillRect(0, 0, $toRect.width, $toRect.height - 1);
+            LabelTextFont.writeSingleLabelToCtx($ctx, $str, 14, 0, 5, TextAlign.CENTER);
+            this.txt.drawToCtx(this.bottomRender.uiAtlas, $ctx);
         };
         return RightMenuVo;
     }(UICompenent));
@@ -123,7 +119,7 @@ var materialui;
             for (var i = 0; i < this.menuTextItem.length; i++) {
                 var $vo = new RightMenuVo;
                 $vo.initData(this, this._bottomRender, this._midRender, this.menuTextItem[i], i);
-                $vo.y = i * 21;
+                $vo.y = i * $vo.txt.height;
                 $vo.x = 0;
                 this.mainMenuUiArr.push($vo);
             }
@@ -174,24 +170,26 @@ var materialui;
         RightMenuPanel.prototype.moseMoveTo = function ($ui) {
             var isSub = false;
             for (var j = 0; j < this.subMenuUiArr.length; j++) {
-                if (this.subMenuUiArr[j].bg == $ui) {
-                    this.subMenuUiArr[j].bg.goToAndStop(1);
+                if (this.subMenuUiArr[j].txt == $ui) {
                     isSub = true;
                 }
-                else {
-                    this.subMenuUiArr[j].bg.goToAndStop(0);
-                }
+                this.drwarColor(this.subMenuUiArr[j], this.subMenuUiArr[j].txt == $ui);
             }
             if (!isSub) {
                 for (var i = 0; i < this.mainMenuUiArr.length; i++) {
-                    if (this.mainMenuUiArr[i].bg == $ui) {
-                        this.mainMenuUiArr[i].bg.goToAndStop(1);
+                    if (this.mainMenuUiArr[i].txt == $ui) {
                         this.showSubMenu(this.mainMenuUiArr[i].data.subMenu, i);
                     }
-                    else {
-                        this.mainMenuUiArr[i].bg.goToAndStop(0);
-                    }
+                    this.drwarColor(this.mainMenuUiArr[i], this.mainMenuUiArr[i].txt == $ui);
                 }
+            }
+        };
+        RightMenuPanel.prototype.drwarColor = function (vo, value) {
+            if (value) {
+                vo.drawFrontToFrame(ColorType.Whiteffffff + vo.data.label, "#555555");
+            }
+            else {
+                vo.drawFrontToFrame(ColorType.Black000000 + vo.data.label, "#6c6c6c");
             }
         };
         RightMenuPanel.prototype.clearSubMenu = function () {
@@ -208,7 +206,7 @@ var materialui;
                     for (var i = 0; i < $subMenu.length; i++) {
                         var $vo = new RightMenuVo;
                         $vo.initData(this, this._bottomRender, this._midRender, $subMenu[i], i, true);
-                        $vo.y = (ty + i) * 21;
+                        $vo.y = (ty + i) * ($vo.txt.height);
                         $vo.x = 102;
                         this.subMenuUiArr.push($vo);
                     }

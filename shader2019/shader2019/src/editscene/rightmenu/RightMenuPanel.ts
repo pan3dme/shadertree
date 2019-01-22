@@ -29,7 +29,7 @@
 
     export class RightMenuVo extends UICompenent {
         public txt: FrameCompenent
-        public bg: FrameCompenent;
+ 
         public data: MenuListData;
         public bottomRender: UIRenderComponent
         private panel: RightMenuPanel
@@ -44,44 +44,47 @@
 
             this.txt.goToAndStop($frameId);
             this.bottomRender = $bottomRender
-            this.drawFrontToFrame(this.txt, ColorType.Black000000 + $data.label)
+            this.drawFrontToFrame(ColorType.Black000000 + $data.label, "#6c6c6c")
 
-            this.bg = <FrameCompenent>this.panel.addChild($bottomRender.getComponent("b_menu_color"));
-            this.bg.goToAndStop(0)
-            this.bg.width = this.txt.width;
-            this.bg.height = this.txt.height;
+      
 
-            this.bg.addEventListener(InteractiveEvent.Move, this.butMove, this);
+            this.txt.addEventListener(InteractiveEvent.Move, this.butMove, this);
 
         }
         public removeStage(): void {
             this.panel.removeChild(this.txt);
-            this.panel.removeChild(this.bg);
+
         }
         protected butMove(evt: InteractiveEvent): void {
-            this.panel.moseMoveTo(evt.target)
+             this.panel.moseMoveTo(evt.target)
         }
         public set x(value: number) {
 
             this._x = value;
-            this.bg.x = this._x
+   
             this.txt.x = this._x
 
         }
         public set y(value: number) {
 
             this._y = value;
-            this.bg.y = this._y
+
             this.txt.y = this._y
 
         }
 
 
-        private drawFrontToFrame($ui: FrameCompenent, $str: string, $align: string = TextAlign.CENTER): void {
-            var $toRect: Rectangle = $ui.getSkinCtxRect()
+        public drawFrontToFrame($str: string, backColor: string): void {
+            var $toRect: Rectangle = this.txt.getSkinCtxRect()
             var $ctx: CanvasRenderingContext2D = UIManager.getInstance().getContext2D($toRect.width, $toRect.height, false);
-            LabelTextFont.writeSingleLabelToCtx($ctx, $str, 12, 0, 0, $align);
-            $ui.drawToCtx(this.bottomRender.uiAtlas, $ctx);
+      
+            $ctx.fillStyle = "#1d1f1d"; // text color
+            $ctx.fillRect(0, 0, $toRect.width, $toRect.height)
+
+            $ctx.fillStyle = backColor; // text color
+            $ctx.fillRect(0, 0, $toRect.width, $toRect.height-1)
+            LabelTextFont.writeSingleLabelToCtx($ctx, $str, 14, 0, 5, TextAlign.CENTER);
+            this.txt.drawToCtx(this.bottomRender.uiAtlas, $ctx);
         }
 
     }
@@ -136,7 +139,8 @@
             for (var i: number = 0; i < this.menuTextItem.length; i++) {
                 var $vo: RightMenuVo = new RightMenuVo;
                 $vo.initData(this, this._bottomRender, this._midRender, this.menuTextItem[i], i);
-                $vo.y = i * 21;
+
+                $vo.y = i * $vo.txt.height
                 $vo.x = 0;
                 this.mainMenuUiArr.push($vo)
 
@@ -191,26 +195,31 @@
         public moseMoveTo($ui: FrameCompenent): void {
 
             var isSub: boolean = false
-
+       
             for (var j: number = 0; j < this.subMenuUiArr.length; j++) {
-                if (this.subMenuUiArr[j].bg == $ui) {
-                    this.subMenuUiArr[j].bg.goToAndStop(1);
+                if (this.subMenuUiArr[j].txt == $ui) {
                     isSub = true
-                } else {
-                    this.subMenuUiArr[j].bg.goToAndStop(0)
-                }
+                } 
+                this.drwarColor(this.subMenuUiArr[j], this.subMenuUiArr[j].txt == $ui)
             }
             if (!isSub) {
                 for (var i: number = 0; i < this.mainMenuUiArr.length; i++) {
-                    if (this.mainMenuUiArr[i].bg == $ui) {
-                        this.mainMenuUiArr[i].bg.goToAndStop(1);
+                    if (this.mainMenuUiArr[i].txt == $ui) {
                         this.showSubMenu(this.mainMenuUiArr[i].data.subMenu, i);
-                    } else {
-                        this.mainMenuUiArr[i].bg.goToAndStop(0)
-                    }
+                    }  
+                    this.drwarColor(this.mainMenuUiArr[i], this.mainMenuUiArr[i].txt == $ui)
                 }
             }
 
+        
+        }
+        private drwarColor(vo: RightMenuVo, value: boolean): void {
+            if (value) {
+                vo.drawFrontToFrame(ColorType.Whiteffffff + vo.data.label, "#555555")
+            } else {
+                vo.drawFrontToFrame(ColorType.Black000000 + vo.data.label, "#6c6c6c")
+            }
+            
         }
         private clearSubMenu(): void {
             while (this.subMenuUiArr.length) {
@@ -230,7 +239,7 @@
                     for (var i: number = 0; i < $subMenu.length; i++) {
                         var $vo: RightMenuVo = new RightMenuVo;
                         $vo.initData(this, this._bottomRender, this._midRender, $subMenu[i], i, true);
-                        $vo.y = (ty + i) * 21;
+                        $vo.y = (ty + i) * ($vo.txt.height);
                         $vo.x = 102;
                         this.subMenuUiArr.push($vo);
                     }
