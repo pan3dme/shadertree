@@ -1,13 +1,26 @@
 ﻿module prop {
     class TextLabelUIMeshVo extends Pan3d.baseMeshVo {
         private _name: string;
+        private _labelWidth: number
         public needDraw: boolean;
+        public constructor() {
+            super()
+            this.labelWidth = 128;
+        }
         public set name(value: string) {
             this._name = value;
             this.needDraw = true;
         }
         public get name(): string {
             return this._name;
+        }
+
+        public set labelWidth(value: number) {
+            this._labelWidth = value;
+            this.needDraw = true;
+        }
+        public get labelWidth(): number {
+            return this._labelWidth;
         }
         public destory(): void {
             this.pos = null;
@@ -29,6 +42,7 @@
 
     export class TextLabelUIDisp2D extends Disp2DBaseText {
         private labelNameMeshVo: TextLabelUIMeshVo
+        private static baseUitr: Rectangle
         public makeData(): void {
             if (this._data) {
          
@@ -38,8 +52,22 @@
                   //  this.labelNameMeshVo.name = "1234456778899"
                 }
                 if (this.lastKey != this.labelNameMeshVo.name) {
-                    this.ui.width = 256 * 0.5;
-                    this.ui.height = 30 * 0.5;
+                 
+                    var bw: number = 256 * 0.5;
+                    var bh: number = 30 * 0.5;
+                    this.ui.width = bw;
+                    this.ui.height = bh;
+
+                    if (!TextLabelUIDisp2D.baseUitr) {
+                        TextLabelUIDisp2D.baseUitr = new Rectangle(0, 0, this.ui.tr.width,this.ui.tr.height)
+                    }
+                    var xScale: number = this.labelNameMeshVo.labelWidth / bw;
+             
+                    this.ui.width = bw * xScale;
+                    this.ui.tr.width = TextLabelUIDisp2D.baseUitr.width * xScale;
+                    
+
+                  
                     this.lastKey = this.labelNameMeshVo.name
                     LabelTextFont.writeSingleLabel(this.parent.uiAtlas, this.textureStr, this.labelNameMeshVo.name, 30, TextAlign.LEFT, "#ffffff", "#27262e");
                 }
@@ -90,6 +118,7 @@
  
             }
             this.textLabelUIMeshVo = this.getCharNameMeshVo();
+     
 
             this.initView();
             this.resize();
@@ -100,6 +129,7 @@
         protected initView(): void
         {
             this.textLabelUIMeshVo.name = "Vec3:";
+            this.textLabelUIMeshVo.labelWidth = 30;
         }
         private resize(): void
         {
@@ -114,6 +144,8 @@
         }
         public set label(value: string) {
             this.textLabelUIMeshVo.name = value;
+            var $ctx: CanvasRenderingContext2D = UIManager.getInstance().getContext2D(100, 100, false);
+            this.textLabelUIMeshVo.labelWidth = $ctx.measureText(value).width + 10
        
         }
     

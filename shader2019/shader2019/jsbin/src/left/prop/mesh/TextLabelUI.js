@@ -16,7 +16,9 @@ var prop;
     var TextLabelUIMeshVo = /** @class */ (function (_super) {
         __extends(TextLabelUIMeshVo, _super);
         function TextLabelUIMeshVo() {
-            return _super !== null && _super.apply(this, arguments) || this;
+            var _this = _super.call(this) || this;
+            _this.labelWidth = 128;
+            return _this;
         }
         Object.defineProperty(TextLabelUIMeshVo.prototype, "name", {
             get: function () {
@@ -24,6 +26,17 @@ var prop;
             },
             set: function (value) {
                 this._name = value;
+                this.needDraw = true;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(TextLabelUIMeshVo.prototype, "labelWidth", {
+            get: function () {
+                return this._labelWidth;
+            },
+            set: function (value) {
+                this._labelWidth = value;
                 this.needDraw = true;
             },
             enumerable: true,
@@ -60,8 +73,16 @@ var prop;
                     //  this.labelNameMeshVo.name = "1234456778899"
                 }
                 if (this.lastKey != this.labelNameMeshVo.name) {
-                    this.ui.width = 256 * 0.5;
-                    this.ui.height = 30 * 0.5;
+                    var bw = 256 * 0.5;
+                    var bh = 30 * 0.5;
+                    this.ui.width = bw;
+                    this.ui.height = bh;
+                    if (!TextLabelUIDisp2D.baseUitr) {
+                        TextLabelUIDisp2D.baseUitr = new Rectangle(0, 0, this.ui.tr.width, this.ui.tr.height);
+                    }
+                    var xScale = this.labelNameMeshVo.labelWidth / bw;
+                    this.ui.width = bw * xScale;
+                    this.ui.tr.width = TextLabelUIDisp2D.baseUitr.width * xScale;
                     this.lastKey = this.labelNameMeshVo.name;
                     LabelTextFont.writeSingleLabel(this.parent.uiAtlas, this.textureStr, this.labelNameMeshVo.name, 30, TextAlign.LEFT, "#ffffff", "#27262e");
                 }
@@ -120,6 +141,7 @@ var prop;
         };
         TextLabelUI.prototype.initView = function () {
             this.textLabelUIMeshVo.name = "Vec3:";
+            this.textLabelUIMeshVo.labelWidth = 30;
         };
         TextLabelUI.prototype.resize = function () {
             this.textLabelUIMeshVo.pos.x = this._x;
@@ -134,6 +156,8 @@ var prop;
             },
             set: function (value) {
                 this.textLabelUIMeshVo.name = value;
+                var $ctx = UIManager.getInstance().getContext2D(100, 100, false);
+                this.textLabelUIMeshVo.labelWidth = $ctx.measureText(value).width + 10;
             },
             enumerable: true,
             configurable: true

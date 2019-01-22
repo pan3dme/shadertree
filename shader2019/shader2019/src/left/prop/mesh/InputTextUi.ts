@@ -11,6 +11,7 @@
             super();
         }
         protected initView(): void {
+
             this.textLabelUIMeshVo.name = "3.599";
             this.addEvets()
         }
@@ -26,7 +27,13 @@
         }
         public set text(value: string) {
             this.textLabelUIMeshVo.name = value;
-           // console.log("valuevaluevalue", value)
+ 
+            var $ctx: CanvasRenderingContext2D = UIManager.getInstance().getContext2D(100, 100, false);
+            this.textLabelUIMeshVo.labelWidth = $ctx.measureText(value).width  + 10
+           
+
+            
+       
         }
         protected butClik(evt: InteractiveEvent): void {
 

@@ -36,7 +36,8 @@ var prop;
         Object.defineProperty(InputTextUi.prototype, "text", {
             set: function (value) {
                 this.textLabelUIMeshVo.name = value;
-                // console.log("valuevaluevalue", value)
+                var $ctx = UIManager.getInstance().getContext2D(100, 100, false);
+                this.textLabelUIMeshVo.labelWidth = $ctx.measureText(value).width + 10;
             },
             enumerable: true,
             configurable: true
