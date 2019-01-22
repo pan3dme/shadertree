@@ -26,7 +26,12 @@
             } else {
                 FileModel.WEB_SEVER_EVENT_AND_BACK("get_STS", "id=" + 99, (res: any) => {
                     this.info = res.data.info
-                    this.uploadFile(file, $fileUrl, $bfun)
+					this.uploadFile(file, $fileUrl, $bfun)
+
+					Pan3d.TimeUtil.addTimeOut(5 * 60 * 1000, () => {
+						console.log("文件上传协议清理")
+						this.info = null
+					})
                 })
             }
         }
