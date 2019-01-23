@@ -165,7 +165,7 @@ var materialui;
         RightMenuPanel.prototype.getOtherListData = function () {
             var $vo = new MenuListData("其它", "4");
             $vo.subMenu = new Array;
-            $vo.subMenu.push(new MenuListData("测试", "41"));
+            $vo.subMenu.push(new MenuListData("菲捏尔", "41"));
             $vo.subMenu.push(new MenuListData("導入材質", "42"));
             $vo.subMenu.push(new MenuListData("函数", "43"));
             $vo.subMenu.push(new MenuListData("文件列表", "44"));
@@ -297,7 +297,7 @@ var materialui;
                         text3dui.creatBase("assets/white.jpg");
                         break;
                     case "41":
-                        //this.onTempNode(new FresnelNodeUI(), evt)
+                        this.onTempNode(new materialui.FresnelNodeUI(), evt);
                         break;
                     case "42":
                         //this.selectInputDae(evt)
