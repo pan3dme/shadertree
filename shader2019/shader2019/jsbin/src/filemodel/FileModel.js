@@ -24,6 +24,10 @@ var filemodel;
                 FileModel.WEB_SEVER_EVENT_AND_BACK("get_STS", "id=" + 99, function (res) {
                     _this.info = res.data.info;
                     _this.uploadFile(file, $fileUrl, $bfun);
+                    Pan3d.TimeUtil.addTimeOut(5 * 60 * 1000, function () {
+                        console.log("文件上传协议清理");
+                        _this.info = null;
+                    });
                 });
             }
         };
