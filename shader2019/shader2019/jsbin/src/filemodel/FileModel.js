@@ -6,6 +6,7 @@ var filemodel;
     var MaterialEvent = materialui.MaterialEvent;
     var FileModel = /** @class */ (function () {
         function FileModel() {
+            this.waitItemFile = [];
         }
         FileModel.getInstance = function () {
             if (!this._instance) {
@@ -16,20 +17,69 @@ var filemodel;
         FileModel.prototype.upOssFile = function (file, $fileUrl, $bfun) {
             var _this = this;
             if ($bfun === void 0) { $bfun = null; }
-            FileModel.webseverurl = "http://api.h5key.com/api/";
+            FileModel.webseverurl = "https://api.h5key.com/api/";
+            /*
             if (this.info) {
-                this.uploadFile(file, $fileUrl, $bfun);
+                this.uploadFile(file, $fileUrl, $bfun)
+            } else {
+                FileModel.WEB_SEVER_EVENT_AND_BACK("get_STS", "id=" + 99, (res: any) => {
+                    this.info = res.data.info
+                    if (this.info) {
+                        this.uploadFile(file, $fileUrl, $bfun)
+                    } else {
+                        console.log("get_STS", res)
+                    }
+
+                })
             }
-            else {
-                FileModel.WEB_SEVER_EVENT_AND_BACK("get_STS", "id=" + 99, function (res) {
-                    _this.info = res.data.info;
-                    _this.uploadFile(file, $fileUrl, $bfun);
-                    Pan3d.TimeUtil.addTimeOut(60 * 1000, function () {
-                        console.log("清理FileInfo");
-                        _this.info = null;
+            */
+            this.waitItemFile.push({ a: file, b: $fileUrl, c: $bfun });
+            if (this.waitItemFile.length == 1) {
+                if (this.info) {
+                    this.oneByOne();
+                }
+                else {
+                    FileModel.WEB_SEVER_EVENT_AND_BACK("get_STS", "id=" + 99, function (res) {
+                        _this.info = res.data.info;
+                        if (_this.info) {
+                            _this.oneByOne();
+                        }
+                        else {
+                            console.log("get_STS", res);
+                        }
                     });
+                }
+            }
+        };
+        FileModel.prototype.oneByOne = function () {
+            var _this = this;
+            if (this.waitItemFile.length > 0) {
+                this.uploadFile(this.waitItemFile[0].a, this.waitItemFile[0].b, function () {
+                    console.log(_this.waitItemFile[0]);
+                    var kFun = _this.waitItemFile[0].c;
+                    _this.waitItemFile.shift();
+                    kFun && kFun();
+                    _this.oneByOne();
                 });
             }
+        };
+        FileModel.prototype.uploadFile = function ($file, $filename, $bfun) {
+            if ($bfun === void 0) { $bfun = null; }
+            console.log(this.info);
+            var client = new OSS.Wrapper({
+                accessKeyId: this.info.AccessKeyId,
+                accessKeySecret: this.info.AccessKeySecret,
+                stsToken: this.info.SecurityToken,
+                endpoint: "https://oss-cn-shanghai.aliyuncs.com",
+                bucket: "webpan"
+            });
+            var storeAs = "upfile/" + $filename;
+            client.multipartUpload(storeAs, $file).then(function (result) {
+                console.log(result);
+                $bfun && $bfun();
+            }).catch(function (err) {
+                console.log(err);
+            });
         };
         FileModel.prototype.selectFileById = function (value) {
             var _this = this;
@@ -181,23 +231,6 @@ var filemodel;
                 u8arr[n] = bstr.charCodeAt(n);
             }
             return new File([u8arr], filename, { type: mime });
-        };
-        FileModel.prototype.uploadFile = function ($file, $filename, $bfun) {
-            if ($bfun === void 0) { $bfun = null; }
-            var client = new OSS.Wrapper({
-                accessKeyId: this.info.AccessKeyId,
-                accessKeySecret: this.info.AccessKeySecret,
-                stsToken: this.info.SecurityToken,
-                endpoint: "https://oss-cn-shanghai.aliyuncs.com",
-                bucket: "webpan"
-            });
-            var storeAs = "upfile/" + $filename;
-            client.multipartUpload(storeAs, $file).then(function (result) {
-                console.log(result);
-                $bfun && $bfun();
-            }).catch(function (err) {
-                console.log(err);
-            });
         };
         FileModel.WEB_SEVER_EVENT_AND_BACK = function (webname, postStr, $bfun) {
             if ($bfun === void 0) { $bfun = null; }

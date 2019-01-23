@@ -19,21 +19,74 @@
             return this._instance;
         }
         private info: any;
+        private waitItemFile: Array<any> = []
         public upOssFile(file: File, $fileUrl: string, $bfun: Function = null): void {
-            FileModel.webseverurl = "http://api.h5key.com/api/";
+            FileModel.webseverurl = "https://api.h5key.com/api/";
+            /*
             if (this.info) {
                 this.uploadFile(file, $fileUrl, $bfun)
             } else {
                 FileModel.WEB_SEVER_EVENT_AND_BACK("get_STS", "id=" + 99, (res: any) => {
                     this.info = res.data.info
-                    this.uploadFile(file, $fileUrl, $bfun)
-                    Pan3d.TimeUtil.addTimeOut(60 * 1000, () => {
-                        console.log("清理FileInfo");
-                        this.info = null;
+                    if (this.info) {
+                        this.uploadFile(file, $fileUrl, $bfun)
+                    } else {
+                        console.log("get_STS", res)
+                    }
 
-                    })
                 })
             }
+            */
+
+            this.waitItemFile.push({ a: file, b: $fileUrl, c: $bfun })
+            if (this.waitItemFile.length == 1) {
+                if (this.info) {
+                    this.oneByOne();
+                } else {
+                    FileModel.WEB_SEVER_EVENT_AND_BACK("get_STS", "id=" + 99, (res: any) => {
+                        this.info = res.data.info
+                        if (this.info) {
+                            this.oneByOne()
+                        } else {
+                            console.log("get_STS", res)
+                        }
+                    })
+                }
+                
+             
+            } 
+        }
+        private oneByOne(): void {
+            if (this.waitItemFile.length >0) {
+                this.uploadFile(this.waitItemFile[0].a, this.waitItemFile[0].b, () => {
+                    console.log(this.waitItemFile[0])
+                    var kFun: Function = this.waitItemFile[0].c;
+                    this.waitItemFile.shift();
+                    kFun && kFun()
+                    this.oneByOne()
+                })
+            }
+
+        }
+        private uploadFile($file: File, $filename: string, $bfun: Function = null): void {
+            console.log(this.info)
+            var client: OSS.Wrapper = new OSS.Wrapper({
+                accessKeyId: this.info.AccessKeyId,
+                accessKeySecret: this.info.AccessKeySecret,
+                stsToken: this.info.SecurityToken,
+                endpoint: "https://oss-cn-shanghai.aliyuncs.com",
+                bucket: "webpan"
+            });
+
+            var storeAs = "upfile/" + $filename;
+
+
+            client.multipartUpload(storeAs, $file).then(function (result) {
+                console.log(result);
+                $bfun && $bfun()
+            }).catch(function (err) {
+                console.log(err);
+            });
         }
         private fileid: number
         public selectFileById(value: number): void {
@@ -225,24 +278,7 @@
 
         private onlySave: MaterialTree
 
-        private uploadFile($file: File, $filename: string, $bfun: Function = null): void {
-            var client = new OSS.Wrapper({
-                accessKeyId: this.info.AccessKeyId,
-                accessKeySecret: this.info.AccessKeySecret,
-                stsToken: this.info.SecurityToken,
-                endpoint: "https://oss-cn-shanghai.aliyuncs.com",
-                bucket: "webpan"
-            });
-            var storeAs = "upfile/" + $filename;
-
-
-            client.multipartUpload(storeAs, $file).then(function (result) {
-                console.log(result);
-                $bfun && $bfun()
-            }).catch(function (err) {
-                console.log(err);
-            });
-        }
+     
         public static WEB_SEVER_EVENT_AND_BACK(webname: string, postStr: string, $bfun: Function = null): void {
             webname = webname.replace(/\s+/g, "");
             var $obj: any = new Object();
