@@ -26,21 +26,12 @@
             } else {
                 FileModel.WEB_SEVER_EVENT_AND_BACK("get_STS", "id=" + 99, (res: any) => {
                     this.info = res.data.info
-<<<<<<< HEAD
 					this.uploadFile(file, $fileUrl, $bfun)
 
 					Pan3d.TimeUtil.addTimeOut(5 * 60 * 1000, () => {
 						console.log("文件上传协议清理")
 						this.info = null
 					})
-=======
-                    this.uploadFile(file, $fileUrl, $bfun)
-                    Pan3d.TimeUtil.addTimeOut(60 * 1000, () => {
-                        console.log("清理FileInfo");
-                        this.info = null;
-
-                    })
->>>>>>> parent of 33842ed... 修改文件上传
                 })
             }
         }
