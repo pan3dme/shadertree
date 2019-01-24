@@ -34,7 +34,6 @@ var filemodel;
                         }
                     });
                 }
-                console.log("ccav");
             }
         };
         FileModel.prototype.oneByOne = function () {

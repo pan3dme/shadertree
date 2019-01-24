@@ -36,7 +36,7 @@
                         }
                     })
                 }
-                console.log("ccav")
+
 
             }
         }
