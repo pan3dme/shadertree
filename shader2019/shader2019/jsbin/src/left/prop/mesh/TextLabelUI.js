@@ -25,6 +25,18 @@ var prop;
             set: function (value) {
                 this._name = value;
                 this.needDraw = true;
+                this.labelWidth = 128;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(TextLabelUIMeshVo.prototype, "labelWidth", {
+            get: function () {
+                return this._labelWidth;
+            },
+            set: function (value) {
+                this._labelWidth = value;
+                this.needDraw = true;
             },
             enumerable: true,
             configurable: true
@@ -57,10 +69,18 @@ var prop;
             if (this._data) {
                 this.labelNameMeshVo = this.data;
                 if (this.lastKey != this.labelNameMeshVo.name) {
-                    this.ui.width = 128 * 0.7;
-                    this.ui.height = 22 * 0.7;
+                    var bw = 256 * 0.5;
+                    var bh = 30 * 0.5;
+                    this.ui.width = bw;
+                    this.ui.height = bh;
+                    if (!TextLabelUIDisp2D.baseUitr) {
+                        TextLabelUIDisp2D.baseUitr = new Rectangle(0, 0, this.ui.tr.width, this.ui.tr.height);
+                    }
+                    var xScale = this.labelNameMeshVo.labelWidth / bw;
+                    this.ui.width = bw * xScale;
+                    this.ui.tr.width = TextLabelUIDisp2D.baseUitr.width * xScale;
                     this.lastKey = this.labelNameMeshVo.name;
-                    LabelTextFont.writeSingleLabel(this.parent.uiAtlas, this.textureStr, this.labelNameMeshVo.name, 20, TextAlign.LEFT, "#ffffff", "#27262e");
+                    LabelTextFont.writeSingleLabel(this.parent.uiAtlas, this.textureStr, this.labelNameMeshVo.name, 30, TextAlign.LEFT, "#ffffff", "#27262e");
                 }
                 this.labelNameMeshVo.needDraw = false;
             }
@@ -100,7 +120,7 @@ var prop;
             _this._x = 0;
             _this._y = 0;
             if (!TextLabelUI._dis2DUIContianer) {
-                TextLabelUI._dis2DUIContianer = new Dis2DUIContianerPanel(TextLabelUIDisp2D, new Rectangle(0, 0, 128, 24), 50);
+                TextLabelUI._dis2DUIContianer = new Dis2DUIContianerPanel(TextLabelUIDisp2D, new Rectangle(0, 0, 256, 30), 60);
                 TextLabelUI._dis2DUIContianer.left = 0;
                 TextLabelUI._dis2DUIContianer.top = 0;
                 TextLabelUI._dis2DUIContianer.layer = 101;
@@ -117,6 +137,7 @@ var prop;
         };
         TextLabelUI.prototype.initView = function () {
             this.textLabelUIMeshVo.name = "Vec3:";
+            this.textLabelUIMeshVo.labelWidth = 30;
         };
         TextLabelUI.prototype.resize = function () {
             this.textLabelUIMeshVo.pos.x = this._x;
