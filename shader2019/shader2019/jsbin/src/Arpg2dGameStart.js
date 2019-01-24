@@ -26,6 +26,7 @@ var Arpg2dGameStart = /** @class */ (function (_super) {
         Pan3d.Engine.initPbr();
         Pan3d.GameMouseManager.getInstance().addMouseEvent();
         Pan3d.ModuleEventManager.dispatchEvent(new materialui.MaterialEvent(materialui.MaterialEvent.SHOW_MATERIA_PANEL));
+        Pan3d.ModuleEventManager.dispatchEvent(new folder.FolderEvent(folder.FolderEvent.SHOW_FOLDER_PANEL));
         Pan3d.UIData.resize = function () { _this.resize(); }; //更尺寸变化
     };
     Arpg2dGameStart.prototype.resize = function () {

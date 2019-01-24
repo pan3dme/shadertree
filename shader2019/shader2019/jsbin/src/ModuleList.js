@@ -21,6 +21,7 @@ var ModuleList = /** @class */ (function () {
             new materialui.MaterialModule(),
             new materialui.RightMenuModule(),
             new left.LeftModule(),
+            new folder.FolderModule(),
             new filemodel.FileModelModule(),
             new colorview.ColorModule(),
         ];

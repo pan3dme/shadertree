@@ -162,7 +162,7 @@
     export class FolderPanel extends Dis2DUIContianerPanel {
         public constructor() {
             super(FolderName, new Rectangle(0, 0, 128, 20), 50);
-
+            this.left=300
 
             this.fileItem=[]
             for (var i: number = 0; i < this._uiItem.length; i++) {
@@ -171,6 +171,10 @@
             this.loadConfigCom()
 
             Pan3d.TimeUtil.addFrameTick((t: number) => { this.update(t) });
+        }
+        public update(t: number): void {
+            super.update(t)
+
         }
         protected butClik(evt: InteractiveEvent): void {
             for (var i: number = 0; i < this._uiItem.length; i++) {
@@ -232,6 +236,8 @@
                     }
                 }
             } 
+
+            
          
         
         }
