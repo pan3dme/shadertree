@@ -123,14 +123,15 @@
     export class FolderName extends Disp2DBaseText {
         public folderMeshVo: FolderMeshVo
         public makeData(): void {
-            if (this._data) {
+            this.folderMeshVo = this.data;
+            if (this.folderMeshVo) {
                 var $uiRec: UIRectangle = this.parent.uiAtlas.getRec(this.textureStr);
                 this.parent.uiAtlas.ctx = UIManager.getInstance().getContext2D($uiRec.pixelWitdh, $uiRec.pixelHeight, false);
 
                 this.parent.uiAtlas.ctx.fillStyle = "rgb(56,56,56)";
-                this.parent.uiAtlas.ctx.fillRect(0, 1, $uiRec.pixelWitdh, $uiRec.pixelHeight-2);
+                this.parent.uiAtlas.ctx.fillRect(0, 1, $uiRec.pixelWitdh, $uiRec.pixelHeight - 2);
 
-                LabelTextFont.writeSingleLabelToCtx(this.parent.uiAtlas.ctx, ColorType.Redd92200 + "CCAVEE", 12, 0, 5, TextAlign.LEFT)
+                LabelTextFont.writeSingleLabelToCtx(this.parent.uiAtlas.ctx, ColorType.Redd92200 + this.folderMeshVo.fileXmlVo.name, 12, 0, 5, TextAlign.LEFT)
                 TextureManager.getInstance().updateTexture(this.parent.uiAtlas.texture, $uiRec.pixelX, $uiRec.pixelY, this.parent.uiAtlas.ctx);
             }
         }
@@ -139,17 +140,13 @@
         public update(): void {
             this.folderMeshVo = this.data;
             if (this.folderMeshVo) {
-
                 if (this.folderMeshVo.needDraw) {
                     this.makeData();
-                    this.folderMeshVo.needDraw = false
+                    this.folderMeshVo.needDraw = false;
                 }
-
                 if (this.folderMeshVo.pos) {
-                    this.ui.x = this.folderMeshVo.pos.x
-                    this.ui.y = this.folderMeshVo.pos.y
-
-                 
+                    this.ui.x = this.folderMeshVo.pos.x;
+                    this.ui.y = this.folderMeshVo.pos.y;
                 }
                 if (this.folderMeshVo.clear) {
                     this.ui.parent.removeChild(this.ui);
@@ -162,18 +159,17 @@
     export class FolderPanel extends Dis2DUIContianerPanel {
         public constructor() {
             super(FolderName, new Rectangle(0, 0, 128, 20), 50);
-            this.left=300
-
-            this.fileItem=[]
+            this.left = 300;
+            this.fileItem = [];
             for (var i: number = 0; i < this._uiItem.length; i++) {
                 this._uiItem[i].ui.addEventListener(InteractiveEvent.Down, this.butClik, this);
             }
-            this.loadConfigCom()
+            this.loadConfigCom();
 
             Pan3d.TimeUtil.addFrameTick((t: number) => { this.update(t) });
         }
         public update(t: number): void {
-            super.update(t)
+            super.update(t);
 
         }
         protected butClik(evt: InteractiveEvent): void {
@@ -207,12 +203,12 @@
             this.addNewFolderNameToItem($item)
             this.resetChildItemAll(); //重算子目录
 
-            FolderPanel.tySkip=0
-            this.mathFileCellHeight(0)
+            FolderPanel.tySkip = 1;
+            this.mathFileCellHeight(0);
  
             for (var i: number = 0; i < this.fileItem.length; i++) {
                 var layer: number = FileXmlVo.getFileSonLayer(this.fileItem[i].fileXmlVo.id)
-                this.fileItem[i].pos.y = 20 * i;
+                this.fileItem[i].pos.y = 20 * this.fileItem[i].ty
                 this.fileItem[i].pos.x = 50 * layer;
 
             }
@@ -230,9 +226,9 @@
             if (this.isOpenByID(id)) {
                 for (var i: number = 0; i < this.fileItem.length; i++) {
                     if (this.fileItem[i].fileXmlVo.perent == id) {
-                        this.fileItem[i].ty = FolderPanel.tySkip
+                        this.fileItem[i].ty = FolderPanel.tySkip;
                         FolderPanel.tySkip++
-                        this.mathFileCellHeight(this.fileItem[i].fileXmlVo.id)
+                        this.mathFileCellHeight(this.fileItem[i].fileXmlVo.id);
                     }
                 }
             } 
@@ -244,7 +240,8 @@
 
         private resetChildItemAll(): void {
             for (var i: number = 0; i < this.fileItem.length; i++) {
-                this.fileItem[i].childItem=[]
+                this.fileItem[i].childItem = [];
+                this.fileItem[i].ty = 0;
                 for (var j: number = 0; j < this.fileItem.length; j++) {
                     if (this.fileItem[j].fileXmlVo.perent == this.fileItem[i].fileXmlVo.id) {
                         this.fileItem[i].childItem.push(this.fileItem[j]);

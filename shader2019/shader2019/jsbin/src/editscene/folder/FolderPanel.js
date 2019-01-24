@@ -127,12 +127,13 @@ var folder;
             return _super !== null && _super.apply(this, arguments) || this;
         }
         FolderName.prototype.makeData = function () {
-            if (this._data) {
+            this.folderMeshVo = this.data;
+            if (this.folderMeshVo) {
                 var $uiRec = this.parent.uiAtlas.getRec(this.textureStr);
                 this.parent.uiAtlas.ctx = UIManager.getInstance().getContext2D($uiRec.pixelWitdh, $uiRec.pixelHeight, false);
                 this.parent.uiAtlas.ctx.fillStyle = "rgb(56,56,56)";
                 this.parent.uiAtlas.ctx.fillRect(0, 1, $uiRec.pixelWitdh, $uiRec.pixelHeight - 2);
-                LabelTextFont.writeSingleLabelToCtx(this.parent.uiAtlas.ctx, ColorType.Redd92200 + "CCAVEE", 12, 0, 5, TextAlign.LEFT);
+                LabelTextFont.writeSingleLabelToCtx(this.parent.uiAtlas.ctx, ColorType.Redd92200 + this.folderMeshVo.fileXmlVo.name, 12, 0, 5, TextAlign.LEFT);
                 TextureManager.getInstance().updateTexture(this.parent.uiAtlas.texture, $uiRec.pixelX, $uiRec.pixelY, this.parent.uiAtlas.ctx);
             }
         };
@@ -199,11 +200,11 @@ var folder;
             this.removeHideItem($item);
             this.addNewFolderNameToItem($item);
             this.resetChildItemAll(); //重算子目录
-            FolderPanel.tySkip = 0;
+            FolderPanel.tySkip = 1;
             this.mathFileCellHeight(0);
             for (var i = 0; i < this.fileItem.length; i++) {
                 var layer = FileXmlVo.getFileSonLayer(this.fileItem[i].fileXmlVo.id);
-                this.fileItem[i].pos.y = 20 * i;
+                this.fileItem[i].pos.y = 20 * this.fileItem[i].ty;
                 this.fileItem[i].pos.x = 50 * layer;
             }
         };
@@ -229,6 +230,7 @@ var folder;
         FolderPanel.prototype.resetChildItemAll = function () {
             for (var i = 0; i < this.fileItem.length; i++) {
                 this.fileItem[i].childItem = [];
+                this.fileItem[i].ty = 0;
                 for (var j = 0; j < this.fileItem.length; j++) {
                     if (this.fileItem[j].fileXmlVo.perent == this.fileItem[i].fileXmlVo.id) {
                         this.fileItem[i].childItem.push(this.fileItem[j]);
