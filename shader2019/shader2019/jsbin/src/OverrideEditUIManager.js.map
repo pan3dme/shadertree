@@ -1,1 +1,0 @@
-{"version":3,"file":"OverrideEditUIManager.js","sourceRoot":"","sources":["../../src/OverrideEditUIManager.ts"],"names":[],"mappings":";;;;;;;;;;AAAA;IAAoC,yCAAe;IAAnD;;IAOA,CAAC;IALU,4CAAY,GAAnB;QACI,KAAK,CAAC,SAAS,CAAC,WAAW,EAAE,CAAA;QAC7B,KAAK,CAAC,SAAS,CAAC,SAAS,GAAG,IAAI,qBAAqB,EAAE,CAAC;IAC5D,CAAC;IAEL,4BAAC;AAAD,CAAC,AAPD,CAAoC,KAAK,CAAC,SAAS,GAOlD"}
