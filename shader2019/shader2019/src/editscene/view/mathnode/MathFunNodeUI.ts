@@ -69,10 +69,80 @@
             this.addEvents(this.outItem);
             this.addDisEvent(this.outItem);
             this.resetBgSize();
-
-            this.drawTitleToFrame("函数(" + $funName+")")
         }
- 
+        /*
+           private makeInputPoint(): void {
+            var $arr: Array<DataMathFunNode> = new Array();
+            $arr.push(new DataMathFunNode("a", MaterialItemType.VEC3));
+            $arr.push(new DataMathFunNode("b", MaterialItemType.FLOAT));
+            for (var i: number = 0; i < $arr.length; i++) {
+
+                var $temp = new ItemMaterialUI($arr[i].name, $arr[i].type);
+                this.addItems($temp);
+                this.addEvents($temp);
+                this.addDisEvent($temp);
+            }
+            this.outItem = new ItemMaterialUI("out", MaterialItemType.VEC3, false);
+            this.addItems(this.outItem);
+            this.addEvents(this.outItem);
+            this.addDisEvent(this.outItem);
+
+        }
+        private makeInputOne(): void {
+            this.clearNode()
+
+            var $arr: Array<DataMathFunNode> = new Array();
+            $arr.push(new DataMathFunNode("lightuv", MaterialItemType.VEC3));
+            $arr.push(new DataMathFunNode("movePos", MaterialItemType.VEC3));
+            for (var i: number = 0; i < $arr.length; i++) {
+
+                var $temp = new ItemMaterialUI($arr[i].name, $arr[i].type);
+                this.addItems($temp);
+                this.addEvents($temp);
+                this.addDisEvent($temp);
+            }
+            this.outItem = new ItemMaterialUI("out", MaterialItemType.VEC3, false);
+            this.addItems(this.outItem);
+            this.addEvents(this.outItem);
+            this.addDisEvent(this.outItem);
+            this.resetBgSize();
+
+            var $outstr: string = "vec3 " + (<NodeTreeFun>this.nodeTree).funName+"(vec3 lightuv,vec3 movePos){\n" +
+                   "return lightuv*movePos;\n" +
+                "}\n";
+
+            (<NodeTreeFun>this.nodeTree).funStr = $outstr;
+
+        }
+        private makeInputTwo(): void {
+            this.clearNode()
+
+            var $arr: Array<DataMathFunNode> = new Array();
+            $arr.push(new DataMathFunNode("trueX", MaterialItemType.FLOAT));
+            $arr.push(new DataMathFunNode("trueY", MaterialItemType.FLOAT));
+            $arr.push(new DataMathFunNode("trueZ", MaterialItemType.FLOAT));
+            for (var i: number = 0; i < $arr.length; i++) {
+
+                var $temp = new ItemMaterialUI($arr[i].name, $arr[i].type);
+                this.addItems($temp);
+                this.addEvents($temp);
+                this.addDisEvent($temp);
+            }
+            this.outItem = new ItemMaterialUI("out", MaterialItemType.FLOAT, false);
+            this.addItems(this.outItem);
+            this.addEvents(this.outItem);
+            this.addDisEvent(this.outItem);
+
+     
+            this.resetBgSize();
+
+            var $outstr: string = "vec3 ic(float trueX,float trueY,float trueZ);\n" +
+                "{;\n" +
+                "return vec3(1.0,1.0,0.0);\n" +
+                "};\n";
+            (<NodeTreeFun>this.nodeTree).funStr = $outstr;
+        }
+        */
         private clearNode(): void {
             this.removeAllNodeLine()
             while (this.inPutItemVec.length) {
@@ -82,7 +152,16 @@
                 this.removeItem(this.outPutItemVec.pop());
             }
         }
- 
+        /*
+            "vec3 dY(vec3 T,vec3 N,vec3 U,float eH){
+                 float eI=1.0-saturate(dot(T,N));\n" +
+                "float eJ=eI*eI;\n" +
+                "eI*=eJ*eJ;\n" +ggg
+                "eI*=eH;\n" +
+                "vec3 endData=(U-eI*U)+eI*uFresnel"
+                "return endData;\n" +
+            "}\n" +
+         */
         protected resetBgSize(): void {
             this.height = this.inPutItemVec.length * 30;
             super.resetBgSize()
