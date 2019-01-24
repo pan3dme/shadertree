@@ -13,6 +13,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 var folder;
 (function (folder) {
+    var UIRenderComponent = Pan3d.UIRenderComponent;
     var ColorType = Pan3d.ColorType;
     var InteractiveEvent = Pan3d.InteractiveEvent;
     var TextAlign = Pan3d.TextAlign;
@@ -21,6 +22,8 @@ var folder;
     var LabelTextFont = Pan3d.LabelTextFont;
     var Dis2DUIContianerPanel = Pan3d.Dis2DUIContianerPanel;
     var Disp2DBaseText = Pan3d.Disp2DBaseText;
+    var UIMask = Pan3d.UIMask;
+    var UIAtlas = Pan3d.UIAtlas;
     var FileXmlVo = /** @class */ (function () {
         function FileXmlVo() {
         }
@@ -162,27 +165,52 @@ var folder;
         function FolderPanel() {
             var _this = _super.call(this, FolderName, new Rectangle(0, 0, 128, 20), 50) || this;
             _this.left = 300;
-            _this.fileItem = [];
-            for (var i = 0; i < _this._uiItem.length; i++) {
-                _this._uiItem[i].ui.addEventListener(InteractiveEvent.Down, _this.butClik, _this);
-            }
-            _this.loadConfigCom();
+            _this._topRender = new UIRenderComponent;
+            _this.addRender(_this._topRender);
+            _this._topRender.uiAtlas = new UIAtlas();
+            _this._topRender.uiAtlas.setInfo("pan/marmoset/uilist/left/left.txt", "pan/marmoset/uilist/left/left.png", function () { _this.loadConfigCom(); });
             Pan3d.TimeUtil.addFrameTick(function (t) { _this.update(t); });
             return _this;
         }
         FolderPanel.prototype.update = function (t) {
             _super.prototype.update.call(this, t);
         };
-        FolderPanel.prototype.butClik = function (evt) {
-            for (var i = 0; i < this._uiItem.length; i++) {
-                var $vo = this._uiItem[i];
-                if ($vo.ui == evt.target) {
-                    $vo.folderMeshVo.fileXmlVo.isOpen = !$vo.folderMeshVo.fileXmlVo.isOpen;
+        FolderPanel.prototype.mouseDown = function (evt) {
+            this.mouseIsDown = true;
+            Scene_data.uiStage.addEventListener(InteractiveEvent.Move, this.stageMouseMove, this);
+        };
+        FolderPanel.prototype.stageMouseMove = function (evt) {
+            this.mouseIsDown = false;
+        };
+        FolderPanel.prototype.mouseUp = function (evt) {
+            Scene_data.uiStage.removeEventListener(InteractiveEvent.Move, this.stageMouseMove, this);
+            if (this.mouseIsDown) {
+                for (var i = 0; i < this._uiItem.length; i++) {
+                    var $vo = this._uiItem[i];
+                    if ($vo.ui == evt.target) {
+                        $vo.folderMeshVo.fileXmlVo.isOpen = !$vo.folderMeshVo.fileXmlVo.isOpen;
+                    }
                 }
+                this.refrish();
             }
-            this.refrish();
         };
         FolderPanel.prototype.loadConfigCom = function () {
+            this.bgMask = new UIMask();
+            this.bgMask.width = 200;
+            this.bgMask.height = 200;
+            this.bgMask.level = 1;
+            this.addMask(this.bgMask);
+            this._baseRender.mask = this.bgMask;
+            this.fileItem = [];
+            for (var i = 0; i < this._uiItem.length; i++) {
+                this._uiItem[i].ui.addEventListener(InteractiveEvent.Down, this.mouseDown, this);
+                this._uiItem[i].ui.addEventListener(InteractiveEvent.Up, this.mouseUp, this);
+            }
+            this.a_input_dae = this.addEvntBut("a_input_dae", this._topRender);
+            this.a_compile_but = this.addEvntBut("a_compile_but", this._topRender);
+            this.loadeFileXml();
+        };
+        FolderPanel.prototype.loadeFileXml = function () {
             var _this = this;
             LoadManager.getInstance().load(Scene_data.fileuiRoot + "folder.txt", LoadManager.XML_TYPE, function ($xmlStr) {
                 FileXmlVo.makeBaseXml($xmlStr);
@@ -205,7 +233,7 @@ var folder;
             for (var i = 0; i < this.fileItem.length; i++) {
                 var layer = FileXmlVo.getFileSonLayer(this.fileItem[i].fileXmlVo.id);
                 this.fileItem[i].pos.y = 20 * this.fileItem[i].ty;
-                this.fileItem[i].pos.x = 50 * layer;
+                this.fileItem[i].pos.x = 20 * layer;
             }
         };
         FolderPanel.prototype.isOpenByID = function (id) {

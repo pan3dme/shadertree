@@ -13,6 +13,8 @@
     import Disp2DBaseText = Pan3d.Disp2DBaseText
     import UIRectangle = Pan3d.UIRectangle
     import baseMeshVo = Pan3d.baseMeshVo
+    import UIMask = Pan3d.UIMask
+    import UIAtlas = Pan3d.UIAtlas
  
 
     export class FileXmlVo   {
@@ -160,30 +162,75 @@
         public constructor() {
             super(FolderName, new Rectangle(0, 0, 128, 20), 50);
             this.left = 300;
-            this.fileItem = [];
-            for (var i: number = 0; i < this._uiItem.length; i++) {
-                this._uiItem[i].ui.addEventListener(InteractiveEvent.Down, this.butClik, this);
-            }
-            this.loadConfigCom();
+
+
+        
+
+            this._topRender = new UIRenderComponent;
+            this.addRender(this._topRender);
+            this._topRender.uiAtlas = new UIAtlas();
+            this._topRender.uiAtlas.setInfo("pan/marmoset/uilist/left/left.txt", "pan/marmoset/uilist/left/left.png", () => { this.loadConfigCom() });
 
             Pan3d.TimeUtil.addFrameTick((t: number) => { this.update(t) });
         }
+        private _topRender: UIRenderComponent;
+        private bgMask: UIMask
         public update(t: number): void {
             super.update(t);
 
         }
-        protected butClik(evt: InteractiveEvent): void {
-            for (var i: number = 0; i < this._uiItem.length; i++) {
-                var $vo: FolderName = <FolderName>this._uiItem[i]
-                if ($vo.ui == evt.target) {
-                    $vo.folderMeshVo.fileXmlVo.isOpen = !$vo.folderMeshVo.fileXmlVo.isOpen;
-              
+        
+        protected mouseDown(evt: InteractiveEvent): void {
+            this.mouseIsDown = true
+            Scene_data.uiStage.addEventListener(InteractiveEvent.Move, this.stageMouseMove, this);
+        }
+        private mouseIsDown: boolean
+        protected stageMouseMove(evt: InteractiveEvent): void {
+            this.mouseIsDown = false
+ 
+        }
+        protected mouseUp(evt: InteractiveEvent): void {
+            Scene_data.uiStage.removeEventListener(InteractiveEvent.Move, this.stageMouseMove, this);
+            if (this.mouseIsDown) {
+                for (var i: number = 0; i < this._uiItem.length; i++) {
+                    var $vo: FolderName = <FolderName>this._uiItem[i]
+                    if ($vo.ui == evt.target) {
+                        $vo.folderMeshVo.fileXmlVo.isOpen = !$vo.folderMeshVo.fileXmlVo.isOpen;
+
+                    }
                 }
+                this.refrish();
+
             }
-            this.refrish();
+        
         }
         protected loadConfigCom(): void {
-            LoadManager.getInstance().load(Scene_data.fileuiRoot+ "folder.txt", LoadManager.XML_TYPE,
+ 
+            this.bgMask = new UIMask();
+            this.bgMask.width = 200;
+            this.bgMask.height = 200;
+            this.bgMask.level = 1;
+            this.addMask(this.bgMask);
+            this._baseRender.mask = this.bgMask
+
+            this.fileItem = [];
+            for (var i: number = 0; i < this._uiItem.length; i++) {
+                this._uiItem[i].ui.addEventListener(InteractiveEvent.Down, this.mouseDown, this);
+                this._uiItem[i].ui.addEventListener(InteractiveEvent.Up, this.mouseUp, this);
+            }
+
+            this.a_input_dae = this.addEvntBut("a_input_dae", this._topRender)
+            this.a_compile_but = this.addEvntBut("a_compile_but", this._topRender)
+
+     
+            this.loadeFileXml()
+  
+        }
+        private a_input_dae: UICompenent;
+        private a_compile_but: UICompenent;
+
+        private loadeFileXml(): void {
+            LoadManager.getInstance().load(Scene_data.fileuiRoot + "folder.txt", LoadManager.XML_TYPE,
                 ($xmlStr: string) => {
                     FileXmlVo.makeBaseXml($xmlStr);
                     this.refrish()
@@ -208,8 +255,8 @@
  
             for (var i: number = 0; i < this.fileItem.length; i++) {
                 var layer: number = FileXmlVo.getFileSonLayer(this.fileItem[i].fileXmlVo.id)
-                this.fileItem[i].pos.y = 20 * this.fileItem[i].ty
-                this.fileItem[i].pos.x = 50 * layer;
+                this.fileItem[i].pos.y = 20 * this.fileItem[i].ty;
+                this.fileItem[i].pos.x = 20 * layer;
 
             }
         }
