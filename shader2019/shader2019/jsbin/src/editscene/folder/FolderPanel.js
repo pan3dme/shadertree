@@ -216,6 +216,11 @@ var folder;
         FolderPanel.prototype.update = function (t) {
             _super.prototype.update.call(this, t);
         };
+        FolderPanel.prototype.panelEventChanger = function (value) {
+            if (value != this) {
+                this.top = value.top;
+            }
+        };
         FolderPanel.prototype.mouseDown = function (evt) {
             this.mouseIsDown = true;
             Scene_data.uiStage.addEventListener(InteractiveEvent.Move, this.stageMouseMove, this);

@@ -296,8 +296,44 @@
 
             this.a_scroll_bar.x = this.folderMask.x + this.folderMask.width - this.a_scroll_bar.width;
 
+
+            this.resetSampleFilePos()
             this.resize();
+
+   
  
+        }
+        private resetSampleFilePos(): void {
+            var w: number = Math.round(this.pageRect.width / 100);
+
+            var contentH: number = Math.round(this.fileItem.length / w) * 70;
+            var moveTy: number = 0
+            if (contentH > this.folderMask.height) {
+                this.setUiListVisibleByItem([this.a_scroll_bar], true);
+                this.a_scroll_bar.height = (this.folderMask.height / contentH) * this.folderMask.height;
+
+
+                this.a_scroll_bar.y = Math.min(this.a_scroll_bar.y, this.folderMask.height + this.folderMask.y - this.a_scroll_bar.height);
+
+
+
+                var nnn: number = (this.a_scroll_bar.y - this.folderMask.y) / (this.folderMask.height - this.a_scroll_bar.height);
+
+
+                moveTy = (this.folderMask.height - contentH) * nnn
+
+            } else {
+                this.setUiListVisibleByItem([this.a_scroll_bar], false);
+                moveTy = 0
+
+            }
+
+            for (var i: number = 0; i < this.fileItem.length; i++) {
+                var vo: FileListMeshVo = this.fileItem[i];
+                vo.pos.x = i % w * 100;
+                vo.pos.y = Math.floor(i / w) * 70 + this.folderMask.y + moveTy
+
+            }
         }
 
         private lastPagePos: Vector2D;
@@ -395,6 +431,7 @@
             }
 
 
+            this.resetSampleFilePos()
         }
         private fileItem: Array<FileListMeshVo>
         private refrishFile(): void {

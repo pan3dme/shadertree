@@ -254,6 +254,13 @@
             super.update(t);
 
         }
+        public panelEventChanger(value: Dis2DUIContianerPanel): void {
+            if (value != this) {
+                this.top = value.top;
+
+            }
+
+        }
 
         protected mouseDown(evt: InteractiveEvent): void {
             this.mouseIsDown = true

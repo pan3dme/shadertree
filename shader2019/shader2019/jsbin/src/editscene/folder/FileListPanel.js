@@ -213,7 +213,29 @@ var filelist;
             this.a_right_bottom.x = this.pageRect.width - this.a_right_bottom.width;
             this.a_right_bottom.y = this.pageRect.height - this.a_right_bottom.height;
             this.a_scroll_bar.x = this.folderMask.x + this.folderMask.width - this.a_scroll_bar.width;
+            this.resetSampleFilePos();
             this.resize();
+        };
+        FileListPanel.prototype.resetSampleFilePos = function () {
+            var w = Math.round(this.pageRect.width / 100);
+            var contentH = Math.round(this.fileItem.length / w) * 70;
+            var moveTy = 0;
+            if (contentH > this.folderMask.height) {
+                this.setUiListVisibleByItem([this.a_scroll_bar], true);
+                this.a_scroll_bar.height = (this.folderMask.height / contentH) * this.folderMask.height;
+                this.a_scroll_bar.y = Math.min(this.a_scroll_bar.y, this.folderMask.height + this.folderMask.y - this.a_scroll_bar.height);
+                var nnn = (this.a_scroll_bar.y - this.folderMask.y) / (this.folderMask.height - this.a_scroll_bar.height);
+                moveTy = (this.folderMask.height - contentH) * nnn;
+            }
+            else {
+                this.setUiListVisibleByItem([this.a_scroll_bar], false);
+                moveTy = 0;
+            }
+            for (var i = 0; i < this.fileItem.length; i++) {
+                var vo = this.fileItem[i];
+                vo.pos.x = i % w * 100;
+                vo.pos.y = Math.floor(i / w) * 70 + this.folderMask.y + moveTy;
+            }
         };
         FileListPanel.prototype.tittleMouseDown = function (evt) {
             this.mouseMoveTaget = evt.target;
@@ -278,6 +300,7 @@ var filelist;
                 $vo.pos = new Vector3D(i * 64, 40, 0);
                 this.fileItem.push($vo);
             }
+            this.resetSampleFilePos();
         };
         FileListPanel.prototype.refrishFile = function () {
         };

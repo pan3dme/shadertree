@@ -24,6 +24,7 @@ var folder;
             return _super !== null && _super.apply(this, arguments) || this;
         }
         FolderEvent.SHOW_FOLDER_PANEL = "SHOW_FOLDER_PANEL";
+        FolderEvent.FILE_LIST_PANEL_CHANG = "FILE_LIST_PANEL_CHANG";
         return FolderEvent;
     }(BaseEvent));
     folder.FolderEvent = FolderEvent;
@@ -51,8 +52,8 @@ var folder;
         };
         FolderProcessor.prototype.receivedModuleEvent = function ($event) {
             if ($event instanceof FolderEvent) {
-                var $materialEvent = $event;
-                if ($materialEvent.type == FolderEvent.SHOW_FOLDER_PANEL) {
+                var _folderEvent = $event;
+                if (_folderEvent.type == FolderEvent.SHOW_FOLDER_PANEL) {
                     if (!this._folderPanel) {
                         this._folderPanel = new folder.FolderPanel();
                     }
@@ -62,11 +63,15 @@ var folder;
                     }
                     UIManager.getInstance().addUIContainer(this._fileListPanel);
                 }
+                if (_folderEvent.type == FolderEvent.FILE_LIST_PANEL_CHANG) {
+                    this._folderPanel.panelEventChanger(_folderEvent.data);
+                }
             }
         };
         FolderProcessor.prototype.listenModuleEvents = function () {
             return [
                 new FolderEvent(FolderEvent.SHOW_FOLDER_PANEL),
+                new FolderEvent(FolderEvent.FILE_LIST_PANEL_CHANG),
             ];
         };
         return FolderProcessor;

@@ -20,7 +20,6 @@ var Pan3d;
         LoadManager.prototype.load = function ($url, $type, $fun, $info, $progressFun) {
             if ($info === void 0) { $info = null; }
             if ($progressFun === void 0) { $progressFun = null; }
-            console.log($url);
             if (!$url || $url.length < 1 || $url.search("undefined") != -1) {
                 //console.log("加载地址不能为空")
                 return;
