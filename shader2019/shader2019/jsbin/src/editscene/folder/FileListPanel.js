@@ -23,79 +23,23 @@ var filelist;
     var Disp2DBaseText = Pan3d.Disp2DBaseText;
     var UIMask = Pan3d.UIMask;
     var UIAtlas = Pan3d.UIAtlas;
-    var FileXmlVo = /** @class */ (function () {
-        function FileXmlVo() {
+    var SampleFileVo = /** @class */ (function () {
+        function SampleFileVo() {
         }
-        FileXmlVo.makeBaseXml = function (value) {
+        SampleFileVo.makeBaseXml = function (value) {
             var obj = JSON.parse(value);
             this.item = new Array;
             for (var i = 0; i < obj.list.length; i++) {
-                var vo = new FileXmlVo();
+                var vo = new SampleFileVo();
                 vo.id = obj.list[i].id;
                 vo.name = obj.list[i].name;
                 vo.perent = obj.list[i].perent;
-                vo.isOpen = false;
                 this.item.push(vo);
             }
         };
-        //获取所有打开可显示的列表
-        FileXmlVo.getListItem = function (value) {
-            var arr = new Array;
-            for (var i = 0; i < this.item.length; i++) {
-                if (this.isShow(this.item[i])) {
-                    arr.push(this.item[i]);
-                }
-            }
-            return arr;
-        };
-        //通过ID获取对应的层级
-        FileXmlVo.getFileSonLayer = function (value) {
-            var num = 0;
-            for (var i = 0; i < this.item.length; i++) {
-                if (this.item[i].id == value) {
-                    if (this.item[i].perent != -1) {
-                        num++;
-                        num += this.getFileSonLayer(this.item[i].perent);
-                    }
-                }
-            }
-            return num;
-        };
-        FileXmlVo.getFileCellHeight = function (id) {
-            var num = 1;
-            for (var i = 0; i < this.item.length; i++) {
-                if (this.item[i].perent == id) {
-                    if (this.item[i].isOpen) {
-                        num += this.getFileCellHeight(this.item[i].id);
-                    }
-                    else {
-                        num += 1;
-                    }
-                }
-            }
-            return num;
-        };
-        //判断是否在显示列表中
-        FileXmlVo.isShow = function (vo) {
-            if (vo.perent == -1) { //根目录
-                return true;
-            }
-            for (var i = 0; i < this.item.length; i++) {
-                if (this.item[i].id == vo.perent) {
-                    if (this.item[i].isOpen) {
-                        return this.isShow(this.item[i]);
-                    }
-                    else {
-                        return false;
-                    }
-                }
-            }
-            console.log("不应该到这里");
-            return false;
-        };
-        return FileXmlVo;
+        return SampleFileVo;
     }());
-    filelist.FileXmlVo = FileXmlVo;
+    filelist.SampleFileVo = SampleFileVo;
     var FileListMeshVo = /** @class */ (function (_super) {
         __extends(FileListMeshVo, _super);
         function FileListMeshVo() {
@@ -134,15 +78,8 @@ var filelist;
                 var $uiRec = this.parent.uiAtlas.getRec(this.textureStr);
                 this.parent.uiAtlas.ctx = UIManager.getInstance().getContext2D($uiRec.pixelWitdh, $uiRec.pixelHeight, false);
                 this.parent.uiAtlas.ctx.clearRect(0, 1, $uiRec.pixelWitdh, $uiRec.pixelHeight);
-                LabelTextFont.writeSingleLabelToCtx(this.parent.uiAtlas.ctx, "[9c9c9c]" + this.fileListMeshVo.fileXmlVo.name, 12, 35, 5, TextAlign.LEFT);
-                if (this.fileListMeshVo.fileXmlVo.isOpen) {
-                    this.parent.uiAtlas.ctx.drawImage(FileListPanel.imgBaseDic["icon_PanRight"], 2, 5, 10, 10);
-                    this.parent.uiAtlas.ctx.drawImage(FileListPanel.imgBaseDic["icon_FolderOpen_dark"], 15, 2, 18, 16);
-                }
-                else {
-                    this.parent.uiAtlas.ctx.drawImage(FileListPanel.imgBaseDic["icon_PanUp"], 3, 5, 10, 10);
-                    this.parent.uiAtlas.ctx.drawImage(FileListPanel.imgBaseDic["icon_FolderClosed_dark"], 15, 2, 18, 16);
-                }
+                this.parent.uiAtlas.ctx.drawImage(FileListPanel.imgBaseDic["icon_Folder_64x"], 7, 0, 50, 50);
+                LabelTextFont.writeSingleLabelToCtx(this.parent.uiAtlas.ctx, "[9c9c9c]" + this.fileListMeshVo.fileXmlVo.name, 12, 0, 50, TextAlign.CENTER);
                 TextureManager.getInstance().updateTexture(this.parent.uiAtlas.texture, $uiRec.pixelX, $uiRec.pixelY, this.parent.uiAtlas.ctx);
             }
         };
@@ -169,17 +106,14 @@ var filelist;
     var FileListPanel = /** @class */ (function (_super) {
         __extends(FileListPanel, _super);
         function FileListPanel() {
-            var _this = _super.call(this, FileListName, new Rectangle(0, 0, 128, 20), 50) || this;
-            _this.folderCellHeight = 20;
-            _this.left = 300;
+            var _this = _super.call(this, FileListName, new Rectangle(0, 0, 64, 64), 50) || this;
+            _this.left = 600;
             _this._bottomRender = new UIRenderComponent;
             _this.addRender(_this._bottomRender);
             _this.removeRender(_this._baseRender);
             _this.addRender(_this._baseRender);
             _this._topRender = new UIRenderComponent;
             _this.addRender(_this._topRender);
-            Pan3d.TimeUtil.addTimeOut(1000, function () {
-            });
             _this.loadAssetImg(function () {
                 _this._bottomRender.uiAtlas = new UIAtlas();
                 _this._bottomRender.uiAtlas.setInfo("ui/folder/folder.txt", "ui/folder/folder.png", function () { _this.loadConfigCom(); });
@@ -193,7 +127,7 @@ var filelist;
             item.push("icon_FolderClosed_dark");
             item.push("icon_FolderOpen_dark");
             item.push("icon_PanRight");
-            item.push("icon_PanUp");
+            item.push("icon_Folder_64x");
             var finishNum = 0;
             for (var i = 0; i < item.length; i++) {
                 this.loadTempOne(item[i], function () {
@@ -226,26 +160,11 @@ var filelist;
         FileListPanel.prototype.mouseUp = function (evt) {
             Scene_data.uiStage.removeEventListener(InteractiveEvent.Move, this.stageMouseMove, this);
             if (this.mouseIsDown) {
-                for (var i = 0; i < this._uiItem.length; i++) {
-                    var $vo = this._uiItem[i];
-                    if ($vo.ui == evt.target) {
-                        if ((evt.x - this.left) - $vo.ui.x < 20) {
-                            $vo.fileListMeshVo.fileXmlVo.isOpen = !$vo.fileListMeshVo.fileXmlVo.isOpen;
-                            $vo.fileListMeshVo.needDraw = true;
-                        }
-                        else {
-                            $vo.fileListMeshVo.fileXmlVo.isOpen = true;
-                            $vo.fileListMeshVo.needDraw = true;
-                            console.log("显示文件夹内容", $vo.fileListMeshVo.fileXmlVo);
-                        }
-                    }
-                }
-                this.refrishFolder();
             }
         };
         FileListPanel.prototype.loadConfigCom = function () {
             this._topRender.uiAtlas = this._bottomRender.uiAtlas;
-            this.pageRect = new Rectangle(0, 0, 200, 200);
+            this.pageRect = new Rectangle(0, 0, 500, 350);
             this.folderMask = new UIMask();
             this.folderMask.level = 1;
             this.addMask(this.folderMask);
@@ -254,6 +173,7 @@ var filelist;
             for (var i = 0; i < this._uiItem.length; i++) {
                 this._uiItem[i].ui.addEventListener(InteractiveEvent.Down, this.mouseDown, this);
                 this._uiItem[i].ui.addEventListener(InteractiveEvent.Up, this.mouseUp, this);
+                console.log(this._uiItem[i].ui.height);
             }
             this.a_bg = this.addEvntBut("a_bg", this._bottomRender);
             this.a_win_tittle = this.addChild(this._topRender.getComponent("a_win_tittle"));
@@ -294,7 +214,6 @@ var filelist;
             this.a_right_bottom.y = this.pageRect.height - this.a_right_bottom.height;
             this.a_scroll_bar.x = this.folderMask.x + this.folderMask.width - this.a_scroll_bar.width;
             this.resize();
-            this.refrishFoldeUiPos();
         };
         FileListPanel.prototype.tittleMouseDown = function (evt) {
             this.mouseMoveTaget = evt.target;
@@ -351,109 +270,22 @@ var filelist;
             this.refrishSize();
         };
         FileListPanel.prototype.loadeFileXml = function () {
-            var _this = this;
-            LoadManager.getInstance().load(Scene_data.fileuiRoot + "folder.txt", LoadManager.XML_TYPE, function ($xmlStr) {
-                FileXmlVo.makeBaseXml($xmlStr);
-                _this.refrishFolder();
-            });
+            for (var i = 0; i < 15; i++) {
+                var sampleFile = new SampleFileVo;
+                sampleFile.id = i;
+                sampleFile.name = "id_" + i;
+                var $vo = this.getCharNameMeshVo(sampleFile);
+                $vo.pos = new Vector3D(i * 64, 40, 0);
+                this.fileItem.push($vo);
+            }
+        };
+        FileListPanel.prototype.refrishFile = function () {
         };
         FileListPanel.prototype.getCharNameMeshVo = function (value) {
             var $vo = new FileListMeshVo;
             $vo.fileXmlVo = value;
             this.showTemp($vo);
             return $vo;
-        };
-        FileListPanel.prototype.refrishFolder = function () {
-            var $item = FileXmlVo.getListItem(-1);
-            this.removeHideItem($item);
-            this.addNewFolderNameToItem($item);
-            this.resetChildItemAll(); //重算子目录
-            this.refrishFoldeUiPos();
-        };
-        FileListPanel.prototype.refrishFoldeUiPos = function () {
-            FileListPanel.tySkip = 1;
-            this.mathFileCellHeight(0);
-            var contentH = FileListPanel.tySkip * this.folderCellHeight;
-            var moveTy = 0;
-            if (contentH > this.folderMask.height) {
-                this.setUiListVisibleByItem([this.a_scroll_bar], true);
-                this.a_scroll_bar.height = (this.folderMask.height / contentH) * this.folderMask.height;
-                this.a_scroll_bar.y = Math.min(this.a_scroll_bar.y, this.folderMask.height + this.folderMask.y - this.a_scroll_bar.height);
-                var nnn = (this.a_scroll_bar.y - this.folderMask.y) / (this.folderMask.height - this.a_scroll_bar.height);
-                moveTy = (this.folderMask.height - contentH) * nnn;
-            }
-            else {
-                this.setUiListVisibleByItem([this.a_scroll_bar], false);
-                moveTy = 0;
-            }
-            for (var i = 0; i < this.fileItem.length; i++) {
-                var layer = FileXmlVo.getFileSonLayer(this.fileItem[i].fileXmlVo.id);
-                this.fileItem[i].pos.y = this.folderCellHeight * this.fileItem[i].ty + this.folderMask.y + moveTy;
-                this.fileItem[i].pos.x = 20 * layer;
-            }
-        };
-        FileListPanel.prototype.isOpenByID = function (id) {
-            for (var i = 0; i < this.fileItem.length; i++) {
-                if (this.fileItem[i].fileXmlVo.id == id && this.fileItem[i].fileXmlVo.isOpen) {
-                    return true;
-                }
-            }
-            return false;
-        };
-        FileListPanel.prototype.mathFileCellHeight = function (id) {
-            if (this.isOpenByID(id)) {
-                for (var i = 0; i < this.fileItem.length; i++) {
-                    if (this.fileItem[i].fileXmlVo.perent == id) {
-                        this.fileItem[i].ty = FileListPanel.tySkip;
-                        FileListPanel.tySkip++;
-                        this.mathFileCellHeight(this.fileItem[i].fileXmlVo.id);
-                    }
-                }
-            }
-        };
-        FileListPanel.prototype.resetChildItemAll = function () {
-            for (var i = 0; i < this.fileItem.length; i++) {
-                this.fileItem[i].childItem = [];
-                this.fileItem[i].ty = 0;
-                for (var j = 0; j < this.fileItem.length; j++) {
-                    if (this.fileItem[j].fileXmlVo.perent == this.fileItem[i].fileXmlVo.id) {
-                        this.fileItem[i].childItem.push(this.fileItem[j]);
-                    }
-                }
-            }
-        };
-        //添加新进来的对象
-        FileListPanel.prototype.addNewFolderNameToItem = function (value) {
-            for (var i = 0; i < value.length; i++) {
-                var needAdd = true;
-                for (var j = 0; j < this.fileItem.length; j++) {
-                    if (this.fileItem[j].fileXmlVo == value[i]) {
-                        needAdd = false;
-                    }
-                }
-                if (needAdd) {
-                    var $vo = this.getCharNameMeshVo(value[i]);
-                    $vo.pos = new Vector3D(0, i * 15, 0);
-                    this.fileItem.push($vo);
-                }
-            }
-        };
-        //移除不显示的对象
-        FileListPanel.prototype.removeHideItem = function (value) {
-            for (var i = 0; i < this.fileItem.length; i++) {
-                var needClear = true;
-                for (var j = 0; j < value.length; j++) {
-                    if (this.fileItem[i].fileXmlVo == value[j]) {
-                        needClear = false;
-                    }
-                }
-                if (needClear) {
-                    var temp = this.fileItem[i];
-                    temp.destory();
-                    this.fileItem.splice(i, 1);
-                    i--;
-                }
-            }
         };
         return FileListPanel;
     }(Dis2DUIContianerPanel));

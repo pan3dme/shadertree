@@ -17,6 +17,7 @@ var folder;
     var Module = Pan3d.Module;
     var BaseProcessor = Pan3d.BaseProcessor;
     var UIManager = Pan3d.UIManager;
+    var FileListPanel = filelist.FileListPanel;
     var FolderEvent = /** @class */ (function (_super) {
         __extends(FolderEvent, _super);
         function FolderEvent() {
@@ -55,8 +56,11 @@ var folder;
                     if (!this._folderPanel) {
                         this._folderPanel = new folder.FolderPanel();
                     }
-                    console.log("这里来了");
                     UIManager.getInstance().addUIContainer(this._folderPanel);
+                    if (!this._fileListPanel) {
+                        this._fileListPanel = new FileListPanel();
+                    }
+                    UIManager.getInstance().addUIContainer(this._fileListPanel);
                 }
             }
         };

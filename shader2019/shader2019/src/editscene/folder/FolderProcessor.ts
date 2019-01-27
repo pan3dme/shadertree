@@ -9,6 +9,7 @@
     import InteractiveEvent = Pan3d.InteractiveEvent;
     import Scene_data = Pan3d.Scene_data;
     import ModuleEventManager = Pan3d.ModuleEventManager;
+    import FileListPanel = filelist.FileListPanel
 
     
 
@@ -43,14 +44,18 @@
                     if (!this._folderPanel) {
                         this._folderPanel = new FolderPanel()
                     }
-                    console.log("这里来了")
- 
                     UIManager.getInstance().addUIContainer(this._folderPanel);
+
+
+                    if (!this._fileListPanel) {
+                        this._fileListPanel = new FileListPanel()
+                    }
+                    UIManager.getInstance().addUIContainer(this._fileListPanel);
                 }
            
             }
         }
-
+        private _fileListPanel: FileListPanel
      
         protected listenModuleEvents(): Array<BaseEvent> {
             return [

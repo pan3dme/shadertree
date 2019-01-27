@@ -28,8 +28,7 @@
         }
 
         public load($url: string, $type: string, $fun: Function, $info: any = null, $progressFun: Function = null): void {
-            console.log($url)
-
+      
             if (!$url || $url.length < 1 || $url.search("undefined") != -1) {
                 //console.log("加载地址不能为空")
                 return;
