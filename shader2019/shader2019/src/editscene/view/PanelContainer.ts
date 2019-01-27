@@ -81,7 +81,7 @@
 
             var $toRect: Rectangle = $ui.getSkinCtxRect()
             var $ctx: CanvasRenderingContext2D = UIManager.getInstance().getContext2D($toRect.width, $toRect.height, false);
-            console.log($toRect.width, $toRect.height)
+ 
             LabelTextFont.writeSingleLabelToCtx($ctx, $str, 24, 0, 5, isAlign);
             $ui.drawToCtx(BaseMaterialNodeUI.baseUIAtlas, $ctx)
 

@@ -65,6 +65,14 @@
         public readImg(): void {
             this.imgNum = this._byte.readInt();
             this.imgLoadNum = 0;
+            //this.imgAry = new Array;
+
+
+            var time: number = TimeUtil.getTimer();
+
+            var ary: Array<Blob> = new Array;
+            var urlAry: Array<string> = new Array;
+
             for (var i: number = 0; i < this.imgNum; i++) {
                 var url: string = Scene_data.fileRoot + this._byte.readUTF();
                 var imgSize: number = this._byte.readInt();
@@ -72,23 +80,29 @@
                     this.readJpngImg(url);
                     continue;
                 }
+                //this.imgAry.push(url);
 
                 var imgAryBuffer: ArrayBuffer = this._byte.buffer.slice(this._byte.position, this._byte.position + imgSize);
                 this._byte.position += imgSize;
 
-                var img: any = makeImage()
-                img.url = url;
+
+                var blob: Blob = new Blob([imgAryBuffer], { type: "application/octet-binary" });
+                ary.push(blob);
+                urlAry.push(url);
+
+            }
+
+            for (var i: number = 0; i < ary.length; i++) {
+                var img: any = new Image();
+                img.url = urlAry[i];
                 img.onload = (evt: Event) => {
                     this.loadImg(evt.target);
                     var etimg: any = evt.target;
+                    URL.revokeObjectURL(etimg.src);
                 }
-                var t = url.substr(url.lastIndexOf('.') + 1).toLocaleLowerCase();
-
-                t = "jpg"
-                console.log(url + "readImg" + 'data:image/' + t + ';base64,')
-                 img.src = 'data:image/' + t + ';base64,' + Base64.encode(imgAryBuffer);
-
+                img.src = URL.createObjectURL(ary[i]);
             }
+
         }
 
 

@@ -30,6 +30,8 @@
     <TypeScriptCompile Include="src\colorview\ColorPanel.ts" />
     <TypeScriptCompile Include="src\colorview\ColorProcessor.ts" />
     <TypeScriptCompile Include="src\editscene\events\MEvent_Material_Connect.ts" />
+    <TypeScriptCompile Include="src\editscene\folder\FolderPanel.ts" />
+    <TypeScriptCompile Include="src\editscene\folder\FolderProcessor.ts" />
     <TypeScriptCompile Include="src\editscene\MaterialProcessor.ts" />
     <TypeScriptCompile Include="src\editscene\materialui\ItemMaterialUI.ts" />
     <TypeScriptCompile Include="src\editscene\materialui\NodeTree.ts" />

@@ -20,18 +20,12 @@ var Pan3d;
         LoadManager.prototype.load = function ($url, $type, $fun, $info, $progressFun) {
             if ($info === void 0) { $info = null; }
             if ($progressFun === void 0) { $progressFun = null; }
+            console.log($url);
             if (!$url || $url.length < 1 || $url.search("undefined") != -1) {
                 //console.log("加载地址不能为空")
                 return;
             }
-            var vkey = "/" + $url.replace(Pan3d.Scene_data.fileRoot, "");
-            var version = LoadManager.getVersion(vkey);
-            if (!version || version == "") {
-                version = "0";
-            }
-            else {
-                //console.log(vkey,version);
-            }
+            var version = "0";
             //GameInstance.mapName
             var loadInfo = new LoadInfo($url, $type, $fun, $info, $progressFun);
             loadInfo.version = version;

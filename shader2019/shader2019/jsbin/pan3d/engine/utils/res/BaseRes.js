@@ -60,6 +60,10 @@ var Pan3d;
             var _this = this;
             this.imgNum = this._byte.readInt();
             this.imgLoadNum = 0;
+            //this.imgAry = new Array;
+            var time = Pan3d.TimeUtil.getTimer();
+            var ary = new Array;
+            var urlAry = new Array;
             for (var i = 0; i < this.imgNum; i++) {
                 var url = Pan3d.Scene_data.fileRoot + this._byte.readUTF();
                 var imgSize = this._byte.readInt();
@@ -67,18 +71,22 @@ var Pan3d;
                     this.readJpngImg(url);
                     continue;
                 }
+                //this.imgAry.push(url);
                 var imgAryBuffer = this._byte.buffer.slice(this._byte.position, this._byte.position + imgSize);
                 this._byte.position += imgSize;
-                var img = makeImage();
-                img.url = url;
+                var blob = new Blob([imgAryBuffer], { type: "application/octet-binary" });
+                ary.push(blob);
+                urlAry.push(url);
+            }
+            for (var i = 0; i < ary.length; i++) {
+                var img = new Image();
+                img.url = urlAry[i];
                 img.onload = function (evt) {
                     _this.loadImg(evt.target);
                     var etimg = evt.target;
+                    URL.revokeObjectURL(etimg.src);
                 };
-                var t = url.substr(url.lastIndexOf('.') + 1).toLocaleLowerCase();
-                t = "jpg";
-                console.log(url + "readImg" + 'data:image/' + t + ';base64,');
-                img.src = 'data:image/' + t + ';base64,' + Pan3d.Base64.encode(imgAryBuffer);
+                img.src = URL.createObjectURL(ary[i]);
             }
         };
         BaseRes.prototype.readJpngImg = function ($url) {

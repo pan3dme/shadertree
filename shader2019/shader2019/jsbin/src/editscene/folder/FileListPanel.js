@@ -11,8 +11,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var folder;
-(function (folder) {
+var filelist;
+(function (filelist) {
     var UIRenderComponent = Pan3d.UIRenderComponent;
     var InteractiveEvent = Pan3d.InteractiveEvent;
     var TextAlign = Pan3d.TextAlign;
@@ -95,15 +95,15 @@ var folder;
         };
         return FileXmlVo;
     }());
-    folder.FileXmlVo = FileXmlVo;
-    var FolderMeshVo = /** @class */ (function (_super) {
-        __extends(FolderMeshVo, _super);
-        function FolderMeshVo() {
+    filelist.FileXmlVo = FileXmlVo;
+    var FileListMeshVo = /** @class */ (function (_super) {
+        __extends(FileListMeshVo, _super);
+        function FileListMeshVo() {
             var _this = _super.call(this) || this;
             _this.cellHeightNum = 1;
             return _this;
         }
-        Object.defineProperty(FolderMeshVo.prototype, "name", {
+        Object.defineProperty(FileListMeshVo.prototype, "name", {
             get: function () {
                 return this._name;
             },
@@ -114,62 +114,62 @@ var folder;
             enumerable: true,
             configurable: true
         });
-        FolderMeshVo.prototype.destory = function () {
+        FileListMeshVo.prototype.destory = function () {
             this.pos = null;
             this._name = null;
             this.needDraw = null;
             this.clear = true;
         };
-        return FolderMeshVo;
+        return FileListMeshVo;
     }(Pan3d.baseMeshVo));
-    folder.FolderMeshVo = FolderMeshVo;
-    var FolderName = /** @class */ (function (_super) {
-        __extends(FolderName, _super);
-        function FolderName() {
+    filelist.FileListMeshVo = FileListMeshVo;
+    var FileListName = /** @class */ (function (_super) {
+        __extends(FileListName, _super);
+        function FileListName() {
             return _super !== null && _super.apply(this, arguments) || this;
         }
-        FolderName.prototype.makeData = function () {
-            this.folderMeshVo = this.data;
-            if (this.folderMeshVo) {
+        FileListName.prototype.makeData = function () {
+            this.fileListMeshVo = this.data;
+            if (this.fileListMeshVo) {
                 var $uiRec = this.parent.uiAtlas.getRec(this.textureStr);
                 this.parent.uiAtlas.ctx = UIManager.getInstance().getContext2D($uiRec.pixelWitdh, $uiRec.pixelHeight, false);
                 this.parent.uiAtlas.ctx.clearRect(0, 1, $uiRec.pixelWitdh, $uiRec.pixelHeight);
-                LabelTextFont.writeSingleLabelToCtx(this.parent.uiAtlas.ctx, "[9c9c9c]" + this.folderMeshVo.fileXmlVo.name, 12, 35, 5, TextAlign.LEFT);
-                if (this.folderMeshVo.fileXmlVo.isOpen) {
-                    this.parent.uiAtlas.ctx.drawImage(FolderPanel.imgBaseDic["icon_PanRight"], 2, 5, 10, 10);
-                    this.parent.uiAtlas.ctx.drawImage(FolderPanel.imgBaseDic["icon_FolderOpen_dark"], 15, 2, 18, 16);
+                LabelTextFont.writeSingleLabelToCtx(this.parent.uiAtlas.ctx, "[9c9c9c]" + this.fileListMeshVo.fileXmlVo.name, 12, 35, 5, TextAlign.LEFT);
+                if (this.fileListMeshVo.fileXmlVo.isOpen) {
+                    this.parent.uiAtlas.ctx.drawImage(FileListPanel.imgBaseDic["icon_PanRight"], 2, 5, 10, 10);
+                    this.parent.uiAtlas.ctx.drawImage(FileListPanel.imgBaseDic["icon_FolderOpen_dark"], 15, 2, 18, 16);
                 }
                 else {
-                    this.parent.uiAtlas.ctx.drawImage(FolderPanel.imgBaseDic["icon_PanUp"], 3, 5, 10, 10);
-                    this.parent.uiAtlas.ctx.drawImage(FolderPanel.imgBaseDic["icon_FolderClosed_dark"], 15, 2, 18, 16);
+                    this.parent.uiAtlas.ctx.drawImage(FileListPanel.imgBaseDic["icon_PanUp"], 3, 5, 10, 10);
+                    this.parent.uiAtlas.ctx.drawImage(FileListPanel.imgBaseDic["icon_FolderClosed_dark"], 15, 2, 18, 16);
                 }
                 TextureManager.getInstance().updateTexture(this.parent.uiAtlas.texture, $uiRec.pixelX, $uiRec.pixelY, this.parent.uiAtlas.ctx);
             }
         };
-        FolderName.prototype.update = function () {
-            this.folderMeshVo = this.data;
-            if (this.folderMeshVo) {
-                if (this.folderMeshVo.needDraw) {
+        FileListName.prototype.update = function () {
+            this.fileListMeshVo = this.data;
+            if (this.fileListMeshVo) {
+                if (this.fileListMeshVo.needDraw) {
                     this.makeData();
-                    this.folderMeshVo.needDraw = false;
+                    this.fileListMeshVo.needDraw = false;
                 }
-                if (this.folderMeshVo.pos) {
-                    this.ui.x = this.folderMeshVo.pos.x;
-                    this.ui.y = this.folderMeshVo.pos.y;
+                if (this.fileListMeshVo.pos) {
+                    this.ui.x = this.fileListMeshVo.pos.x;
+                    this.ui.y = this.fileListMeshVo.pos.y;
                 }
-                if (this.folderMeshVo.clear) {
+                if (this.fileListMeshVo.clear) {
                     this.ui.parent.removeChild(this.ui);
                     this._data = null;
                 }
             }
         };
-        return FolderName;
+        return FileListName;
     }(Disp2DBaseText));
-    folder.FolderName = FolderName;
-    var FolderPanel = /** @class */ (function (_super) {
-        __extends(FolderPanel, _super);
-        function FolderPanel() {
-            var _this = _super.call(this, FolderName, new Rectangle(0, 0, 128, 20), 50) || this;
+    filelist.FileListName = FileListName;
+    var FileListPanel = /** @class */ (function (_super) {
+        __extends(FileListPanel, _super);
+        function FileListPanel() {
+            var _this = _super.call(this, FileListName, new Rectangle(0, 0, 128, 20), 50) || this;
             _this.folderCellHeight = 20;
             _this.left = 300;
             _this._bottomRender = new UIRenderComponent;
@@ -187,8 +187,8 @@ var folder;
             });
             return _this;
         }
-        FolderPanel.prototype.loadAssetImg = function (bfun) {
-            FolderPanel.imgBaseDic = {};
+        FileListPanel.prototype.loadAssetImg = function (bfun) {
+            FileListPanel.imgBaseDic = {};
             var item = [];
             item.push("icon_FolderClosed_dark");
             item.push("icon_FolderOpen_dark");
@@ -204,46 +204,46 @@ var folder;
                 });
             }
         };
-        FolderPanel.prototype.loadTempOne = function (name, bfun) {
+        FileListPanel.prototype.loadTempOne = function (name, bfun) {
             var tempImg = makeImage();
-            FolderPanel.imgBaseDic[name] = tempImg;
+            FileListPanel.imgBaseDic[name] = tempImg;
             tempImg.onload = function () {
                 bfun();
             };
             tempImg.url = Scene_data.fileuiRoot + "ui/folder/pic/" + name + ".png";
             tempImg.src = Scene_data.fileuiRoot + "ui/folder/pic/" + name + ".png";
         };
-        FolderPanel.prototype.update = function (t) {
+        FileListPanel.prototype.update = function (t) {
             _super.prototype.update.call(this, t);
         };
-        FolderPanel.prototype.mouseDown = function (evt) {
+        FileListPanel.prototype.mouseDown = function (evt) {
             this.mouseIsDown = true;
             Scene_data.uiStage.addEventListener(InteractiveEvent.Move, this.stageMouseMove, this);
         };
-        FolderPanel.prototype.stageMouseMove = function (evt) {
+        FileListPanel.prototype.stageMouseMove = function (evt) {
             this.mouseIsDown = false;
         };
-        FolderPanel.prototype.mouseUp = function (evt) {
+        FileListPanel.prototype.mouseUp = function (evt) {
             Scene_data.uiStage.removeEventListener(InteractiveEvent.Move, this.stageMouseMove, this);
             if (this.mouseIsDown) {
                 for (var i = 0; i < this._uiItem.length; i++) {
                     var $vo = this._uiItem[i];
                     if ($vo.ui == evt.target) {
                         if ((evt.x - this.left) - $vo.ui.x < 20) {
-                            $vo.folderMeshVo.fileXmlVo.isOpen = !$vo.folderMeshVo.fileXmlVo.isOpen;
-                            $vo.folderMeshVo.needDraw = true;
+                            $vo.fileListMeshVo.fileXmlVo.isOpen = !$vo.fileListMeshVo.fileXmlVo.isOpen;
+                            $vo.fileListMeshVo.needDraw = true;
                         }
                         else {
-                            $vo.folderMeshVo.fileXmlVo.isOpen = true;
-                            $vo.folderMeshVo.needDraw = true;
-                            console.log("显示文件夹内容", $vo.folderMeshVo.fileXmlVo);
+                            $vo.fileListMeshVo.fileXmlVo.isOpen = true;
+                            $vo.fileListMeshVo.needDraw = true;
+                            console.log("显示文件夹内容", $vo.fileListMeshVo.fileXmlVo);
                         }
                     }
                 }
                 this.refrishFolder();
             }
         };
-        FolderPanel.prototype.loadConfigCom = function () {
+        FileListPanel.prototype.loadConfigCom = function () {
             this._topRender.uiAtlas = this._bottomRender.uiAtlas;
             this.pageRect = new Rectangle(0, 0, 200, 200);
             this.folderMask = new UIMask();
@@ -270,7 +270,7 @@ var folder;
             this.a_scroll_bar.y = this.folderMask.y;
             this.loadeFileXml();
         };
-        FolderPanel.prototype.refrishSize = function () {
+        FileListPanel.prototype.refrishSize = function () {
             this.pageRect.width = Math.max(100, this.pageRect.width);
             this.pageRect.height = Math.max(100, this.pageRect.height);
             this.a_win_tittle.x = 0;
@@ -296,7 +296,7 @@ var folder;
             this.resize();
             this.refrishFoldeUiPos();
         };
-        FolderPanel.prototype.tittleMouseDown = function (evt) {
+        FileListPanel.prototype.tittleMouseDown = function (evt) {
             this.mouseMoveTaget = evt.target;
             this.lastMousePos = new Vector2D(evt.x, evt.y);
             switch (this.mouseMoveTaget) {
@@ -318,11 +318,11 @@ var folder;
             Scene_data.uiStage.addEventListener(InteractiveEvent.Move, this.mouseOnTittleMove, this);
             Scene_data.uiStage.addEventListener(InteractiveEvent.Up, this.tittleMouseUp, this);
         };
-        FolderPanel.prototype.tittleMouseUp = function (evt) {
+        FileListPanel.prototype.tittleMouseUp = function (evt) {
             Scene_data.uiStage.removeEventListener(InteractiveEvent.Move, this.mouseOnTittleMove, this);
             Scene_data.uiStage.removeEventListener(InteractiveEvent.Up, this.tittleMouseUp, this);
         };
-        FolderPanel.prototype.mouseOnTittleMove = function (evt) {
+        FileListPanel.prototype.mouseOnTittleMove = function (evt) {
             switch (this.mouseMoveTaget) {
                 case this.a_win_tittle:
                     this.left = this.lastPagePos.x + (evt.x - this.lastMousePos.x);
@@ -350,30 +350,30 @@ var folder;
             }
             this.refrishSize();
         };
-        FolderPanel.prototype.loadeFileXml = function () {
+        FileListPanel.prototype.loadeFileXml = function () {
             var _this = this;
             LoadManager.getInstance().load(Scene_data.fileuiRoot + "folder.txt", LoadManager.XML_TYPE, function ($xmlStr) {
                 FileXmlVo.makeBaseXml($xmlStr);
                 _this.refrishFolder();
             });
         };
-        FolderPanel.prototype.getCharNameMeshVo = function (value) {
-            var $vo = new FolderMeshVo;
+        FileListPanel.prototype.getCharNameMeshVo = function (value) {
+            var $vo = new FileListMeshVo;
             $vo.fileXmlVo = value;
             this.showTemp($vo);
             return $vo;
         };
-        FolderPanel.prototype.refrishFolder = function () {
+        FileListPanel.prototype.refrishFolder = function () {
             var $item = FileXmlVo.getListItem(-1);
             this.removeHideItem($item);
             this.addNewFolderNameToItem($item);
             this.resetChildItemAll(); //重算子目录
             this.refrishFoldeUiPos();
         };
-        FolderPanel.prototype.refrishFoldeUiPos = function () {
-            FolderPanel.tySkip = 1;
+        FileListPanel.prototype.refrishFoldeUiPos = function () {
+            FileListPanel.tySkip = 1;
             this.mathFileCellHeight(0);
-            var contentH = FolderPanel.tySkip * this.folderCellHeight;
+            var contentH = FileListPanel.tySkip * this.folderCellHeight;
             var moveTy = 0;
             if (contentH > this.folderMask.height) {
                 this.setUiListVisibleByItem([this.a_scroll_bar], true);
@@ -392,7 +392,7 @@ var folder;
                 this.fileItem[i].pos.x = 20 * layer;
             }
         };
-        FolderPanel.prototype.isOpenByID = function (id) {
+        FileListPanel.prototype.isOpenByID = function (id) {
             for (var i = 0; i < this.fileItem.length; i++) {
                 if (this.fileItem[i].fileXmlVo.id == id && this.fileItem[i].fileXmlVo.isOpen) {
                     return true;
@@ -400,18 +400,18 @@ var folder;
             }
             return false;
         };
-        FolderPanel.prototype.mathFileCellHeight = function (id) {
+        FileListPanel.prototype.mathFileCellHeight = function (id) {
             if (this.isOpenByID(id)) {
                 for (var i = 0; i < this.fileItem.length; i++) {
                     if (this.fileItem[i].fileXmlVo.perent == id) {
-                        this.fileItem[i].ty = FolderPanel.tySkip;
-                        FolderPanel.tySkip++;
+                        this.fileItem[i].ty = FileListPanel.tySkip;
+                        FileListPanel.tySkip++;
                         this.mathFileCellHeight(this.fileItem[i].fileXmlVo.id);
                     }
                 }
             }
         };
-        FolderPanel.prototype.resetChildItemAll = function () {
+        FileListPanel.prototype.resetChildItemAll = function () {
             for (var i = 0; i < this.fileItem.length; i++) {
                 this.fileItem[i].childItem = [];
                 this.fileItem[i].ty = 0;
@@ -423,7 +423,7 @@ var folder;
             }
         };
         //添加新进来的对象
-        FolderPanel.prototype.addNewFolderNameToItem = function (value) {
+        FileListPanel.prototype.addNewFolderNameToItem = function (value) {
             for (var i = 0; i < value.length; i++) {
                 var needAdd = true;
                 for (var j = 0; j < this.fileItem.length; j++) {
@@ -439,7 +439,7 @@ var folder;
             }
         };
         //移除不显示的对象
-        FolderPanel.prototype.removeHideItem = function (value) {
+        FileListPanel.prototype.removeHideItem = function (value) {
             for (var i = 0; i < this.fileItem.length; i++) {
                 var needClear = true;
                 for (var j = 0; j < value.length; j++) {
@@ -455,8 +455,8 @@ var folder;
                 }
             }
         };
-        return FolderPanel;
+        return FileListPanel;
     }(Dis2DUIContianerPanel));
-    folder.FolderPanel = FolderPanel;
-})(folder || (folder = {}));
-//# sourceMappingURL=FolderPanel.js.map
+    filelist.FileListPanel = FileListPanel;
+})(filelist || (filelist = {}));
+//# sourceMappingURL=FileListPanel.js.map

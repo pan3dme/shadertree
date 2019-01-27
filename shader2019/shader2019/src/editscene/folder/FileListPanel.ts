@@ -1,4 +1,4 @@
-﻿module folder {
+﻿module filelist {
     import UICompenent = Pan3d.UICompenent
     import FrameCompenent = Pan3d.FrameCompenent
     import UIRenderComponent = Pan3d.UIRenderComponent
@@ -97,12 +97,12 @@
         }
 
     }
-    export class FolderMeshVo extends Pan3d.baseMeshVo {
+    export class FileListMeshVo extends Pan3d.baseMeshVo {
         private _name: string;
         public fileXmlVo: FileXmlVo
         public ty: number
         public cellHeightNum: number;
-        public childItem: Array<FolderMeshVo>
+        public childItem: Array<FileListMeshVo>
         public needDraw: boolean;
         public constructor() {
             super();
@@ -124,11 +124,11 @@
 
 
     }
-    export class FolderName extends Disp2DBaseText {
-        public folderMeshVo: FolderMeshVo
+    export class FileListName extends Disp2DBaseText {
+        public fileListMeshVo: FileListMeshVo
         public makeData(): void {
-            this.folderMeshVo = this.data;
-            if (this.folderMeshVo) {
+            this.fileListMeshVo = this.data;
+            if (this.fileListMeshVo) {
 
 
 
@@ -136,24 +136,24 @@
                 var $uiRec: UIRectangle = this.parent.uiAtlas.getRec(this.textureStr);
                 this.parent.uiAtlas.ctx = UIManager.getInstance().getContext2D($uiRec.pixelWitdh, $uiRec.pixelHeight, false);
 
-       
-                this.parent.uiAtlas.ctx.clearRect(0, 1, $uiRec.pixelWitdh, $uiRec.pixelHeight );
+
+                this.parent.uiAtlas.ctx.clearRect(0, 1, $uiRec.pixelWitdh, $uiRec.pixelHeight);
 
 
-                LabelTextFont.writeSingleLabelToCtx(this.parent.uiAtlas.ctx, "[9c9c9c]"+ this.folderMeshVo.fileXmlVo.name, 12, 35, 5, TextAlign.LEFT)
- 
+                LabelTextFont.writeSingleLabelToCtx(this.parent.uiAtlas.ctx, "[9c9c9c]" + this.fileListMeshVo.fileXmlVo.name, 12, 35, 5, TextAlign.LEFT)
 
-          
-                    if (this.folderMeshVo.fileXmlVo.isOpen) {
-                        this.parent.uiAtlas.ctx.drawImage(FolderPanel.imgBaseDic["icon_PanRight"], 2, 5, 10, 10)
 
-                        this.parent.uiAtlas.ctx.drawImage(FolderPanel.imgBaseDic["icon_FolderOpen_dark"], 15, 2, 18, 16)
-                    } else {
-                        this.parent.uiAtlas.ctx.drawImage(FolderPanel.imgBaseDic["icon_PanUp"], 3, 5, 10, 10)
 
-                        this.parent.uiAtlas.ctx.drawImage(FolderPanel.imgBaseDic["icon_FolderClosed_dark"], 15, 2, 18, 16)
-                    }
- 
+                if (this.fileListMeshVo.fileXmlVo.isOpen) {
+                    this.parent.uiAtlas.ctx.drawImage(FileListPanel.imgBaseDic["icon_PanRight"], 2, 5, 10, 10)
+
+                    this.parent.uiAtlas.ctx.drawImage(FileListPanel.imgBaseDic["icon_FolderOpen_dark"], 15, 2, 18, 16)
+                } else {
+                    this.parent.uiAtlas.ctx.drawImage(FileListPanel.imgBaseDic["icon_PanUp"], 3, 5, 10, 10)
+
+                    this.parent.uiAtlas.ctx.drawImage(FileListPanel.imgBaseDic["icon_FolderClosed_dark"], 15, 2, 18, 16)
+                }
+
 
                 TextureManager.getInstance().updateTexture(this.parent.uiAtlas.texture, $uiRec.pixelX, $uiRec.pixelY, this.parent.uiAtlas.ctx);
 
@@ -166,17 +166,17 @@
 
 
         public update(): void {
-            this.folderMeshVo = this.data;
-            if (this.folderMeshVo) {
-                if (this.folderMeshVo.needDraw) {
+            this.fileListMeshVo = this.data;
+            if (this.fileListMeshVo) {
+                if (this.fileListMeshVo.needDraw) {
                     this.makeData();
-                    this.folderMeshVo.needDraw = false;
+                    this.fileListMeshVo.needDraw = false;
                 }
-                if (this.folderMeshVo.pos) {
-                    this.ui.x = this.folderMeshVo.pos.x;
-                    this.ui.y = this.folderMeshVo.pos.y;
+                if (this.fileListMeshVo.pos) {
+                    this.ui.x = this.fileListMeshVo.pos.x;
+                    this.ui.y = this.fileListMeshVo.pos.y;
                 }
-                if (this.folderMeshVo.clear) {
+                if (this.fileListMeshVo.clear) {
                     this.ui.parent.removeChild(this.ui);
                     this._data = null;
                 }
@@ -184,11 +184,11 @@
         }
     }
 
-    export class FolderPanel extends Dis2DUIContianerPanel {
+    export class FileListPanel extends Dis2DUIContianerPanel {
 
         public static imgBaseDic: any
         public constructor() {
-            super(FolderName, new Rectangle(0, 0, 128, 20), 50);
+            super(FileListName, new Rectangle(0, 0, 128, 20), 50);
             this.left = 300;
 
             this._bottomRender = new UIRenderComponent;
@@ -200,7 +200,7 @@
 
 
             Pan3d.TimeUtil.addTimeOut(1000, () => {
-               
+
             })
 
             this.loadAssetImg(() => {
@@ -214,13 +214,13 @@
 
         }
         private loadAssetImg(bfun: Function): void {
-            FolderPanel.imgBaseDic = {};
+            FileListPanel.imgBaseDic = {};
             var item: Array<string> = [];
             item.push("icon_FolderClosed_dark");
             item.push("icon_FolderOpen_dark");
             item.push("icon_PanRight");
             item.push("icon_PanUp");
-            
+
 
             var finishNum: number = 0
             for (var i: number = 0; i < item.length; i++) {
@@ -233,11 +233,11 @@
                 });
             }
         }
-  
-        private loadTempOne(name: string, bfun: Function): void { 
-  
+
+        private loadTempOne(name: string, bfun: Function): void {
+
             var tempImg = makeImage()
-            FolderPanel.imgBaseDic[name] = tempImg;
+            FileListPanel.imgBaseDic[name] = tempImg;
             tempImg.onload = () => {
                 bfun();
             }
@@ -268,17 +268,17 @@
             Scene_data.uiStage.removeEventListener(InteractiveEvent.Move, this.stageMouseMove, this);
             if (this.mouseIsDown) {
                 for (var i: number = 0; i < this._uiItem.length; i++) {
-                    var $vo: FolderName = <FolderName>this._uiItem[i]
+                    var $vo: FileListName = <FileListName>this._uiItem[i]
                     if ($vo.ui == evt.target) {
                         if ((evt.x - this.left) - $vo.ui.x < 20) {
-                            $vo.folderMeshVo.fileXmlVo.isOpen = !$vo.folderMeshVo.fileXmlVo.isOpen;
-                            $vo.folderMeshVo.needDraw = true;
+                            $vo.fileListMeshVo.fileXmlVo.isOpen = !$vo.fileListMeshVo.fileXmlVo.isOpen;
+                            $vo.fileListMeshVo.needDraw = true;
                         } else {
-                            $vo.folderMeshVo.fileXmlVo.isOpen = true
-                            $vo.folderMeshVo.needDraw = true
-                            console.log("显示文件夹内容", $vo.folderMeshVo.fileXmlVo)
+                            $vo.fileListMeshVo.fileXmlVo.isOpen = true
+                            $vo.fileListMeshVo.needDraw = true
+                            console.log("显示文件夹内容", $vo.fileListMeshVo.fileXmlVo)
                         }
-          
+
 
                     }
                 }
@@ -464,9 +464,9 @@
                     this.refrishFolder()
                 });
         }
-        private fileItem: Array<FolderMeshVo>;
-        public getCharNameMeshVo(value: FileXmlVo): FolderMeshVo {
-            var $vo: FolderMeshVo = new FolderMeshVo;
+        private fileItem: Array<FileListMeshVo>;
+        public getCharNameMeshVo(value: FileXmlVo): FileListMeshVo {
+            var $vo: FileListMeshVo = new FileListMeshVo;
             $vo.fileXmlVo = value;
 
             this.showTemp($vo);
@@ -484,10 +484,10 @@
             this.refrishFoldeUiPos();
         }
         private refrishFoldeUiPos(): void {
-            FolderPanel.tySkip = 1;
+            FileListPanel.tySkip = 1;
             this.mathFileCellHeight(0);
 
-            var contentH: number = FolderPanel.tySkip * this.folderCellHeight;
+            var contentH: number = FileListPanel.tySkip * this.folderCellHeight;
             var moveTy: number = 0
             if (contentH > this.folderMask.height) {
                 this.setUiListVisibleByItem([this.a_scroll_bar], true);
@@ -530,8 +530,8 @@
             if (this.isOpenByID(id)) {
                 for (var i: number = 0; i < this.fileItem.length; i++) {
                     if (this.fileItem[i].fileXmlVo.perent == id) {
-                        this.fileItem[i].ty = FolderPanel.tySkip;
-                        FolderPanel.tySkip++
+                        this.fileItem[i].ty = FileListPanel.tySkip;
+                        FileListPanel.tySkip++
                         this.mathFileCellHeight(this.fileItem[i].fileXmlVo.id);
                     }
                 }
@@ -566,7 +566,7 @@
                     }
                 }
                 if (needAdd) {
-                    var $vo: FolderMeshVo = this.getCharNameMeshVo(value[i]);
+                    var $vo: FileListMeshVo = this.getCharNameMeshVo(value[i]);
                     $vo.pos = new Vector3D(0, i * 15, 0)
                     this.fileItem.push($vo);
                 }
@@ -584,7 +584,7 @@
                     }
                 }
                 if (needClear) {
-                    var temp: FolderMeshVo = this.fileItem[i];
+                    var temp: FileListMeshVo = this.fileItem[i];
                     temp.destory()
                     this.fileItem.splice(i, 1);
                     i--;

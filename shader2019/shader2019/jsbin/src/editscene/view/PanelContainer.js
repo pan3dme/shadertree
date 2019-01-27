@@ -62,7 +62,6 @@ var materialui;
         PanelContainer.prototype.drawTextToName = function ($ui, $str, isAlign) {
             var $toRect = $ui.getSkinCtxRect();
             var $ctx = UIManager.getInstance().getContext2D($toRect.width, $toRect.height, false);
-            console.log($toRect.width, $toRect.height);
             LabelTextFont.writeSingleLabelToCtx($ctx, $str, 24, 0, 5, isAlign);
             $ui.drawToCtx(materialui.BaseMaterialNodeUI.baseUIAtlas, $ctx);
         };

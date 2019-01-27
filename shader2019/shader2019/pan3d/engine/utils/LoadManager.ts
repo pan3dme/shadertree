@@ -28,20 +28,16 @@
         }
 
         public load($url: string, $type: string, $fun: Function, $info: any = null, $progressFun: Function = null): void {
-
+            console.log($url)
 
             if (!$url || $url.length < 1 || $url.search("undefined") != -1) {
                 //console.log("加载地址不能为空")
                 return;
             }
 
-            var vkey: string = "/" + $url.replace(Scene_data.fileRoot, "");
-            var version: string = LoadManager.getVersion(vkey);
-            if (!version || version == "") {
-                version = "0"
-            } else {
-                //console.log(vkey,version);
-            }
+
+            var version: string ="0"
+     
 
             //GameInstance.mapName
 
