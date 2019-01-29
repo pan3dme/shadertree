@@ -256,16 +256,13 @@
 
         }
         public panelEventChanger(value: Pan3d.Rectangle): void {
-
             if (this.pageRect) {
                 this.pageRect.height = value.height ;
-                this.pageRect.width = value.width - 250;
-                this.left = value.x+250
+                this.pageRect.width = value.width ;
+                this.left = value.x
                 this.top = value.y ;
                 this.refrishSize();
             }
- 
-
         }
 
         private a_scroll_bar: UICompenent

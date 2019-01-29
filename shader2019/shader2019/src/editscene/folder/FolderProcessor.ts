@@ -60,18 +60,13 @@
                         this._fileListPanel = new FileListPanel();
                     }
                    UIManager.getInstance().addUIContainer(this._fileListPanel);
-
-
-                 
-                   
                 }
                 if (_folderEvent.type == FolderEvent.FILE_LIST_PANEL_CHANG) {
-                    this._folderPanel.panelEventChanger(_folderEvent.data)
-                    this._fileListPanel.panelEventChanger(_folderEvent.data)
+                    var base: Pan3d.Rectangle = _folderEvent.data
+                    this._folderPanel.panelEventChanger(new Pan3d.Rectangle(base.x, base.y, base.width, base.height));
+                    var leftw: number = this._folderPanel.getPageRect().width;
+                    this._fileListPanel.panelEventChanger(new Pan3d.Rectangle(base.x + leftw, base.y, base.width - leftw, base.height));
                 }
-
-              
-           
             }
         }
         private _fileListPanel: FileListPanel

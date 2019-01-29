@@ -191,8 +191,8 @@ var filelist;
         FileListPanel.prototype.panelEventChanger = function (value) {
             if (this.pageRect) {
                 this.pageRect.height = value.height;
-                this.pageRect.width = value.width - 250;
-                this.left = value.x + 250;
+                this.pageRect.width = value.width;
+                this.left = value.x;
                 this.top = value.y;
                 this.refrishSize();
             }

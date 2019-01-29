@@ -253,18 +253,15 @@
 
         }
         public panelEventChanger(value: Pan3d.Rectangle): void {
-        
             if (this.pageRect) {
-                this.pageRect.width = 250;
                 this.pageRect.height = value.height ;
                 this.left = value.x;
                 this.top = value.y;
                 this.refrishSize();
-      
             }
-          
-
-
+        }
+        public getPageRect(): Rectangle {
+            return this.pageRect
         }
 
 

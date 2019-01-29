@@ -217,12 +217,14 @@ var folder;
         };
         FolderPanel.prototype.panelEventChanger = function (value) {
             if (this.pageRect) {
-                this.pageRect.width = 250;
                 this.pageRect.height = value.height;
                 this.left = value.x;
                 this.top = value.y;
                 this.refrishSize();
             }
+        };
+        FolderPanel.prototype.getPageRect = function () {
+            return this.pageRect;
         };
         FolderPanel.prototype.mouseDown = function (evt) {
             this.mouseIsDown = true;
