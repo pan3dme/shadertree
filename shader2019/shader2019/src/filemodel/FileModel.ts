@@ -5,7 +5,133 @@
     import ModuleEventManager = Pan3d.ModuleEventManager
     import MaterialTree = materialui.MaterialTree
     import MaterialEvent = materialui.MaterialEvent
+    export class FileVo {
+        public name: string
+        public path: string
+        public suffix: string
+        public isFolder: boolean
 
+
+        public meshStr(str: string): void {
+            var $arr: Array<string> = str.split("/");
+            this.name = $arr[$arr.length - 2]
+            this.path = str;
+            this.isFolder = true;
+          //  console.log(this.name, this.path)
+        }
+        public static meshObj(value: any): FileVo {
+            if (value.name.length - 1 != value.name.lastIndexOf("/")) {
+                var vo: FileVo = new FileVo()
+                var str: string = value.name
+                var $arr: Array<string> = str.split("/");
+                vo.name = $arr[$arr.length - 1]
+                vo.path = str;
+                vo.suffix=   vo.name.split(".")[1]
+              //  console.log(vo.name, vo.path)
+                return vo
+            }
+            return null
+        }
+    }
+
+    export class FolderModel {
+        private static waitItem: Array<any>;
+        private static ossWrapper: any;
+        private static oneByOne(): void {
+            if (this.waitItem.length > 0) {
+                var $dir: string = this.waitItem[0].a;//目录
+                var kFun: Function = this.waitItem[0].b; //返回
+                var nextMarker = "";
+                this.ossWrapper.list({
+                    'delimiter': '/',
+                    'prefix': $dir,
+                    'max-keys': 100,
+                    'marker': nextMarker,
+                }).then((result) => {
+                    this.waitItem.shift();
+                    this.oneByOne();
+                    kFun(result);
+                }).catch(function (err) {
+                    console.log(err);
+         
+                });
+            }
+        }
+        public static getFolderArr($dir: string, bfun: Function): void {
+
+            this.getDisList($dir, (value) => {
+                var fileArr: Array<FileVo>=[]
+                for (var i: number = 0; i < value.prefixes.length; i++) {
+                    var fileVo: FileVo = new FileVo();
+                    fileVo.meshStr(value.prefixes[i])
+                    fileArr.push(fileVo)
+                }
+                for (var j: number = 0; j < value.objects.length; j++) {
+                    var fileVo: FileVo = FileVo.meshObj(value.objects[j])
+                    if (fileVo) {
+                        fileArr.push(fileVo);
+                    }
+                
+                }
+
+                bfun(fileArr);
+            })
+        }
+        private static getDisList($dir: string, bfun: Function): void {
+            if (!this.waitItem) {
+                this.waitItem = [];
+            }
+            this.waitItem.push({ a: $dir, b: bfun });
+            if (this.waitItem.length == 1) {
+                if (this.ossWrapper) {
+                    this.oneByOne();
+                } else {
+                    FileModel.webseverurl = "https://api.h5key.com/api/";
+                    FileModel.WEB_SEVER_EVENT_AND_BACK("get_STS", "id=" + 99, (res: any) => {
+                        if (res.data && res.data.info) {
+                            this.ossWrapper = new OSS.Wrapper({
+                                accessKeyId: res.data.info.AccessKeyId,
+                                accessKeySecret: res.data.info.AccessKeySecret,
+                                stsToken: res.data.info.SecurityToken,
+                                endpoint: "https://oss-cn-shanghai.aliyuncs.com",
+                                bucket: "webpan"
+                            });
+                            this.oneByOne();
+                        } else {
+                            console.log(res);
+                        }
+                    })
+                }
+            }
+        }
+        public static getBase(): void {
+            FileModel.webseverurl = "https://api.h5key.com/api/";
+            FileModel.WEB_SEVER_EVENT_AND_BACK("get_STS", "id=" + 99, (res: any) => {
+                if (res.data.info) {
+                    var client: any = new OSS.Wrapper({
+                        accessKeyId: res.data.info.AccessKeyId,
+                        accessKeySecret: res.data.info.AccessKeySecret,
+                        stsToken: res.data.info.SecurityToken,
+                        endpoint: "https://oss-cn-shanghai.aliyuncs.com",
+                        bucket: "webpan"
+                    });
+                    //获取oss文件列表
+                    var nextMarker = "";
+                    client.list({
+                        'delimiter': '/',
+                        'prefix': "",
+                        'max-keys': 1000,
+                        'marker': nextMarker,
+                    }).then(function (result) {
+                        console.log(result)
+                    }).catch(function (err) {
+                        console.log(err);
+                    });
+                }
+            })
+        }
+
+    }
     export class FileModel {
 
 
@@ -56,7 +182,7 @@
         public selectFileById(value: number): void {
 
             this.fileid = value
-            var $texturl: string = "texturelist/" + this.fileid  + ".txt"
+            var $texturl: string = "texturelist/" + this.fileid + ".txt"
             Pan3d.LoadManager.getInstance().load(Scene_data.fileRoot + $texturl, Pan3d.LoadManager.BYTE_TYPE,
                 ($dtstr: ArrayBuffer) => {
                     var $byte: Pan3d.Pan3dByteArray = new Pan3d.Pan3dByteArray($dtstr);
@@ -71,8 +197,8 @@
                     $materialEvent.materailTree = $tempMaterial;
                     ModuleEventManager.dispatchEvent($materialEvent);
 
-              
-                    Pan3d.LoadManager.getInstance().load(Scene_data.fileRoot + "texturelist/config/" + this.fileid+ ".txt", Pan3d.LoadManager.XML_TYPE,
+
+                    Pan3d.LoadManager.getInstance().load(Scene_data.fileRoot + "texturelist/config/" + this.fileid + ".txt", Pan3d.LoadManager.XML_TYPE,
                         ($configStr: string) => {
                             var $config: any = JSON.parse($configStr);
                             if ($config.showType == 0) {
@@ -88,18 +214,18 @@
                                 left.SceneRenderToTextrue.getInstance().viweLHnumber = 300
                             }
                         });
-                    
 
- 
- 
+
+
+
                 });
         }
-        
-    
+
+
         private saveModelToWeb(): void {
 
             if (left.ModelShowModel.getInstance().selectShowDisp instanceof left.MaterialModelSprite) {
-                var $modelSprite: left.MaterialModelSprite = <left.MaterialModelSprite> left.ModelShowModel.getInstance().selectShowDisp;
+                var $modelSprite: left.MaterialModelSprite = <left.MaterialModelSprite>left.ModelShowModel.getInstance().selectShowDisp;
                 var $objInfo: any = {};
                 $objInfo.vertices = $modelSprite.objData.vertices;
                 $objInfo.normals = $modelSprite.objData.normals;
@@ -110,23 +236,23 @@
                 var $modelStr: string = JSON.stringify($objInfo);
                 if ($modelStr) {
                     var $file: File = new File([$modelStr], "ossfile.txt");
-                    this.upOssFile($file, "shadertree/texturelist/model_" + this.fileid+ "_objs.txt", () => {
+                    this.upOssFile($file, "shadertree/texturelist/model_" + this.fileid + "_objs.txt", () => {
                         console.log("文件上传成功");
                     })
                 }
             }
 
 
-     
+
         }
         private saveRoleToWeb(): void {
-   
+
             if (left.ModelShowModel.getInstance().selectShowDisp instanceof left.MaterialRoleSprite) {
                 var role: left.MaterialRoleSprite = <left.MaterialRoleSprite>left.ModelShowModel.getInstance().selectShowDisp
                 var $roleStr: string = RoleChangeModel.getInstance().getChangeRoleStr();
                 if ($roleStr) {
                     var $file: File = new File([$roleStr], "ossfile.txt");
-                    this.upOssFile($file, "shadertree/texturelist/role_" + this.fileid+ "_str.txt", () => {
+                    this.upOssFile($file, "shadertree/texturelist/role_" + this.fileid + "_str.txt", () => {
                         console.log("文件上传成功");
                     })
                 } else {
@@ -138,27 +264,27 @@
         private upListIcon(): void {
             var ctx: any = Pan3d.Scene_data.canvas3D
 
- 
+
             var gl: WebGLRenderingContext = Pan3d.Scene_data.context3D.renderContext
             var width: number = 256;
             var height: number = 256;
 
 
-           
+
 
             gl.viewport(0, 0, 256, 256);
             gl.clearColor(63 / 255, 63 / 255, 63 / 255, 1.0);
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT);
 
             left.SceneRenderToTextrue.getInstance().resetViewMatrx3D()
-            Scene_data.viewMatrx3D.appendScale(1,-1,1)
+            Scene_data.viewMatrx3D.appendScale(1, -1, 1)
             MathClass.getCamView(Scene_data.cam3D, Scene_data.focus3D); //一定要角色帧渲染后再重置镜头矩阵
             left.ModelShowModel.getInstance().selectShowDisp.update();
-         
+
 
             var arrayBuffer: Uint8Array = new Uint8Array(width * height * 4);
             gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE, arrayBuffer);
-            var clampArray: Uint8ClampedArray= new Uint8ClampedArray(arrayBuffer, 0, arrayBuffer.length);
+            var clampArray: Uint8ClampedArray = new Uint8ClampedArray(arrayBuffer, 0, arrayBuffer.length);
             var imageData: ImageData = new ImageData(clampArray, width, height);
 
 
@@ -168,12 +294,12 @@
             tempCanvas.getContext('2d').putImageData(imageData, 0, 0);
             var $img: HTMLImageElement = this.convertCanvasToImage(tempCanvas);
 
-            var $upfile: File = this.dataURLtoFile($img.src, this.fileid+".jpg");
-            var $newUrl: string =  $upfile.name
+            var $upfile: File = this.dataURLtoFile($img.src, this.fileid + ".jpg");
+            var $newUrl: string = $upfile.name
             filemodel.FileModel.getInstance().upOssFile($upfile, "shadertree/ui/filelist/pic/" + $newUrl, () => {
                 console.log("文件上传成功");
             })
-           
+
         }
         public convertCanvasToImage(canvas): any {
             var image = new Image();
@@ -190,13 +316,13 @@
                 $temp.showType = 1;
             }
             var $file: File = new File([JSON.stringify($temp)], "ossfile.txt");
-            this.upOssFile($file, "shadertree/texturelist/config/" + this.fileid+ ".txt", () => {
+            this.upOssFile($file, "shadertree/texturelist/config/" + this.fileid + ".txt", () => {
                 console.log("文件上传成功", $file.name);
             })
 
 
         }
-       
+
         public upMaterialTreeToWeb($temp: MaterialTree) {
 
             if (this.fileid) {
@@ -210,7 +336,7 @@
                         var $img: any = TextureManager.getInstance().getImgResByurl(Scene_data.fileRoot + $vo.data.url)
                         if ($img) { //新加的图
                             var $upfile: File = this.dataURLtoFile($img.src, $vo.data.url);
-                            var $newUrl: string = "uppic/" + this.fileid+ "/" + $upfile.name
+                            var $newUrl: string = "uppic/" + this.fileid + "/" + $upfile.name
                             filemodel.FileModel.getInstance().upOssFile($upfile, "shadertree/" + $newUrl, () => {
                                 console.log("文件上传成功");
                             })
@@ -223,11 +349,11 @@
                 var $byte: Pan3d.Pan3dByteArray = new Pan3d.Pan3dByteArray();
                 $byte.writeUTF(JSON.stringify({ data: $temp.data }))
                 var $file: File = new File([$byte.buffer], "ossfile.txt");
-               this.upOssFile($file, "shadertree/texturelist/" + this.fileid+ ".txt", () => {
+                this.upOssFile($file, "shadertree/texturelist/" + this.fileid + ".txt", () => {
                     console.log("文件上传成功");
                 })
             } else {
-               // alert("还没有先文件")
+                // alert("还没有先文件")
             }
 
         }
@@ -268,48 +394,10 @@
             $obj.fun = $bfun;
             this.isPostWeboffwx(webname, postStr, $bfun)
         }
-        public static getDisList(): void {
-            FileModel.webseverurl = "https://api.h5key.com/api/";
-            FileModel.WEB_SEVER_EVENT_AND_BACK("get_STS", "id=" + 99, (res: any) => {
-
-                if (res.data.info) {
-                    var client: any = new OSS.Wrapper({
-                        accessKeyId: res.data.info.AccessKeyId,
-                        accessKeySecret: res.data.info.AccessKeySecret,
-                        stsToken: res.data.info.SecurityToken,
-                        endpoint: "https://oss-cn-shanghai.aliyuncs.com",
-                        bucket: "webpan"
-                    });
-
-                    //获取oss文件列表
-                    var nextMarker = "";
-                    var $dir: string="res/"
- 
-                    client.list({
-                        'delimiter': '/',
-                        'prefix': $dir,
-                        'max-keys':1000,
-                        'marker': nextMarker,
-                    }).then(function (result) {
-                        console.log(result);
-                    }).catch(function (err) {
-                        console.log(err);
-               
-                    });
-                 
-
-                
-
-                }
 
 
-        
-            })
 
-
-        }
-        
-        private static webseverurl: string
+        public static webseverurl: string
         //网页模式的WEB请求
         private static isPostWeboffwx(webname: string, postStr: string, $bfun: Function = null) {
             var ajax: XMLHttpRequest = new XMLHttpRequest();
