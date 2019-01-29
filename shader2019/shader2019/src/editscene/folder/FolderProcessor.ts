@@ -10,6 +10,7 @@
     import Scene_data = Pan3d.Scene_data;
     import ModuleEventManager = Pan3d.ModuleEventManager;
     import FileListPanel = filelist.FileListPanel
+    import BaseFolderWindow = basefolderwin.BaseFolderWindow
 
     
 
@@ -40,29 +41,41 @@
             return "FolderProcessor";
         }
         private _folderPanel: FolderPanel
+        private _fff: basefolderwin.BaseFolderWindow
         protected receivedModuleEvent($event: BaseEvent): void {
             if ($event instanceof FolderEvent) {
                 var _folderEvent: FolderEvent = <FolderEvent>$event;
                 if (_folderEvent.type == FolderEvent.SHOW_FOLDER_PANEL) {
+
+                    if (!this._baseFolderWindow) {
+                        this._baseFolderWindow = new BaseFolderWindow()
+                    }
+                    UIManager.getInstance().addUIContainer(this._baseFolderWindow);
+
                     if (!this._folderPanel) {
-                        this._folderPanel = new FolderPanel()
+                        this._folderPanel = new FolderPanel();
                     }
-                    UIManager.getInstance().addUIContainer(this._folderPanel);
-
-
+                   UIManager.getInstance().addUIContainer(this._folderPanel);
                     if (!this._fileListPanel) {
-                        this._fileListPanel = new FileListPanel()
+                        this._fileListPanel = new FileListPanel();
                     }
-                    UIManager.getInstance().addUIContainer(this._fileListPanel);
+                   UIManager.getInstance().addUIContainer(this._fileListPanel);
+
+
+                 
+                   
                 }
                 if (_folderEvent.type == FolderEvent.FILE_LIST_PANEL_CHANG) {
                     this._folderPanel.panelEventChanger(_folderEvent.data)
+                    this._fileListPanel.panelEventChanger(_folderEvent.data)
                 }
+
+              
            
             }
         }
         private _fileListPanel: FileListPanel
-     
+        private _baseFolderWindow: BaseFolderWindow
         protected listenModuleEvents(): Array<BaseEvent> {
             return [
                 new FolderEvent(FolderEvent.SHOW_FOLDER_PANEL),

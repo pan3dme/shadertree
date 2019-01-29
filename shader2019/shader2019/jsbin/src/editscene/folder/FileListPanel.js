@@ -107,13 +107,13 @@ var filelist;
         __extends(FileListPanel, _super);
         function FileListPanel() {
             var _this = _super.call(this, FileListName, new Rectangle(0, 0, 64, 64), 50) || this;
-            _this.left = 600;
             _this._bottomRender = new UIRenderComponent;
             _this.addRender(_this._bottomRender);
             _this.removeRender(_this._baseRender);
             _this.addRender(_this._baseRender);
             _this._topRender = new UIRenderComponent;
             _this.addRender(_this._topRender);
+            _this.pageRect = new Rectangle(0, 0, 500, 350);
             _this.loadAssetImg(function () {
                 _this._bottomRender.uiAtlas = new UIAtlas();
                 _this._bottomRender.uiAtlas.setInfo("ui/folder/folder.txt", "ui/folder/folder.png", function () { _this.loadConfigCom(); });
@@ -164,7 +164,6 @@ var filelist;
         };
         FileListPanel.prototype.loadConfigCom = function () {
             this._topRender.uiAtlas = this._bottomRender.uiAtlas;
-            this.pageRect = new Rectangle(0, 0, 500, 350);
             this.folderMask = new UIMask();
             this.folderMask.level = 1;
             this.addMask(this.folderMask);
@@ -173,7 +172,6 @@ var filelist;
             for (var i = 0; i < this._uiItem.length; i++) {
                 this._uiItem[i].ui.addEventListener(InteractiveEvent.Down, this.mouseDown, this);
                 this._uiItem[i].ui.addEventListener(InteractiveEvent.Up, this.mouseUp, this);
-                console.log(this._uiItem[i].ui.height);
             }
             this.a_bg = this.addEvntBut("a_bg", this._bottomRender);
             this.a_win_tittle = this.addChild(this._topRender.getComponent("a_win_tittle"));
@@ -190,7 +188,19 @@ var filelist;
             this.a_scroll_bar.y = this.folderMask.y;
             this.loadeFileXml();
         };
+        FileListPanel.prototype.panelEventChanger = function (value) {
+            if (this.pageRect) {
+                this.pageRect.height = value.height;
+                this.pageRect.width = value.width - 250;
+                this.left = value.x + 250;
+                this.top = value.y;
+                this.refrishSize();
+            }
+        };
         FileListPanel.prototype.refrishSize = function () {
+            if (!this._topRender.uiAtlas) {
+                return;
+            }
             this.pageRect.width = Math.max(100, this.pageRect.width);
             this.pageRect.height = Math.max(100, this.pageRect.height);
             this.a_win_tittle.x = 0;
@@ -215,6 +225,7 @@ var filelist;
             this.a_scroll_bar.x = this.folderMask.x + this.folderMask.width - this.a_scroll_bar.width;
             this.resetSampleFilePos();
             this.resize();
+            this.setUiListVisibleByItem([this.a_right_bottom, this.a_bottom_line, this.a_bg, this.a_rigth_line, this.a_win_tittle], this.canMoveTittle);
         };
         FileListPanel.prototype.resetSampleFilePos = function () {
             var w = Math.round(this.pageRect.width / 100);

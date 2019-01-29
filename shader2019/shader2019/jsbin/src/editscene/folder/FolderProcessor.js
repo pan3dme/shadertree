@@ -18,6 +18,7 @@ var folder;
     var BaseProcessor = Pan3d.BaseProcessor;
     var UIManager = Pan3d.UIManager;
     var FileListPanel = filelist.FileListPanel;
+    var BaseFolderWindow = basefolderwin.BaseFolderWindow;
     var FolderEvent = /** @class */ (function (_super) {
         __extends(FolderEvent, _super);
         function FolderEvent() {
@@ -54,6 +55,10 @@ var folder;
             if ($event instanceof FolderEvent) {
                 var _folderEvent = $event;
                 if (_folderEvent.type == FolderEvent.SHOW_FOLDER_PANEL) {
+                    if (!this._baseFolderWindow) {
+                        this._baseFolderWindow = new BaseFolderWindow();
+                    }
+                    UIManager.getInstance().addUIContainer(this._baseFolderWindow);
                     if (!this._folderPanel) {
                         this._folderPanel = new folder.FolderPanel();
                     }
@@ -65,6 +70,7 @@ var folder;
                 }
                 if (_folderEvent.type == FolderEvent.FILE_LIST_PANEL_CHANG) {
                     this._folderPanel.panelEventChanger(_folderEvent.data);
+                    this._fileListPanel.panelEventChanger(_folderEvent.data);
                 }
             }
         };

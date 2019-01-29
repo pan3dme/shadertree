@@ -199,9 +199,7 @@
             this.addRender(this._topRender);
 
 
-            Pan3d.TimeUtil.addTimeOut(1000, () => {
-               
-            })
+            this.pageRect = new Rectangle(0, 0, 200, 200)
 
             this.loadAssetImg(() => {
 
@@ -254,13 +252,21 @@
             super.update(t);
 
         }
-        public panelEventChanger(value: Dis2DUIContianerPanel): void {
-            if (value != this) {
-                this.top = value.top;
-
+        public panelEventChanger(value: Pan3d.Rectangle): void {
+        
+            if (this.pageRect) {
+                this.pageRect.width = 250;
+                this.pageRect.height = value.height ;
+                this.left = value.x;
+                this.top = value.y;
+                this.refrishSize();
+      
             }
+          
+
 
         }
+
 
         protected mouseDown(evt: InteractiveEvent): void {
             this.mouseIsDown = true
@@ -296,7 +302,7 @@
         }
         protected loadConfigCom(): void {
             this._topRender.uiAtlas = this._bottomRender.uiAtlas
-            this.pageRect = new Rectangle(0, 0, 200, 200)
+         
             this.folderMask = new UIMask();
 
             this.folderMask.level = 1;
@@ -329,11 +335,12 @@
             this.a_scroll_bar = this.addChild(<UICompenent>this._topRender.getComponent("a_scroll_bar"));
             this.a_scroll_bar.addEventListener(InteractiveEvent.Down, this.tittleMouseDown, this);
 
-
-
-
-            this.refrishSize()
             this.a_scroll_bar.y = this.folderMask.y;
+
+            this.setUiListVisibleByItem([this.a_bottom_line, this.a_right_bottom, this.a_bg, this.a_win_tittle], this.canMoveTittle)
+   
+            this.refrishSize()
+
 
             this.loadeFileXml()
 
@@ -347,6 +354,10 @@
         private a_rigth_line: UICompenent;
         private refrishSize(): void {
 
+            if (!this._topRender.uiAtlas) {
+                return
+            }
+ 
             this.pageRect.width = Math.max(100, this.pageRect.width)
             this.pageRect.height = Math.max(100, this.pageRect.height)
 
@@ -389,7 +400,9 @@
         private lastMousePos: Vector2D;
         private mouseMoveTaget: UICompenent
         private pageRect: Rectangle
+        private canMoveTittle: boolean
         protected tittleMouseDown(evt: InteractiveEvent): void {
+        
             this.mouseMoveTaget = evt.target
 
             this.lastMousePos = new Vector2D(evt.x, evt.y)

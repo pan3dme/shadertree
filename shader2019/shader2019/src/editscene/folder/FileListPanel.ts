@@ -127,7 +127,7 @@
         public static imgBaseDic: any
         public constructor() {
             super(FileListName, new Rectangle(0, 0, 64, 64), 50);
-            this.left = 600;
+          
 
             this._bottomRender = new UIRenderComponent;
             this.addRender(this._bottomRender);
@@ -136,7 +136,7 @@
             this._topRender = new UIRenderComponent;
             this.addRender(this._topRender);
 
-
+            this.pageRect = new Rectangle(0, 0, 500, 350)
 
             this.loadAssetImg(() => {
 
@@ -208,8 +208,9 @@
 
         }
         protected loadConfigCom(): void {
+          
             this._topRender.uiAtlas = this._bottomRender.uiAtlas
-            this.pageRect = new Rectangle(0, 0, 500, 350)
+     
             this.folderMask = new UIMask();
 
             this.folderMask.level = 1;
@@ -222,7 +223,7 @@
                 this._uiItem[i].ui.addEventListener(InteractiveEvent.Down, this.mouseDown, this);
                 this._uiItem[i].ui.addEventListener(InteractiveEvent.Up, this.mouseUp, this);
 
-                console.log(this._uiItem[i].ui.height)
+ 
             }
 
             this.a_bg = this.addEvntBut("a_bg", this._bottomRender);
@@ -254,6 +255,19 @@
             this.loadeFileXml()
 
         }
+        public panelEventChanger(value: Pan3d.Rectangle): void {
+
+            if (this.pageRect) {
+                this.pageRect.height = value.height ;
+                this.pageRect.width = value.width - 250;
+                this.left = value.x+250
+                this.top = value.y ;
+                this.refrishSize();
+            }
+ 
+
+        }
+
         private a_scroll_bar: UICompenent
         private a_bottom_line: UICompenent
 
@@ -262,6 +276,10 @@
         private a_right_bottom: UICompenent;
         private a_rigth_line: UICompenent;
         private refrishSize(): void {
+
+            if (!this._topRender.uiAtlas) {
+                return
+            }
 
             this.pageRect.width = Math.max(100, this.pageRect.width)
             this.pageRect.height = Math.max(100, this.pageRect.height)
@@ -300,6 +318,7 @@
             this.resetSampleFilePos()
             this.resize();
 
+            this.setUiListVisibleByItem([this.a_right_bottom, this.a_bottom_line, this.a_bg,this.a_rigth_line, this.a_win_tittle], this.canMoveTittle)
    
  
         }
@@ -340,7 +359,9 @@
         private lastMousePos: Vector2D;
         private mouseMoveTaget: UICompenent
         private pageRect: Rectangle
+        private canMoveTittle: boolean
         protected tittleMouseDown(evt: InteractiveEvent): void {
+           
             this.mouseMoveTaget = evt.target
 
             this.lastMousePos = new Vector2D(evt.x, evt.y)

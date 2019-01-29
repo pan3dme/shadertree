@@ -178,8 +178,7 @@ var folder;
             _this.addRender(_this._baseRender);
             _this._topRender = new UIRenderComponent;
             _this.addRender(_this._topRender);
-            Pan3d.TimeUtil.addTimeOut(1000, function () {
-            });
+            _this.pageRect = new Rectangle(0, 0, 200, 200);
             _this.loadAssetImg(function () {
                 _this._bottomRender.uiAtlas = new UIAtlas();
                 _this._bottomRender.uiAtlas.setInfo("ui/folder/folder.txt", "ui/folder/folder.png", function () { _this.loadConfigCom(); });
@@ -217,8 +216,12 @@ var folder;
             _super.prototype.update.call(this, t);
         };
         FolderPanel.prototype.panelEventChanger = function (value) {
-            if (value != this) {
-                this.top = value.top;
+            if (this.pageRect) {
+                this.pageRect.width = 250;
+                this.pageRect.height = value.height;
+                this.left = value.x;
+                this.top = value.y;
+                this.refrishSize();
             }
         };
         FolderPanel.prototype.mouseDown = function (evt) {
@@ -250,7 +253,6 @@ var folder;
         };
         FolderPanel.prototype.loadConfigCom = function () {
             this._topRender.uiAtlas = this._bottomRender.uiAtlas;
-            this.pageRect = new Rectangle(0, 0, 200, 200);
             this.folderMask = new UIMask();
             this.folderMask.level = 1;
             this.addMask(this.folderMask);
@@ -271,11 +273,15 @@ var folder;
             this.a_right_bottom.addEventListener(InteractiveEvent.Down, this.tittleMouseDown, this);
             this.a_scroll_bar = this.addChild(this._topRender.getComponent("a_scroll_bar"));
             this.a_scroll_bar.addEventListener(InteractiveEvent.Down, this.tittleMouseDown, this);
-            this.refrishSize();
             this.a_scroll_bar.y = this.folderMask.y;
+            this.setUiListVisibleByItem([this.a_bottom_line, this.a_right_bottom, this.a_bg, this.a_win_tittle], this.canMoveTittle);
+            this.refrishSize();
             this.loadeFileXml();
         };
         FolderPanel.prototype.refrishSize = function () {
+            if (!this._topRender.uiAtlas) {
+                return;
+            }
             this.pageRect.width = Math.max(100, this.pageRect.width);
             this.pageRect.height = Math.max(100, this.pageRect.height);
             this.a_win_tittle.x = 0;
