@@ -268,6 +268,47 @@
             $obj.fun = $bfun;
             this.isPostWeboffwx(webname, postStr, $bfun)
         }
+        public static getDisList(): void {
+            FileModel.webseverurl = "https://api.h5key.com/api/";
+            FileModel.WEB_SEVER_EVENT_AND_BACK("get_STS", "id=" + 99, (res: any) => {
+
+                if (res.data.info) {
+                    var client: any = new OSS.Wrapper({
+                        accessKeyId: res.data.info.AccessKeyId,
+                        accessKeySecret: res.data.info.AccessKeySecret,
+                        stsToken: res.data.info.SecurityToken,
+                        endpoint: "https://oss-cn-shanghai.aliyuncs.com",
+                        bucket: "webpan"
+                    });
+
+                    //获取oss文件列表
+                    var nextMarker = "";
+                    var $dir: string="res/"
+ 
+                    client.list({
+                        'delimiter': '/',
+                        'prefix': $dir,
+                        'max-keys':1000,
+                        'marker': nextMarker,
+                    }).then(function (result) {
+                        console.log(result);
+                    }).catch(function (err) {
+                        console.log(err);
+               
+                    });
+                 
+
+                
+
+                }
+
+
+        
+            })
+
+
+        }
+        
         private static webseverurl: string
         //网页模式的WEB请求
         private static isPostWeboffwx(webname: string, postStr: string, $bfun: Function = null) {
