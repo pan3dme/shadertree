@@ -25,7 +25,8 @@
                 var str: string = value.name
                 var $arr: Array<string> = str.split("/");
                 vo.name = $arr[$arr.length - 1]
-                vo.path = str;
+
+                vo.path = str.replace("upfile/shadertree/","");
                 vo.suffix=   vo.name.split(".")[1]
               //  console.log(vo.name, vo.path)
                 return vo
@@ -40,6 +41,7 @@
         private static oneByOne(): void {
             if (this.waitItem.length > 0) {
                 var $dir: string = this.waitItem[0].a;//目录
+
                 var kFun: Function = this.waitItem[0].b; //返回
                 var nextMarker = "";
                 this.ossWrapper.list({

@@ -1,4 +1,4 @@
-﻿module folder {
+﻿module ossfolder {
     import UICompenent = Pan3d.UICompenent
     import FrameCompenent = Pan3d.FrameCompenent
     import UIRenderComponent = Pan3d.UIRenderComponent
@@ -17,7 +17,9 @@
     import UiDraw = Pan3d.UiDraw
     import UIData = Pan3d.UIData
     import UIAtlas = Pan3d.UIAtlas
-
+    import FileVo = filemodel.FileVo
+    import SampleFileVo = filelist.SampleFileVo
+    
 
     export class FileXmlVo {
         public id: number
@@ -136,24 +138,24 @@
                 var $uiRec: UIRectangle = this.parent.uiAtlas.getRec(this.textureStr);
                 this.parent.uiAtlas.ctx = UIManager.getInstance().getContext2D($uiRec.pixelWitdh, $uiRec.pixelHeight, false);
 
-       
-                this.parent.uiAtlas.ctx.clearRect(0, 1, $uiRec.pixelWitdh, $uiRec.pixelHeight );
+
+                this.parent.uiAtlas.ctx.clearRect(0, 1, $uiRec.pixelWitdh, $uiRec.pixelHeight);
 
 
-                LabelTextFont.writeSingleLabelToCtx(this.parent.uiAtlas.ctx, "[9c9c9c]"+ this.folderMeshVo.fileXmlVo.name, 12, 35, 5, TextAlign.LEFT)
- 
+                LabelTextFont.writeSingleLabelToCtx(this.parent.uiAtlas.ctx, "[9c9c9c]" + this.folderMeshVo.fileXmlVo.name, 12, 35, 5, TextAlign.LEFT)
 
-          
-                    if (this.folderMeshVo.fileXmlVo.isOpen) {
-                        this.parent.uiAtlas.ctx.drawImage(FolderPanel.imgBaseDic["icon_PanRight"], 2, 5, 10, 10)
 
-                        this.parent.uiAtlas.ctx.drawImage(FolderPanel.imgBaseDic["icon_FolderOpen_dark"], 15, 2, 18, 16)
-                    } else {
-                        this.parent.uiAtlas.ctx.drawImage(FolderPanel.imgBaseDic["icon_PanUp"], 3, 5, 10, 10)
 
-                        this.parent.uiAtlas.ctx.drawImage(FolderPanel.imgBaseDic["icon_FolderClosed_dark"], 15, 2, 18, 16)
-                    }
- 
+                if (this.folderMeshVo.fileXmlVo.isOpen) {
+                    this.parent.uiAtlas.ctx.drawImage(OssFolderPanel.imgBaseDic["icon_PanRight"], 2, 5, 10, 10)
+
+                    this.parent.uiAtlas.ctx.drawImage(OssFolderPanel.imgBaseDic["icon_FolderOpen_dark"], 15, 2, 18, 16)
+                } else {
+                    this.parent.uiAtlas.ctx.drawImage(OssFolderPanel.imgBaseDic["icon_PanUp"], 3, 5, 10, 10)
+
+                    this.parent.uiAtlas.ctx.drawImage(OssFolderPanel.imgBaseDic["icon_FolderClosed_dark"], 15, 2, 18, 16)
+                }
+
 
                 TextureManager.getInstance().updateTexture(this.parent.uiAtlas.texture, $uiRec.pixelX, $uiRec.pixelY, this.parent.uiAtlas.ctx);
 
@@ -184,7 +186,7 @@
         }
     }
 
-    export class FolderPanel extends Dis2DUIContianerPanel {
+    export class OssFolderPanel extends Dis2DUIContianerPanel {
 
         public static imgBaseDic: any
         public constructor() {
@@ -212,13 +214,13 @@
 
         }
         private loadAssetImg(bfun: Function): void {
-            FolderPanel.imgBaseDic = {};
+            OssFolderPanel.imgBaseDic = {};
             var item: Array<string> = [];
             item.push("icon_FolderClosed_dark");
             item.push("icon_FolderOpen_dark");
             item.push("icon_PanRight");
             item.push("icon_PanUp");
-            
+
 
             var finishNum: number = 0
             for (var i: number = 0; i < item.length; i++) {
@@ -231,11 +233,11 @@
                 });
             }
         }
-  
-        private loadTempOne(name: string, bfun: Function): void { 
-  
+
+        private loadTempOne(name: string, bfun: Function): void {
+
             var tempImg = makeImage()
-            FolderPanel.imgBaseDic[name] = tempImg;
+            OssFolderPanel.imgBaseDic[name] = tempImg;
             tempImg.onload = () => {
                 bfun();
             }
@@ -254,7 +256,7 @@
         }
         public panelEventChanger(value: Pan3d.Rectangle): void {
             if (this.pageRect) {
-                this.pageRect.height = value.height ;
+                this.pageRect.height = value.height;
                 this.left = value.x;
                 this.top = value.y;
                 this.refrishSize();
@@ -288,7 +290,7 @@
                             $vo.folderMeshVo.needDraw = true
                             console.log("显示文件夹内容", $vo.folderMeshVo.fileXmlVo)
                         }
-          
+
 
                     }
                 }
@@ -299,7 +301,7 @@
         }
         protected loadConfigCom(): void {
             this._topRender.uiAtlas = this._bottomRender.uiAtlas
-         
+
             this.folderMask = new UIMask();
 
             this.folderMask.level = 1;
@@ -335,11 +337,11 @@
             this.a_scroll_bar.y = this.folderMask.y;
 
             this.setUiListVisibleByItem([this.a_bottom_line, this.a_right_bottom, this.a_bg, this.a_win_tittle], this.canMoveTittle)
-   
+
             this.refrishSize()
 
 
-            this.loadeFileXml()
+            this.loadeFileXml("upfile/shadertree/")
 
         }
         private a_scroll_bar: UICompenent
@@ -354,7 +356,7 @@
             if (!this._topRender.uiAtlas) {
                 return
             }
- 
+
             this.pageRect.width = Math.max(100, this.pageRect.width)
             this.pageRect.height = Math.max(100, this.pageRect.height)
 
@@ -399,7 +401,7 @@
         private pageRect: Rectangle
         private canMoveTittle: boolean
         protected tittleMouseDown(evt: InteractiveEvent): void {
-        
+
             this.mouseMoveTaget = evt.target
 
             this.lastMousePos = new Vector2D(evt.x, evt.y)
@@ -474,17 +476,20 @@
         private a_bg: UICompenent;
         private a_win_tittle: UICompenent;
 
-        private loadeFileXml(): void {
-          
-            LoadManager.getInstance().load(Scene_data.fileuiRoot + "folder.txt", LoadManager.XML_TYPE,
-                ($xmlStr: string) => {
-                    FileXmlVo.makeBaseXml($xmlStr);
-                    this.refrishFolder()
-                });
+        private loadeFileXml(pathstr: string): void {
 
-            
+       
 
-         
+            filemodel.FolderModel.getFolderArr(pathstr, (value: Array<FileVo>) => {
+                for (var i: number = 0; i < value.length; i++) {
+                    if (value[i].isFolder) {
+                        console.log(value[i])
+                    }
+                }
+            })
+
+
+
         }
         private fileItem: Array<FolderMeshVo>;
         public getCharNameMeshVo(value: FileXmlVo): FolderMeshVo {
@@ -506,10 +511,10 @@
             this.refrishFoldeUiPos();
         }
         private refrishFoldeUiPos(): void {
-            FolderPanel.tySkip = 1;
+            OssFolderPanel.tySkip = 1;
             this.mathFileCellHeight(0);
 
-            var contentH: number = FolderPanel.tySkip * this.folderCellHeight;
+            var contentH: number = OssFolderPanel.tySkip * this.folderCellHeight;
             var moveTy: number = 0
             if (contentH > this.folderMask.height) {
                 this.setUiListVisibleByItem([this.a_scroll_bar], true);
@@ -552,8 +557,8 @@
             if (this.isOpenByID(id)) {
                 for (var i: number = 0; i < this.fileItem.length; i++) {
                     if (this.fileItem[i].fileXmlVo.perent == id) {
-                        this.fileItem[i].ty = FolderPanel.tySkip;
-                        FolderPanel.tySkip++
+                        this.fileItem[i].ty = OssFolderPanel.tySkip;
+                        OssFolderPanel.tySkip++
                         this.mathFileCellHeight(this.fileItem[i].fileXmlVo.id);
                     }
                 }

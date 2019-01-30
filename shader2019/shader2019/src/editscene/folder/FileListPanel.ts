@@ -18,26 +18,16 @@
     import UIData = Pan3d.UIData
     import UIAtlas = Pan3d.UIAtlas
 
+    import FileVo = filemodel.FileVo
+
 
     export class SampleFileVo {
         public id: number
-        public name: string
+ 
         public perent: number;
+        public data: FileVo
  
- 
-        public static makeBaseXml(value: string): void {
-            var obj: any = JSON.parse(value);
-            this.item = new Array;
-            for (var i: number = 0; i < obj.list.length; i++) {
-                var vo: SampleFileVo = new SampleFileVo();
-                vo.id = obj.list[i].id;
-                vo.name = obj.list[i].name;
-                vo.perent = obj.list[i].perent;
-                this.item.push(vo)
-            }
-
-        }
-        private static item: Array<SampleFileVo>
+  
  
  
       
@@ -75,30 +65,36 @@
         public makeData(): void {
             this.fileListMeshVo = this.data;
             if (this.fileListMeshVo) {
+                var fileVo: FileVo = this.fileListMeshVo.fileXmlVo.data;
+                switch (fileVo.suffix) {
+                    case "jpg":
+                    case "png":
+                        LoadManager.getInstance().load(Scene_data.fileRoot + fileVo.path, LoadManager.IMG_TYPE,
+                            ($img: any) => {
+                                this.drawFileIconName($img, fileVo.name)
+                            });
+
+                        break
+                    default:
+                        this.drawFileIconName(FileListPanel.imgBaseDic["icon_Folder_64x"], fileVo.name)
+                        break
 
 
-
-
-                var $uiRec: UIRectangle = this.parent.uiAtlas.getRec(this.textureStr);
-                this.parent.uiAtlas.ctx = UIManager.getInstance().getContext2D($uiRec.pixelWitdh, $uiRec.pixelHeight, false);
-
-
-                this.parent.uiAtlas.ctx.clearRect(0, 1, $uiRec.pixelWitdh, $uiRec.pixelHeight);
-
-
-            
-
-                this.parent.uiAtlas.ctx.drawImage(FileListPanel.imgBaseDic["icon_Folder_64x"], 7, 0, 50, 50)
-
-                LabelTextFont.writeSingleLabelToCtx(this.parent.uiAtlas.ctx, "[9c9c9c]" + this.fileListMeshVo.fileXmlVo.name, 12, 0, 50, TextAlign.CENTER)
-
-
-                TextureManager.getInstance().updateTexture(this.parent.uiAtlas.texture, $uiRec.pixelX, $uiRec.pixelY, this.parent.uiAtlas.ctx);
-
-
+                }
 
 
             }
+        }
+        private drawFileIconName($img: any, name: string): void {
+            var $uiRec: UIRectangle = this.parent.uiAtlas.getRec(this.textureStr);
+            this.parent.uiAtlas.ctx = UIManager.getInstance().getContext2D($uiRec.pixelWitdh, $uiRec.pixelHeight, false);
+            this.parent.uiAtlas.ctx.clearRect(0, 1, $uiRec.pixelWitdh, $uiRec.pixelHeight);
+
+
+            this.parent.uiAtlas.ctx.drawImage($img, 7, 0, 50, 50)
+
+            LabelTextFont.writeSingleLabelToCtx(this.parent.uiAtlas.ctx, "[9c9c9c]" + name, 12, 0, 50, TextAlign.CENTER)
+            TextureManager.getInstance().updateTexture(this.parent.uiAtlas.texture, $uiRec.pixelX, $uiRec.pixelY, this.parent.uiAtlas.ctx);
         }
 
 
@@ -202,10 +198,53 @@
         protected mouseUp(evt: InteractiveEvent): void {
             Scene_data.uiStage.removeEventListener(InteractiveEvent.Move, this.stageMouseMove, this);
             if (this.mouseIsDown) {
-          
+
+      
+                var vo: FileListName = this.getItemVoByUi(evt.target)
+           
+                if (vo && vo.fileListMeshVo.fileXmlVo.data.isFolder) {
+                    console.log(vo.fileListMeshVo.fileXmlVo.data.path)
+
+                    this.refrishPath(vo.fileListMeshVo.fileXmlVo.data.path)
+
+                }
 
             }
 
+        }
+        //移除不显示的对象
+        private clearListAll( ): void {
+            while (this.fileItem.length) {
+                var vo: FileListMeshVo = this.fileItem.pop()
+                vo.destory()
+            }
+        }
+        private refrishPath(pathstr: string): void {
+            this.clearListAll()
+            filemodel.FolderModel.getFolderArr(pathstr, (value: Array<FileVo>) => {
+                for (var i: number = 0; i < value.length; i++) {
+                    var sampleFile: SampleFileVo = new SampleFileVo;
+                    sampleFile.id = i;
+                    sampleFile.data = value[i]
+                    var $vo: FileListMeshVo = this.getCharNameMeshVo(sampleFile);
+                    $vo.pos = new Vector3D(i * 64, 40, 0);
+                    this.fileItem.push($vo);
+                }
+            })
+            this.resetSampleFilePos()
+        }
+        private getItemVoByUi(ui: UICompenent): FileListName {
+            for (var i: number = 0; i < this._uiItem.length; i++) {
+                var $vo: FileListName = <FileListName>this._uiItem[i]
+                if ($vo.ui == ui) {
+
+                    return $vo
+                }
+            
+                
+
+            }
+            return null
         }
         protected loadConfigCom(): void {
           
@@ -252,7 +291,7 @@
             this.refrishSize()
             this.a_scroll_bar.y = this.folderMask.y;
 
-            this.loadeFileXml()
+            this.refrishPath("upfile/shadertree/");
 
         }
         public panelEventChanger(value: Pan3d.Rectangle): void {
@@ -433,24 +472,7 @@
         private a_bg: UICompenent;
         private a_win_tittle: UICompenent;
 
-        private loadeFileXml(): void {
-
-
-
-            for (var i: number = 0; i < 15; i++) {
-
-                var sampleFile: SampleFileVo = new SampleFileVo;
-                sampleFile.id = i;
-                sampleFile.name="id_"+i
-
-                var $vo: FileListMeshVo = this.getCharNameMeshVo(sampleFile);
-                $vo.pos = new Vector3D(i*64, 40, 0);
-                this.fileItem.push($vo);
-            }
-
-
-            this.resetSampleFilePos()
-        }
+    
         private fileItem: Array<FileListMeshVo>
         private refrishFile(): void {
 
