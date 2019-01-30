@@ -166,9 +166,12 @@
             super.update(t);
 
         }
-        public panelEventChanger(value: Pan3d.Rectangle): void {
+        private perentRect: Rectangle
+        public panelEventChanger(value: Rectangle): void {
+            this.perentRect = value;
             if (this.pageRect) {
                 this.pageRect.height = value.height;
+                this.pageRect.width = Math.min(this.pageRect.width, value.width - 200)
                 this.left = value.x;
                 this.top = value.y;
                 this.refrishSize();
@@ -428,6 +431,8 @@
                     break
                 case this.a_rigth_line:
                     this.pageRect.width = this.lastPagePos.x + (evt.x - this.lastMousePos.x)
+                    
+
 
                     break
                 case this.a_bottom_line:
@@ -454,8 +459,15 @@
                     break
 
             }
+         
+                this.pageRect.width = Math.min(this.pageRect.width, this.perentRect.width-200)
+          
+
             this.refrishSize()
 
+         
+            Pan3d.ModuleEventManager.dispatchEvent(new folder.FolderEvent(folder.FolderEvent.FILE_LIST_PANEL_CHANG), this.perentRect);
+        
         }
         private a_bg: UICompenent;
         private a_win_tittle: UICompenent;

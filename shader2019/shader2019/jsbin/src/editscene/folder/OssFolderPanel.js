@@ -142,8 +142,10 @@ var ossfolder;
             _super.prototype.update.call(this, t);
         };
         OssFolderPanel.prototype.panelEventChanger = function (value) {
+            this.perentRect = value;
             if (this.pageRect) {
                 this.pageRect.height = value.height;
+                this.pageRect.width = Math.min(this.pageRect.width, value.width - 200);
                 this.left = value.x;
                 this.top = value.y;
                 this.refrishSize();
@@ -348,7 +350,9 @@ var ossfolder;
                     console.log("nonono");
                     break;
             }
+            this.pageRect.width = Math.min(this.pageRect.width, this.perentRect.width - 200);
             this.refrishSize();
+            Pan3d.ModuleEventManager.dispatchEvent(new folder.FolderEvent(folder.FolderEvent.FILE_LIST_PANEL_CHANG), this.perentRect);
         };
         OssFolderPanel.prototype.getCharNameMeshVo = function (value) {
             var $vo = new FolderMeshVo;

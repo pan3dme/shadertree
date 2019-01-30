@@ -8,7 +8,11 @@ var Pan3d;
                 ModuleEventManager._instance.addEventListener(ary[i].type, $fun, $thisObj);
             }
         };
-        ModuleEventManager.dispatchEvent = function ($event) {
+        ModuleEventManager.dispatchEvent = function ($event, $data) {
+            if ($data === void 0) { $data = null; }
+            if ($data) {
+                $event.data = $data;
+            }
             ModuleEventManager._instance.dispatchEvent($event);
         };
         ModuleEventManager._instance = new Pan3d.EventDispatcher();

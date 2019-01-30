@@ -241,7 +241,7 @@ var filelist;
             if (!this._topRender.uiAtlas) {
                 return;
             }
-            this.pageRect.width = Math.max(100, this.pageRect.width);
+            this.pageRect.width = Math.max(200, this.pageRect.width);
             this.pageRect.height = Math.max(100, this.pageRect.height);
             this.a_win_tittle.x = 0;
             this.a_win_tittle.y = 0;

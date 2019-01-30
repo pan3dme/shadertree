@@ -9,7 +9,10 @@
 
         }
 
-        public static dispatchEvent($event: BaseEvent): void {
+        public static dispatchEvent($event: BaseEvent, $data: any = null): void {
+            if ($data) {
+                $event.data = $data
+            }
             ModuleEventManager._instance.dispatchEvent($event);
         }
 

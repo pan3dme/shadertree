@@ -13,12 +13,12 @@
     import BaseFolderWindow = basefolderwin.BaseFolderWindow
     import OssFolderPanel = ossfolder.OssFolderPanel;
 
-    
+
 
     export class FolderEvent extends BaseEvent {
-        public static SHOW_FOLDER_PANEL: string = "SHOW_FOLDER_PANEL"; 
+        public static SHOW_FOLDER_PANEL: string = "SHOW_FOLDER_PANEL";
 
-        public static FILE_LIST_PANEL_CHANG: string = "FILE_LIST_PANEL_CHANG"; 
+        public static FILE_LIST_PANEL_CHANG: string = "FILE_LIST_PANEL_CHANG";
 
         public data: any
 
@@ -48,47 +48,37 @@
                 var _folderEvent: FolderEvent = <FolderEvent>$event;
                 if (_folderEvent.type == FolderEvent.SHOW_FOLDER_PANEL) {
 
-                   
                     if (!this._baseFolderWindow) {
                         this._baseFolderWindow = new BaseFolderWindow()
                     }
-                     UIManager.getInstance().addUIContainer(this._baseFolderWindow);
-
+                    UIManager.getInstance().addUIContainer(this._baseFolderWindow);
                     if (!this._folderPanel) {
                         this._folderPanel = new OssFolderPanel();
                     }
-                   UIManager.getInstance().addUIContainer(this._folderPanel);
+                    UIManager.getInstance().addUIContainer(this._folderPanel);
                     if (!this._fileListPanel) {
                         this._fileListPanel = new FileListPanel();
                     }
-                   UIManager.getInstance().addUIContainer(this._fileListPanel);
-
-                    
-                    filemodel.FolderModel.getFolderArr("upfile/shadertree/", (value: any) => {
-                     //  console.log(value)
-                    })
-                    console.log("-------")
-                    //filemodel.FolderModel.getFolderArr("res/base/", (value: any) => {
-                    //    console.log(value)
-                    //})
-             
+                    UIManager.getInstance().addUIContainer(this._fileListPanel);
                 }
                 if (_folderEvent.type == FolderEvent.FILE_LIST_PANEL_CHANG) {
-                    var base: Pan3d.Rectangle = _folderEvent.data
+                    var base: Pan3d.Rectangle = _folderEvent.data;
+
                     this._folderPanel.panelEventChanger(new Pan3d.Rectangle(base.x, base.y, base.width, base.height));
                     var leftw: number = this._folderPanel.getPageRect().width;
                     this._fileListPanel.panelEventChanger(new Pan3d.Rectangle(base.x + leftw, base.y, base.width - leftw, base.height));
                 }
             }
         }
- 
+        
+
         private _fileListPanel: FileListPanel
         private _baseFolderWindow: BaseFolderWindow
         protected listenModuleEvents(): Array<BaseEvent> {
             return [
                 new FolderEvent(FolderEvent.SHOW_FOLDER_PANEL),
                 new FolderEvent(FolderEvent.FILE_LIST_PANEL_CHANG),
- 
+
             ];
         }
     }

@@ -68,13 +68,6 @@ var folder;
                         this._fileListPanel = new FileListPanel();
                     }
                     UIManager.getInstance().addUIContainer(this._fileListPanel);
-                    filemodel.FolderModel.getFolderArr("upfile/shadertree/", function (value) {
-                        //  console.log(value)
-                    });
-                    console.log("-------");
-                    //filemodel.FolderModel.getFolderArr("res/base/", (value: any) => {
-                    //    console.log(value)
-                    //})
                 }
                 if (_folderEvent.type == FolderEvent.FILE_LIST_PANEL_CHANG) {
                     var base = _folderEvent.data;
