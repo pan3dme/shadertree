@@ -52,7 +52,7 @@
                     if (!this._baseFolderWindow) {
                         this._baseFolderWindow = new BaseFolderWindow()
                     }
-                //    UIManager.getInstance().addUIContainer(this._baseFolderWindow);
+                     UIManager.getInstance().addUIContainer(this._baseFolderWindow);
 
                     if (!this._folderPanel) {
                         this._folderPanel = new OssFolderPanel();
@@ -61,7 +61,7 @@
                     if (!this._fileListPanel) {
                         this._fileListPanel = new FileListPanel();
                     }
-               //     UIManager.getInstance().addUIContainer(this._fileListPanel);
+                   UIManager.getInstance().addUIContainer(this._fileListPanel);
 
                     
                     filemodel.FolderModel.getFolderArr("upfile/shadertree/", (value: any) => {
@@ -74,10 +74,10 @@
              
                 }
                 if (_folderEvent.type == FolderEvent.FILE_LIST_PANEL_CHANG) {
-                //    var base: Pan3d.Rectangle = _folderEvent.data
-                 //   this._folderPanel.panelEventChanger(new Pan3d.Rectangle(base.x, base.y, base.width, base.height));
-                //    var leftw: number = this._folderPanel.getPageRect().width;
-                 //   this._fileListPanel.panelEventChanger(new Pan3d.Rectangle(base.x + leftw, base.y, base.width - leftw, base.height));
+                    var base: Pan3d.Rectangle = _folderEvent.data
+                    this._folderPanel.panelEventChanger(new Pan3d.Rectangle(base.x, base.y, base.width, base.height));
+                    var leftw: number = this._folderPanel.getPageRect().width;
+                    this._fileListPanel.panelEventChanger(new Pan3d.Rectangle(base.x + leftw, base.y, base.width - leftw, base.height));
                 }
             }
         }

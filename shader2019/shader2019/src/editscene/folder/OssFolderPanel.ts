@@ -21,105 +21,26 @@
     import SampleFileVo = filelist.SampleFileVo
     
 
-    export class FileXmlVo {
-        public id: number
-        public name: string
-        public perent: number;
+    export class OssListFile {
         public isOpen: boolean;
-
-        public static makeBaseXml(value: string): void {
-            var obj: any = JSON.parse(value);
-            this.item = new Array;
-            for (var i: number = 0; i < obj.list.length; i++) {
-                var vo: FileXmlVo = new FileXmlVo();
-                vo.id = obj.list[i].id;
-                vo.name = obj.list[i].name;
-                vo.perent = obj.list[i].perent;
-                vo.isOpen = false;
-                this.item.push(vo)
-            }
-
-        }
-        private static item: Array<FileXmlVo>
-        //获取所有打开可显示的列表
-        public static getListItem(value: number): Array<FileXmlVo> {
-            var arr: Array<FileXmlVo> = new Array;
-            for (var i: number = 0; i < this.item.length; i++) {
-                if (this.isShow(this.item[i])) {
-                    arr.push(this.item[i]);
-                }
-            }
-            return arr
-        }
-        //通过ID获取对应的层级
-        public static getFileSonLayer(value: number): number {
-            var num: number = 0;
-            for (var i: number = 0; i < this.item.length; i++) {
-                if (this.item[i].id == value) {
-                    if (this.item[i].perent != -1) {
-                        num++
-                        num += this.getFileSonLayer(this.item[i].perent)
-                    }
-
-                }
-            }
-
-            return num
-        }
-        public static getFileCellHeight(id: number): number {
-            var num: number = 1
-            for (var i: number = 0; i < this.item.length; i++) {
-                if (this.item[i].perent == id) {
-                    if (this.item[i].isOpen) {
-                        num += this.getFileCellHeight(this.item[i].id);
-                    } else {
-                        num += 1;
-                    }
-
-                }
-            }
-            return num
-        }
-        //判断是否在显示列表中
-        private static isShow(vo: FileXmlVo): boolean {
-            if (vo.perent == -1) { //根目录
-                return true;
-            }
-            for (var i: number = 0; i < this.item.length; i++) {
-                if (this.item[i].id == vo.perent) {
-                    if (this.item[i].isOpen) {
-                        return this.isShow(this.item[i])
-                    } else {
-                        return false
-                    }
-                }
-            }
-            console.log("不应该到这里")
-            return false;
-        }
+        public baseFile: FileVo;
 
     }
     export class FolderMeshVo extends Pan3d.baseMeshVo {
-        private _name: string;
-        public fileXmlVo: FileXmlVo
-        public ty: number
-        public cellHeightNum: number;
+        public ossListFile: OssListFile
         public childItem: Array<FolderMeshVo>
         public needDraw: boolean;
         public constructor() {
             super();
-            this.cellHeightNum = 1;
         }
         public set name(value: string) {
-            this._name = value;
+    
             this.needDraw = true;
         }
-        public get name(): string {
-            return this._name;
-        }
+     
         public destory(): void {
             this.pos = null;
-            this._name = null;
+ 
             this.needDraw = null;
             this.clear = true
         }
@@ -132,21 +53,16 @@
             this.folderMeshVo = this.data;
             if (this.folderMeshVo) {
 
-
-
-
                 var $uiRec: UIRectangle = this.parent.uiAtlas.getRec(this.textureStr);
                 this.parent.uiAtlas.ctx = UIManager.getInstance().getContext2D($uiRec.pixelWitdh, $uiRec.pixelHeight, false);
-
-
                 this.parent.uiAtlas.ctx.clearRect(0, 1, $uiRec.pixelWitdh, $uiRec.pixelHeight);
 
 
-                LabelTextFont.writeSingleLabelToCtx(this.parent.uiAtlas.ctx, "[9c9c9c]" + this.folderMeshVo.fileXmlVo.name, 12, 35, 5, TextAlign.LEFT)
+                LabelTextFont.writeSingleLabelToCtx(this.parent.uiAtlas.ctx, "[9c9c9c]" + this.folderMeshVo.ossListFile.baseFile.name, 12, 35, 5, TextAlign.LEFT)
 
 
 
-                if (this.folderMeshVo.fileXmlVo.isOpen) {
+                if (this.folderMeshVo.ossListFile.isOpen) {
                     this.parent.uiAtlas.ctx.drawImage(OssFolderPanel.imgBaseDic["icon_PanRight"], 2, 5, 10, 10)
 
                     this.parent.uiAtlas.ctx.drawImage(OssFolderPanel.imgBaseDic["icon_FolderOpen_dark"], 15, 2, 18, 16)
@@ -156,11 +72,7 @@
                     this.parent.uiAtlas.ctx.drawImage(OssFolderPanel.imgBaseDic["icon_FolderClosed_dark"], 15, 2, 18, 16)
                 }
 
-
                 TextureManager.getInstance().updateTexture(this.parent.uiAtlas.texture, $uiRec.pixelX, $uiRec.pixelY, this.parent.uiAtlas.ctx);
-
-
-
 
             }
         }
@@ -283,15 +195,23 @@
                     var $vo: FolderName = <FolderName>this._uiItem[i]
                     if ($vo.ui == evt.target) {
                         if ((evt.x - this.left) - $vo.ui.x < 20) {
-                            $vo.folderMeshVo.fileXmlVo.isOpen = !$vo.folderMeshVo.fileXmlVo.isOpen;
-                            $vo.folderMeshVo.needDraw = true;
+                            $vo.folderMeshVo.ossListFile.isOpen = !$vo.folderMeshVo.ossListFile.isOpen;
+                            if ($vo.folderMeshVo.ossListFile.isOpen) {
+                                this.pushChidrenDic($vo)
+                            } else {
+                                this.clearChildern($vo.folderMeshVo)   //将要关闭
+                            }
+                          
                         } else {
-                            $vo.folderMeshVo.fileXmlVo.isOpen = true
-                            $vo.folderMeshVo.needDraw = true
-                            console.log("显示文件夹内容", $vo.folderMeshVo.fileXmlVo)
+                            if (!$vo.folderMeshVo.ossListFile.isOpen) {
+                                this.pushChidrenDic($vo)
+                            } 
+                            $vo.folderMeshVo.ossListFile.isOpen = true
                         }
 
+                        $vo.folderMeshVo.needDraw = true;
 
+                      
                     }
                 }
                 this.refrishFolder();
@@ -299,6 +219,58 @@
             }
 
         }
+        private resetHideDic(arr: Array<FolderMeshVo>): void {
+
+            for (var i: number = 0; arr && i < arr.length; i++) {
+                arr[i].clear = false
+                arr[i].pos = new Vector3D();
+                this.showTemp(arr[i]);
+                this.resetHideDic( arr[i].childItem)
+            }
+
+        }
+        private pushChidrenDic($folderName: FolderName): void {
+            if ($folderName.folderMeshVo.childItem) {
+
+                console.log("已经有了，直接显示就行")
+                this.resetHideDic($folderName.folderMeshVo.childItem)
+            
+
+            } else {
+                var pathurl: string = $folderName.folderMeshVo.ossListFile.baseFile.path
+                filemodel.FolderModel.getFolderArr(pathurl, (value: Array<FileVo>) => {
+                    if (!$folderName.folderMeshVo.childItem) {
+                        $folderName.folderMeshVo.childItem = []
+                        for (var i: number = 0; value && i < value.length; i++) {
+                            if (value[i].isFolder) {
+                                var $vo: FolderMeshVo = this.getCharNameMeshVo(value[i])
+                                $vo.pos = new Vector3D(0, i * 15, 0)
+                                $folderName.folderMeshVo.childItem.push($vo)
+                            }
+                        }
+                        this.refrishFolder();
+                    } else {
+                        console.log("已获取过，注意可能是网络问题")
+                    }
+
+                })
+            }
+           
+      
+ 
+        }
+        private clearChildern($folderMeshVo: FolderMeshVo): void {
+            if ($folderMeshVo.childItem) {
+                for (var i: number = 0; i < $folderMeshVo.childItem.length; i++) {
+                    var $vo: FolderMeshVo = $folderMeshVo.childItem[i];
+                    $vo.destory();
+                    console.log("移除", $vo)
+
+                    this.clearChildern($vo)
+                }
+            }
+        }
+
         protected loadConfigCom(): void {
             this._topRender.uiAtlas = this._bottomRender.uiAtlas
 
@@ -341,7 +313,19 @@
             this.refrishSize()
 
 
-            this.loadeFileXml("upfile/shadertree/")
+  
+
+            filemodel.FolderModel.getFolderArr("upfile/shadertree/", (value: Array<FileVo>) => {
+                for (var i: number = 0; i < value.length; i++) {
+                    if (value[i].isFolder) {
+                        var $vo: FolderMeshVo = this.getCharNameMeshVo(value[i])
+                        $vo.pos = new Vector3D(0, i * 15, 0)
+
+                        this.fileItem.push($vo)
+                    }
+                }
+                this.refrishFolder();
+            })
 
         }
         private a_scroll_bar: UICompenent
@@ -391,8 +375,8 @@
             this.a_scroll_bar.x = this.folderMask.x + this.folderMask.width - this.a_scroll_bar.width;
 
             this.resize();
-
-            this.refrishFoldeUiPos();
+            this.refrishFolder();
+     
         }
 
         private lastPagePos: Vector2D;
@@ -462,7 +446,7 @@
                     this.a_scroll_bar.y = Math.max(this.a_scroll_bar.y, this.folderMask.y)
                     this.a_scroll_bar.y = Math.min(this.a_scroll_bar.y, this.folderMask.y + this.folderMask.height - this.a_scroll_bar.height)
 
-                    //  console.log(this.a_scroll_bar.y)
+                     console.log(this.a_scroll_bar.y)
 
                     break
                 default:
@@ -476,150 +460,66 @@
         private a_bg: UICompenent;
         private a_win_tittle: UICompenent;
 
-        private loadeFileXml(pathstr: string): void {
+ 
 
        
-
-            filemodel.FolderModel.getFolderArr(pathstr, (value: Array<FileVo>) => {
-                for (var i: number = 0; i < value.length; i++) {
-                    if (value[i].isFolder) {
-                        console.log(value[i])
-                    }
-                }
-            })
-
-
-
-        }
+ 
         private fileItem: Array<FolderMeshVo>;
-        public getCharNameMeshVo(value: FileXmlVo): FolderMeshVo {
+        public getCharNameMeshVo(value: FileVo): FolderMeshVo {
             var $vo: FolderMeshVo = new FolderMeshVo;
-            $vo.fileXmlVo = value;
-
+            $vo.ossListFile = new OssListFile;
+            $vo.ossListFile.baseFile = value
             this.showTemp($vo);
             return $vo;
         }
         private folderCellHeight: number = 20
         private refrishFolder(): void {
-            var $item: Array<FileXmlVo> = FileXmlVo.getListItem(-1);
-            this.removeHideItem($item)
-            this.addNewFolderNameToItem($item)
-            this.resetChildItemAll(); //重算子目录
+            OssFolderPanel.listTy = 25;
+            this.disChiendren(this.fileItem);
 
 
+            var contentH: number = OssFolderPanel.listTy  
 
-            this.refrishFoldeUiPos();
-        }
-        private refrishFoldeUiPos(): void {
-            OssFolderPanel.tySkip = 1;
-            this.mathFileCellHeight(0);
 
-            var contentH: number = OssFolderPanel.tySkip * this.folderCellHeight;
             var moveTy: number = 0
             if (contentH > this.folderMask.height) {
                 this.setUiListVisibleByItem([this.a_scroll_bar], true);
                 this.a_scroll_bar.height = (this.folderMask.height / contentH) * this.folderMask.height;
-
-
                 this.a_scroll_bar.y = Math.min(this.a_scroll_bar.y, this.folderMask.height + this.folderMask.y - this.a_scroll_bar.height);
-
-
+                this.a_scroll_bar.y = Math.max(this.a_scroll_bar.y, this.folderMask.y );
 
                 var nnn: number = (this.a_scroll_bar.y - this.folderMask.y) / (this.folderMask.height - this.a_scroll_bar.height);
-
-
                 moveTy = (this.folderMask.height - contentH) * nnn
-
             } else {
                 this.setUiListVisibleByItem([this.a_scroll_bar], false);
                 moveTy = 0
-
             }
 
-            for (var i: number = 0; i < this.fileItem.length; i++) {
-                var layer: number = FileXmlVo.getFileSonLayer(this.fileItem[i].fileXmlVo.id)
-                this.fileItem[i].pos.y = this.folderCellHeight * this.fileItem[i].ty + this.folderMask.y + moveTy;
-                this.fileItem[i].pos.x = 20 * layer;
+            this.moveAllTy(this.fileItem, moveTy)
+ 
+        }
+        private moveAllTy(arr: Array<FolderMeshVo>, ty: number = 0): void {
+            for (var i: number = 0; arr && i < arr.length; i++) {
+                arr[i].pos.y += ty;  
+                if (arr[i].ossListFile.isOpen) {
+                    this.moveAllTy(arr[i].childItem, ty)
+                }
             }
 
         }
-
-        private isOpenByID(id): boolean {
-            for (var i: number = 0; i < this.fileItem.length; i++) {
-                if (this.fileItem[i].fileXmlVo.id == id && this.fileItem[i].fileXmlVo.isOpen) {
-                    return true
+        private static listTy: number
+        private disChiendren(arr: Array<FolderMeshVo>, tx: number=0): void {
+            for (var i: number = 0; arr && i < arr.length; i++) {
+                arr[i].pos.x = tx;
+                arr[i].pos.y = OssFolderPanel.listTy
+                OssFolderPanel.listTy += 20;
+                if (arr[i].ossListFile.isOpen) {
+                    this.disChiendren(arr[i].childItem, tx+20)
                 }
             }
-            return false
+   
         }
-        private static tySkip: number
-        private mathFileCellHeight(id: number): void {
-            if (this.isOpenByID(id)) {
-                for (var i: number = 0; i < this.fileItem.length; i++) {
-                    if (this.fileItem[i].fileXmlVo.perent == id) {
-                        this.fileItem[i].ty = OssFolderPanel.tySkip;
-                        OssFolderPanel.tySkip++
-                        this.mathFileCellHeight(this.fileItem[i].fileXmlVo.id);
-                    }
-                }
-            }
-
-
-
-
-        }
-
-        private resetChildItemAll(): void {
-            for (var i: number = 0; i < this.fileItem.length; i++) {
-                this.fileItem[i].childItem = [];
-                this.fileItem[i].ty = 0;
-                for (var j: number = 0; j < this.fileItem.length; j++) {
-                    if (this.fileItem[j].fileXmlVo.perent == this.fileItem[i].fileXmlVo.id) {
-                        this.fileItem[i].childItem.push(this.fileItem[j]);
-                    }
-                }
-
-            }
-
-        }
-
-        //添加新进来的对象
-        private addNewFolderNameToItem(value: Array<FileXmlVo>): void {
-            for (var i: number = 0; i < value.length; i++) {
-                var needAdd: boolean = true
-                for (var j: number = 0; j < this.fileItem.length; j++) {
-                    if (this.fileItem[j].fileXmlVo == value[i]) {
-                        needAdd = false
-                    }
-                }
-                if (needAdd) {
-                    var $vo: FolderMeshVo = this.getCharNameMeshVo(value[i]);
-                    $vo.pos = new Vector3D(0, i * 15, 0)
-                    this.fileItem.push($vo);
-                }
-
-            }
-
-        }
-        //移除不显示的对象
-        private removeHideItem(value: Array<FileXmlVo>): void {
-            for (var i: number = 0; i < this.fileItem.length; i++) {
-                var needClear: boolean = true
-                for (var j: number = 0; j < value.length; j++) {
-                    if (this.fileItem[i].fileXmlVo == value[j]) {
-                        needClear = false
-                    }
-                }
-                if (needClear) {
-                    var temp: FolderMeshVo = this.fileItem[i];
-                    temp.destory()
-                    this.fileItem.splice(i, 1);
-                    i--;
-                }
-            }
-
-
-        }
+    
 
 
 

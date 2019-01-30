@@ -34,6 +34,7 @@
     <TypeScriptCompile Include="src\editscene\folder\FileListPanel.ts" />
     <TypeScriptCompile Include="src\editscene\folder\FolderPanel.ts" />
     <TypeScriptCompile Include="src\editscene\folder\FolderProcessor.ts" />
+    <TypeScriptCompile Include="src\editscene\folder\OssFolderPanel.ts" />
     <TypeScriptCompile Include="src\editscene\MaterialProcessor.ts" />
     <TypeScriptCompile Include="src\editscene\materialui\ItemMaterialUI.ts" />
     <TypeScriptCompile Include="src\editscene\materialui\NodeTree.ts" />

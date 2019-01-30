@@ -26,17 +26,6 @@ var filelist;
     var SampleFileVo = /** @class */ (function () {
         function SampleFileVo() {
         }
-        SampleFileVo.makeBaseXml = function (value) {
-            var obj = JSON.parse(value);
-            this.item = new Array;
-            for (var i = 0; i < obj.list.length; i++) {
-                var vo = new SampleFileVo();
-                vo.id = obj.list[i].id;
-                vo.name = obj.list[i].name;
-                vo.perent = obj.list[i].perent;
-                this.item.push(vo);
-            }
-        };
         return SampleFileVo;
     }());
     filelist.SampleFileVo = SampleFileVo;
@@ -73,15 +62,30 @@ var filelist;
             return _super !== null && _super.apply(this, arguments) || this;
         }
         FileListName.prototype.makeData = function () {
+            var _this = this;
             this.fileListMeshVo = this.data;
             if (this.fileListMeshVo) {
-                var $uiRec = this.parent.uiAtlas.getRec(this.textureStr);
-                this.parent.uiAtlas.ctx = UIManager.getInstance().getContext2D($uiRec.pixelWitdh, $uiRec.pixelHeight, false);
-                this.parent.uiAtlas.ctx.clearRect(0, 1, $uiRec.pixelWitdh, $uiRec.pixelHeight);
-                this.parent.uiAtlas.ctx.drawImage(FileListPanel.imgBaseDic["icon_Folder_64x"], 7, 0, 50, 50);
-                LabelTextFont.writeSingleLabelToCtx(this.parent.uiAtlas.ctx, "[9c9c9c]" + this.fileListMeshVo.fileXmlVo.name, 12, 0, 50, TextAlign.CENTER);
-                TextureManager.getInstance().updateTexture(this.parent.uiAtlas.texture, $uiRec.pixelX, $uiRec.pixelY, this.parent.uiAtlas.ctx);
+                var fileVo = this.fileListMeshVo.fileXmlVo.data;
+                switch (fileVo.suffix) {
+                    case "jpg":
+                    case "png":
+                        LoadManager.getInstance().load(Scene_data.fileRoot + fileVo.path, LoadManager.IMG_TYPE, function ($img) {
+                            _this.drawFileIconName($img, fileVo.name);
+                        });
+                        break;
+                    default:
+                        this.drawFileIconName(FileListPanel.imgBaseDic["icon_Folder_64x"], fileVo.name);
+                        break;
+                }
             }
+        };
+        FileListName.prototype.drawFileIconName = function ($img, name) {
+            var $uiRec = this.parent.uiAtlas.getRec(this.textureStr);
+            this.parent.uiAtlas.ctx = UIManager.getInstance().getContext2D($uiRec.pixelWitdh, $uiRec.pixelHeight, false);
+            this.parent.uiAtlas.ctx.clearRect(0, 1, $uiRec.pixelWitdh, $uiRec.pixelHeight);
+            this.parent.uiAtlas.ctx.drawImage($img, 7, 0, 50, 50);
+            LabelTextFont.writeSingleLabelToCtx(this.parent.uiAtlas.ctx, "[9c9c9c]" + name, 12, 0, 50, TextAlign.CENTER);
+            TextureManager.getInstance().updateTexture(this.parent.uiAtlas.texture, $uiRec.pixelX, $uiRec.pixelY, this.parent.uiAtlas.ctx);
         };
         FileListName.prototype.update = function () {
             this.fileListMeshVo = this.data;
@@ -160,7 +164,43 @@ var filelist;
         FileListPanel.prototype.mouseUp = function (evt) {
             Scene_data.uiStage.removeEventListener(InteractiveEvent.Move, this.stageMouseMove, this);
             if (this.mouseIsDown) {
+                var vo = this.getItemVoByUi(evt.target);
+                if (vo && vo.fileListMeshVo.fileXmlVo.data.isFolder) {
+                    console.log(vo.fileListMeshVo.fileXmlVo.data.path);
+                    this.refrishPath(vo.fileListMeshVo.fileXmlVo.data.path);
+                }
             }
+        };
+        //移除不显示的对象
+        FileListPanel.prototype.clearListAll = function () {
+            while (this.fileItem.length) {
+                var vo = this.fileItem.pop();
+                vo.destory();
+            }
+        };
+        FileListPanel.prototype.refrishPath = function (pathstr) {
+            var _this = this;
+            this.clearListAll();
+            filemodel.FolderModel.getFolderArr(pathstr, function (value) {
+                for (var i = 0; i < value.length; i++) {
+                    var sampleFile = new SampleFileVo;
+                    sampleFile.id = i;
+                    sampleFile.data = value[i];
+                    var $vo = _this.getCharNameMeshVo(sampleFile);
+                    $vo.pos = new Vector3D(i * 64, 40, 0);
+                    _this.fileItem.push($vo);
+                }
+            });
+            this.resetSampleFilePos();
+        };
+        FileListPanel.prototype.getItemVoByUi = function (ui) {
+            for (var i = 0; i < this._uiItem.length; i++) {
+                var $vo = this._uiItem[i];
+                if ($vo.ui == ui) {
+                    return $vo;
+                }
+            }
+            return null;
         };
         FileListPanel.prototype.loadConfigCom = function () {
             this._topRender.uiAtlas = this._bottomRender.uiAtlas;
@@ -186,7 +226,7 @@ var filelist;
             this.a_scroll_bar.addEventListener(InteractiveEvent.Down, this.tittleMouseDown, this);
             this.refrishSize();
             this.a_scroll_bar.y = this.folderMask.y;
-            this.loadeFileXml();
+            this.refrishPath("upfile/shadertree/");
         };
         FileListPanel.prototype.panelEventChanger = function (value) {
             if (this.pageRect) {
@@ -301,17 +341,6 @@ var filelist;
                     break;
             }
             this.refrishSize();
-        };
-        FileListPanel.prototype.loadeFileXml = function () {
-            for (var i = 0; i < 15; i++) {
-                var sampleFile = new SampleFileVo;
-                sampleFile.id = i;
-                sampleFile.name = "id_" + i;
-                var $vo = this.getCharNameMeshVo(sampleFile);
-                $vo.pos = new Vector3D(i * 64, 40, 0);
-                this.fileItem.push($vo);
-            }
-            this.resetSampleFilePos();
         };
         FileListPanel.prototype.refrishFile = function () {
         };

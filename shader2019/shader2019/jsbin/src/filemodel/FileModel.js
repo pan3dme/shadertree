@@ -4,6 +4,131 @@ var filemodel;
     var ModuleEventManager = Pan3d.ModuleEventManager;
     var MaterialTree = materialui.MaterialTree;
     var MaterialEvent = materialui.MaterialEvent;
+    var FileVo = /** @class */ (function () {
+        function FileVo() {
+        }
+        FileVo.prototype.meshStr = function (str) {
+            var $arr = str.split("/");
+            this.name = $arr[$arr.length - 2];
+            this.path = str;
+            this.isFolder = true;
+            //  console.log(this.name, this.path)
+        };
+        FileVo.meshObj = function (value) {
+            if (value.name.length - 1 != value.name.lastIndexOf("/")) {
+                var vo = new FileVo();
+                var str = value.name;
+                var $arr = str.split("/");
+                vo.name = $arr[$arr.length - 1];
+                vo.path = str.replace("upfile/shadertree/", "");
+                vo.suffix = vo.name.split(".")[1];
+                //  console.log(vo.name, vo.path)
+                return vo;
+            }
+            return null;
+        };
+        return FileVo;
+    }());
+    filemodel.FileVo = FileVo;
+    var FolderModel = /** @class */ (function () {
+        function FolderModel() {
+        }
+        FolderModel.oneByOne = function () {
+            var _this = this;
+            if (this.waitItem.length > 0) {
+                var $dir = this.waitItem[0].a; //目录
+                var kFun = this.waitItem[0].b; //返回
+                var nextMarker = "";
+                this.ossWrapper.list({
+                    'delimiter': '/',
+                    'prefix': $dir,
+                    'max-keys': 100,
+                    'marker': nextMarker,
+                }).then(function (result) {
+                    _this.waitItem.shift();
+                    _this.oneByOne();
+                    kFun(result);
+                }).catch(function (err) {
+                    console.log(err);
+                });
+            }
+        };
+        FolderModel.getFolderArr = function ($dir, bfun) {
+            this.getDisList($dir, function (value) {
+                var fileArr = [];
+                for (var i = 0; i < value.prefixes.length; i++) {
+                    var fileVo = new FileVo();
+                    fileVo.meshStr(value.prefixes[i]);
+                    fileArr.push(fileVo);
+                }
+                for (var j = 0; j < value.objects.length; j++) {
+                    var fileVo = FileVo.meshObj(value.objects[j]);
+                    if (fileVo) {
+                        fileArr.push(fileVo);
+                    }
+                }
+                bfun(fileArr);
+            });
+        };
+        FolderModel.getDisList = function ($dir, bfun) {
+            var _this = this;
+            if (!this.waitItem) {
+                this.waitItem = [];
+            }
+            this.waitItem.push({ a: $dir, b: bfun });
+            if (this.waitItem.length == 1) {
+                if (this.ossWrapper) {
+                    this.oneByOne();
+                }
+                else {
+                    FileModel.webseverurl = "https://api.h5key.com/api/";
+                    FileModel.WEB_SEVER_EVENT_AND_BACK("get_STS", "id=" + 99, function (res) {
+                        if (res.data && res.data.info) {
+                            _this.ossWrapper = new OSS.Wrapper({
+                                accessKeyId: res.data.info.AccessKeyId,
+                                accessKeySecret: res.data.info.AccessKeySecret,
+                                stsToken: res.data.info.SecurityToken,
+                                endpoint: "https://oss-cn-shanghai.aliyuncs.com",
+                                bucket: "webpan"
+                            });
+                            _this.oneByOne();
+                        }
+                        else {
+                            console.log(res);
+                        }
+                    });
+                }
+            }
+        };
+        FolderModel.getBase = function () {
+            FileModel.webseverurl = "https://api.h5key.com/api/";
+            FileModel.WEB_SEVER_EVENT_AND_BACK("get_STS", "id=" + 99, function (res) {
+                if (res.data.info) {
+                    var client = new OSS.Wrapper({
+                        accessKeyId: res.data.info.AccessKeyId,
+                        accessKeySecret: res.data.info.AccessKeySecret,
+                        stsToken: res.data.info.SecurityToken,
+                        endpoint: "https://oss-cn-shanghai.aliyuncs.com",
+                        bucket: "webpan"
+                    });
+                    //获取oss文件列表
+                    var nextMarker = "";
+                    client.list({
+                        'delimiter': '/',
+                        'prefix': "",
+                        'max-keys': 1000,
+                        'marker': nextMarker,
+                    }).then(function (result) {
+                        console.log(result);
+                    }).catch(function (err) {
+                        console.log(err);
+                    });
+                }
+            });
+        };
+        return FolderModel;
+    }());
+    filemodel.FolderModel = FolderModel;
     var FileModel = /** @class */ (function () {
         function FileModel() {
             this.waitItemFile = [];

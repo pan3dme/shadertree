@@ -19,6 +19,7 @@ var folder;
     var UIManager = Pan3d.UIManager;
     var FileListPanel = filelist.FileListPanel;
     var BaseFolderWindow = basefolderwin.BaseFolderWindow;
+    var OssFolderPanel = ossfolder.OssFolderPanel;
     var FolderEvent = /** @class */ (function (_super) {
         __extends(FolderEvent, _super);
         function FolderEvent() {
@@ -60,13 +61,20 @@ var folder;
                     }
                     UIManager.getInstance().addUIContainer(this._baseFolderWindow);
                     if (!this._folderPanel) {
-                        this._folderPanel = new folder.FolderPanel();
+                        this._folderPanel = new OssFolderPanel();
                     }
                     UIManager.getInstance().addUIContainer(this._folderPanel);
                     if (!this._fileListPanel) {
                         this._fileListPanel = new FileListPanel();
                     }
                     UIManager.getInstance().addUIContainer(this._fileListPanel);
+                    filemodel.FolderModel.getFolderArr("upfile/shadertree/", function (value) {
+                        //  console.log(value)
+                    });
+                    console.log("-------");
+                    //filemodel.FolderModel.getFolderArr("res/base/", (value: any) => {
+                    //    console.log(value)
+                    //})
                 }
                 if (_folderEvent.type == FolderEvent.FILE_LIST_PANEL_CHANG) {
                     var base = _folderEvent.data;

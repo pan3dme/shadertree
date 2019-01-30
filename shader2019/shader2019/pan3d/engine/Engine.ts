@@ -94,32 +94,13 @@
         public static needInputTxt: boolean = false;//在输入文本时，将不再可调整大小
         public static resetSize(a: number = 0, b: number = 0): void {
 
-            if (Engine.needInputTxt) {
-                return;
-            }
-            //Scene_data.stageWidth = document.documentElement.clientWidth;
-            //Scene_data.stageHeight = document.documentElement.clientHeight;
-            //var flag: boolean = false;
-
-            if (document.body.clientWidth > document.body.clientHeight) {
+       
+       
+         
                 Scene_data.stageWidth = document.body.clientWidth;
                 Scene_data.stageHeight = document.body.clientHeight;
-                Scene_data.verticalScene = false;
-            } else {
-                Scene_data.stageWidth = document.body.clientHeight;
-                Scene_data.stageHeight = document.body.clientWidth;
-                Scene_data.verticalScene = true;
-            }
-
-            // Scene_data.stageWidth = document.body.clientWidth;
-            // Scene_data.stageHeight = document.body.clientHeight;
-            // Scene_data.verticalScene = false;
-
-            if (!this.needVertical) {
-                Scene_data.stageWidth = document.body.clientWidth;
-                Scene_data.stageHeight = document.body.clientHeight;
-                Scene_data.verticalScene = false;
-            }
+         
+           
 
             Scene_data.canvas3D.width = Scene_data.stageWidth;
             Scene_data.canvas3D.height = Scene_data.stageHeight;
@@ -136,20 +117,7 @@
             Scene_data.canvas3D.style.position = "absolute";
             Scene_data.canvas3D.style.left = "0px";
             Scene_data.canvas3D.style.top = "0px";
-
-            if (Scene_data.verticalScene) {
-                Scene_data.canvas3D.style.transform = "matrix(0,1,-1,0," + Scene_data.stageHeight + ",0)";
-                //Scene_data.canvas3D.style.webkitTransform = "matrix(0,1,-1,0," + Scene_data.stageHeight + ",0)";
-            } else {
-
-                Scene_data.canvas3D.style.transform = "matrix(1,0,0,1,0,0)";
-                //Scene_data.canvas3D.style.webkitTransform = "matrix(0,1,-1,0," + Scene_data.stageHeight + ",0)";
-            }
-
-            Scene_data.canvas3D.style.transformOrigin = "0px 0px 0px";
-
-            Scene_data.canvas3D.style.top = "0px";
-
+ 
         }
         public static sceneCamScale: number = 1.76;
         public static resetViewMatrx3D(): void {

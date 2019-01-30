@@ -76,30 +76,8 @@ var Pan3d;
         Engine.resetSize = function (a, b) {
             if (a === void 0) { a = 0; }
             if (b === void 0) { b = 0; }
-            if (Engine.needInputTxt) {
-                return;
-            }
-            //Scene_data.stageWidth = document.documentElement.clientWidth;
-            //Scene_data.stageHeight = document.documentElement.clientHeight;
-            //var flag: boolean = false;
-            if (document.body.clientWidth > document.body.clientHeight) {
-                Pan3d.Scene_data.stageWidth = document.body.clientWidth;
-                Pan3d.Scene_data.stageHeight = document.body.clientHeight;
-                Pan3d.Scene_data.verticalScene = false;
-            }
-            else {
-                Pan3d.Scene_data.stageWidth = document.body.clientHeight;
-                Pan3d.Scene_data.stageHeight = document.body.clientWidth;
-                Pan3d.Scene_data.verticalScene = true;
-            }
-            // Scene_data.stageWidth = document.body.clientWidth;
-            // Scene_data.stageHeight = document.body.clientHeight;
-            // Scene_data.verticalScene = false;
-            if (!this.needVertical) {
-                Pan3d.Scene_data.stageWidth = document.body.clientWidth;
-                Pan3d.Scene_data.stageHeight = document.body.clientHeight;
-                Pan3d.Scene_data.verticalScene = false;
-            }
+            Pan3d.Scene_data.stageWidth = document.body.clientWidth;
+            Pan3d.Scene_data.stageHeight = document.body.clientHeight;
             Pan3d.Scene_data.canvas3D.width = Pan3d.Scene_data.stageWidth;
             Pan3d.Scene_data.canvas3D.height = Pan3d.Scene_data.stageHeight;
             Pan3d.Scene_data.context3D.resetSize(Pan3d.Scene_data.stageWidth, Pan3d.Scene_data.stageHeight);
@@ -108,16 +86,6 @@ var Pan3d;
             this.resetViewMatrx3D();
             Pan3d.Scene_data.canvas3D.style.position = "absolute";
             Pan3d.Scene_data.canvas3D.style.left = "0px";
-            Pan3d.Scene_data.canvas3D.style.top = "0px";
-            if (Pan3d.Scene_data.verticalScene) {
-                Pan3d.Scene_data.canvas3D.style.transform = "matrix(0,1,-1,0," + Pan3d.Scene_data.stageHeight + ",0)";
-                //Scene_data.canvas3D.style.webkitTransform = "matrix(0,1,-1,0," + Scene_data.stageHeight + ",0)";
-            }
-            else {
-                Pan3d.Scene_data.canvas3D.style.transform = "matrix(1,0,0,1,0,0)";
-                //Scene_data.canvas3D.style.webkitTransform = "matrix(0,1,-1,0," + Scene_data.stageHeight + ",0)";
-            }
-            Pan3d.Scene_data.canvas3D.style.transformOrigin = "0px 0px 0px";
             Pan3d.Scene_data.canvas3D.style.top = "0px";
         };
         Engine.resetViewMatrx3D = function () {
