@@ -219,7 +219,9 @@
                 vo.destory()
             }
         }
-        private refrishPath(pathstr: string): void {
+        public refrishPath(pathstr: string): void {
+            this.a_path_tittle_txt.x=10
+            LabelTextFont.writeSingleLabel(this._topRender.uiAtlas, this.a_path_tittle_txt.skinName, ColorType.White9A683F+ pathstr, 12, Pan3d.TextAlign.LEFT)
             this.clearListAll()
             filemodel.FolderModel.getFolderArr(pathstr, (value: Array<FileVo>) => {
                 for (var i: number = 0; i < value.length; i++) {
@@ -230,8 +232,9 @@
                     $vo.pos = new Vector3D(i * 64, 40, 0);
                     this.fileItem.push($vo);
                 }
+                this.resetSampleFilePos()
             })
-            this.resetSampleFilePos()
+
         }
         private getItemVoByUi(ui: UICompenent): FileListName {
             for (var i: number = 0; i < this._uiItem.length; i++) {
@@ -287,6 +290,8 @@
 
 
 
+            this.a_path_tittle_txt = this.addEvntBut("a_path_tittle_txt",this._topRender)
+
 
             this.refrishSize()
             this.a_scroll_bar.y = this.folderMask.y;
@@ -294,6 +299,7 @@
             this.refrishPath("upfile/shadertree/");
 
         }
+        private a_path_tittle_txt: UICompenent
         public panelEventChanger(value: Pan3d.Rectangle): void {
             if (this.pageRect) {
                 this.pageRect.height = value.height ;

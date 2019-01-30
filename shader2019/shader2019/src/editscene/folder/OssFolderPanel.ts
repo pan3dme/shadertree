@@ -210,6 +210,8 @@
                                 this.pushChidrenDic($vo)
                             } 
                             $vo.folderMeshVo.ossListFile.isOpen = true
+
+                            Pan3d.ModuleEventManager.dispatchEvent(new folder.FolderEvent(folder.FolderEvent.LIST_DIS_ALL_FILE), $vo.folderMeshVo.ossListFile.baseFile.path)
                         }
 
                         $vo.folderMeshVo.needDraw = true;

@@ -17,7 +17,7 @@
             this.name = $arr[$arr.length - 2]
             this.path = str;
             this.isFolder = true;
-          //  console.log(this.name, this.path)
+            //  console.log(this.name, this.path)
         }
         public static meshObj(value: any): FileVo {
             if (value.name.length - 1 != value.name.lastIndexOf("/")) {
@@ -26,9 +26,9 @@
                 var $arr: Array<string> = str.split("/");
                 vo.name = $arr[$arr.length - 1]
 
-                vo.path = str.replace("upfile/shadertree/","");
-                vo.suffix=   vo.name.split(".")[1]
-              //  console.log(vo.name, vo.path)
+                vo.path = str.replace("upfile/shadertree/", "");
+                vo.suffix = vo.name.split(".")[1]
+                //  console.log(vo.name, vo.path)
                 return vo
             }
             return null
@@ -53,17 +53,20 @@
                     this.waitItem.shift();
                     this.oneByOne();
                     kFun(result);
-                }).catch(function (err) {
-                    console.log(err);
-         
+                }).catch((err) => {
+                    console.log(err)
+                    console.log("网络异常。需要注意");
+                    this.waitItem.shift();
+                    this.oneByOne();
+                    kFun(null);
                 });
             }
         }
         public static getFolderArr($dir: string, bfun: Function): void {
 
             this.getDisList($dir, (value) => {
-                var fileArr: Array<FileVo>=[]
-                for (var i: number = 0; i < value.prefixes.length; i++) {
+                var fileArr: Array<FileVo> = []
+                for (var i: number = 0; value.prefixes && i < value.prefixes.length; i++) {
                     var fileVo: FileVo = new FileVo();
                     fileVo.meshStr(value.prefixes[i])
                     fileArr.push(fileVo)
@@ -73,7 +76,7 @@
                     if (fileVo) {
                         fileArr.push(fileVo);
                     }
-                
+
                 }
 
                 bfun(fileArr);

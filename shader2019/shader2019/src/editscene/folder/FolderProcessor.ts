@@ -19,6 +19,7 @@
         public static SHOW_FOLDER_PANEL: string = "SHOW_FOLDER_PANEL";
 
         public static FILE_LIST_PANEL_CHANG: string = "FILE_LIST_PANEL_CHANG";
+        public static LIST_DIS_ALL_FILE: string = "LIST_DIS_ALL_FILE";
 
         public data: any
 
@@ -68,6 +69,10 @@
                     var leftw: number = this._folderPanel.getPageRect().width;
                     this._fileListPanel.panelEventChanger(new Pan3d.Rectangle(base.x + leftw, base.y, base.width - leftw, base.height));
                 }
+                if (_folderEvent.type == FolderEvent.LIST_DIS_ALL_FILE) {
+            
+                    this._fileListPanel.refrishPath(String(_folderEvent.data));
+                }
             }
         }
         
@@ -78,6 +83,7 @@
             return [
                 new FolderEvent(FolderEvent.SHOW_FOLDER_PANEL),
                 new FolderEvent(FolderEvent.FILE_LIST_PANEL_CHANG),
+                new FolderEvent(FolderEvent.LIST_DIS_ALL_FILE),
 
             ];
         }

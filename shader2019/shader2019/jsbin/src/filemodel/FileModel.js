@@ -50,13 +50,17 @@ var filemodel;
                     kFun(result);
                 }).catch(function (err) {
                     console.log(err);
+                    console.log("网络异常。需要注意");
+                    _this.waitItem.shift();
+                    _this.oneByOne();
+                    kFun(null);
                 });
             }
         };
         FolderModel.getFolderArr = function ($dir, bfun) {
             this.getDisList($dir, function (value) {
                 var fileArr = [];
-                for (var i = 0; i < value.prefixes.length; i++) {
+                for (var i = 0; value.prefixes && i < value.prefixes.length; i++) {
                     var fileVo = new FileVo();
                     fileVo.meshStr(value.prefixes[i]);
                     fileArr.push(fileVo);

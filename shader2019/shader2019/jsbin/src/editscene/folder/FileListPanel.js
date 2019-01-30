@@ -14,6 +14,7 @@ var __extends = (this && this.__extends) || (function () {
 var filelist;
 (function (filelist) {
     var UIRenderComponent = Pan3d.UIRenderComponent;
+    var ColorType = Pan3d.ColorType;
     var InteractiveEvent = Pan3d.InteractiveEvent;
     var TextAlign = Pan3d.TextAlign;
     var Rectangle = Pan3d.Rectangle;
@@ -180,6 +181,8 @@ var filelist;
         };
         FileListPanel.prototype.refrishPath = function (pathstr) {
             var _this = this;
+            this.a_path_tittle_txt.x = 10;
+            LabelTextFont.writeSingleLabel(this._topRender.uiAtlas, this.a_path_tittle_txt.skinName, ColorType.White9A683F + pathstr, 12, Pan3d.TextAlign.LEFT);
             this.clearListAll();
             filemodel.FolderModel.getFolderArr(pathstr, function (value) {
                 for (var i = 0; i < value.length; i++) {
@@ -190,8 +193,8 @@ var filelist;
                     $vo.pos = new Vector3D(i * 64, 40, 0);
                     _this.fileItem.push($vo);
                 }
+                _this.resetSampleFilePos();
             });
-            this.resetSampleFilePos();
         };
         FileListPanel.prototype.getItemVoByUi = function (ui) {
             for (var i = 0; i < this._uiItem.length; i++) {
@@ -224,6 +227,7 @@ var filelist;
             this.a_right_bottom.addEventListener(InteractiveEvent.Down, this.tittleMouseDown, this);
             this.a_scroll_bar = this.addChild(this._topRender.getComponent("a_scroll_bar"));
             this.a_scroll_bar.addEventListener(InteractiveEvent.Down, this.tittleMouseDown, this);
+            this.a_path_tittle_txt = this.addEvntBut("a_path_tittle_txt", this._topRender);
             this.refrishSize();
             this.a_scroll_bar.y = this.folderMask.y;
             this.refrishPath("upfile/shadertree/");
