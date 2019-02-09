@@ -280,21 +280,28 @@ var materialui;
         };
         MaterialProcessor.prototype.onMouseWheel = function ($evt) {
             var $slectUi = UIManager.getInstance().getObjectsUnderPoint(new Vector2D($evt.x, $evt.y));
-            if ($slectUi && $slectUi.name == "modelPic") {
-                Scene_data.cam3D.distance += ($evt.wheelDelta * Scene_data.cam3D.distance) / 1000;
+            if (!$slectUi || $slectUi.parent instanceof materialui.MtUiPanel) {
+                this.changeScalePanle($evt);
             }
             else {
-                var $v2d = new Vector2D(($evt.x - Arpg2dGameStart.stagePos.x), ($evt.y - Arpg2dGameStart.stagePos.y));
-                var tx = $evt.x / materialui.MtlUiData.Scale;
-                var ty = $evt.y / materialui.MtlUiData.Scale;
-                var $oldScale = materialui.MtlUiData.Scale;
-                var $addScale = $evt.wheelDelta > 0 ? +0.1 : -0.1;
-                materialui.MtlUiData.Scale += $addScale;
-                materialui.MtlUiData.Scale = Math.max(0.5, materialui.MtlUiData.Scale);
-                materialui.MtlUiData.Scale = Math.min(materialui.MtlUiData.Scale, 1.2);
-                var $se = (materialui.MtlUiData.Scale - $oldScale);
-                this.stageMoveTx(new Vector2D(-tx * $se / materialui.MtlUiData.Scale, -ty * $se / materialui.MtlUiData.Scale));
+                if ($slectUi.name == "modelPic") {
+                    Scene_data.cam3D.distance += ($evt.wheelDelta * Scene_data.cam3D.distance) / 1000;
+                }
+                else {
+                }
             }
+        };
+        MaterialProcessor.prototype.changeScalePanle = function ($evt) {
+            var $v2d = new Vector2D(($evt.x - Arpg2dGameStart.stagePos.x), ($evt.y - Arpg2dGameStart.stagePos.y));
+            var tx = $evt.x / materialui.MtlUiData.Scale;
+            var ty = $evt.y / materialui.MtlUiData.Scale;
+            var $oldScale = materialui.MtlUiData.Scale;
+            var $addScale = $evt.wheelDelta > 0 ? +0.1 : -0.1;
+            materialui.MtlUiData.Scale += $addScale;
+            materialui.MtlUiData.Scale = Math.max(0.5, materialui.MtlUiData.Scale);
+            materialui.MtlUiData.Scale = Math.min(materialui.MtlUiData.Scale, 1.2);
+            var $se = (materialui.MtlUiData.Scale - $oldScale);
+            this.stageMoveTx(new Vector2D(-tx * $se / materialui.MtlUiData.Scale, -ty * $se / materialui.MtlUiData.Scale));
         };
         MaterialProcessor.prototype.stageMoveTx = function ($txy) {
             Arpg2dGameStart.stagePos.x += $txy.x;

@@ -290,7 +290,9 @@
 
 
 
-            this.a_path_tittle_txt = this.addEvntBut("a_path_tittle_txt",this._topRender)
+            this.a_path_tittle_txt = this.addChild(<UICompenent>this._topRender.getComponent("a_path_tittle_txt"));
+
+     
 
 
             this.refrishSize()

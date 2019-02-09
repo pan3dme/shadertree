@@ -17,6 +17,7 @@
     import UiDraw = Pan3d.UiDraw
     import UIData = Pan3d.UIData
     import UIAtlas = Pan3d.UIAtlas
+    import MouseType = Pan3d.MouseType
     import FileVo = filemodel.FileVo
     import SampleFileVo = filelist.SampleFileVo
     
@@ -275,7 +276,16 @@
                 }
             }
         }
-
+        public onMouseWheel($evt: MouseWheelEvent): void {
+            var $slectUi: UICompenent = UIManager.getInstance().getObjectsUnderPoint(new Vector2D($evt.x, $evt.y))
+            if ($slectUi && $slectUi.parent == this) {
+                if (this.a_scroll_bar.parent) {
+                    this.a_scroll_bar.y   -= $evt.wheelDelta/10
+                    this.resize();
+                    this.refrishFolder();
+                } 
+            }
+        }
         protected loadConfigCom(): void {
             this._topRender.uiAtlas = this._bottomRender.uiAtlas
 
@@ -290,6 +300,8 @@
                 this._uiItem[i].ui.addEventListener(InteractiveEvent.Down, this.mouseDown, this);
                 this._uiItem[i].ui.addEventListener(InteractiveEvent.Up, this.mouseUp, this);
             }
+            document.addEventListener(MouseType.MouseWheel, ($evt: MouseWheelEvent) => { this.onMouseWheel($evt) });
+ 
 
             this.a_bg = this.addEvntBut("a_bg", this._bottomRender);
 

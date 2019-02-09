@@ -348,7 +348,9 @@
                         break;
                     case "44":
 
-                        Pan3d.ModuleEventManager.dispatchEvent(new filemodel.FileModelEvent(filemodel.FileModelEvent.SHOW_FILEMODEL_PANEL))
+  
+
+                        Pan3d.ModuleEventManager.dispatchEvent(new folder.FolderEvent(folder.FolderEvent.SHOW_FOLDER_PANEL));
                         break;
                     default:
                         break;

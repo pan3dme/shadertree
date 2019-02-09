@@ -23,6 +23,7 @@ var ossfolder;
     var Disp2DBaseText = Pan3d.Disp2DBaseText;
     var UIMask = Pan3d.UIMask;
     var UIAtlas = Pan3d.UIAtlas;
+    var MouseType = Pan3d.MouseType;
     var OssListFile = /** @class */ (function () {
         function OssListFile() {
         }
@@ -233,6 +234,16 @@ var ossfolder;
                 }
             }
         };
+        OssFolderPanel.prototype.onMouseWheel = function ($evt) {
+            var $slectUi = UIManager.getInstance().getObjectsUnderPoint(new Vector2D($evt.x, $evt.y));
+            if ($slectUi && $slectUi.parent == this) {
+                if (this.a_scroll_bar.parent) {
+                    this.a_scroll_bar.y -= $evt.wheelDelta / 10;
+                    this.resize();
+                    this.refrishFolder();
+                }
+            }
+        };
         OssFolderPanel.prototype.loadConfigCom = function () {
             var _this = this;
             this._topRender.uiAtlas = this._bottomRender.uiAtlas;
@@ -245,6 +256,7 @@ var ossfolder;
                 this._uiItem[i].ui.addEventListener(InteractiveEvent.Down, this.mouseDown, this);
                 this._uiItem[i].ui.addEventListener(InteractiveEvent.Up, this.mouseUp, this);
             }
+            document.addEventListener(MouseType.MouseWheel, function ($evt) { _this.onMouseWheel($evt); });
             this.a_bg = this.addEvntBut("a_bg", this._bottomRender);
             this.a_win_tittle = this.addChild(this._topRender.getComponent("a_win_tittle"));
             this.a_win_tittle.addEventListener(InteractiveEvent.Down, this.tittleMouseDown, this);

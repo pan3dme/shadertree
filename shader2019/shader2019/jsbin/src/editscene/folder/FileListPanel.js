@@ -227,7 +227,7 @@ var filelist;
             this.a_right_bottom.addEventListener(InteractiveEvent.Down, this.tittleMouseDown, this);
             this.a_scroll_bar = this.addChild(this._topRender.getComponent("a_scroll_bar"));
             this.a_scroll_bar.addEventListener(InteractiveEvent.Down, this.tittleMouseDown, this);
-            this.a_path_tittle_txt = this.addEvntBut("a_path_tittle_txt", this._topRender);
+            this.a_path_tittle_txt = this.addChild(this._topRender.getComponent("a_path_tittle_txt"));
             this.refrishSize();
             this.a_scroll_bar.y = this.folderMask.y;
             this.refrishPath("upfile/shadertree/");

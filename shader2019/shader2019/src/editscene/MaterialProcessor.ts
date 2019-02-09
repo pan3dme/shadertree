@@ -323,27 +323,38 @@
         private mouseXY: Vector2D;
         public onMouseWheel($evt: MouseWheelEvent): void {
 
+       
             var $slectUi: UICompenent = UIManager.getInstance().getObjectsUnderPoint(new Vector2D($evt.x, $evt.y))
-            if ($slectUi && $slectUi.name == "modelPic") {
-                Scene_data.cam3D.distance += ($evt.wheelDelta * Scene_data.cam3D.distance)/1000;
+ 
+
+            if (!$slectUi || $slectUi.parent instanceof MtUiPanel) {
+                this.changeScalePanle($evt)
             } else {
-
-                var $v2d: Vector2D = new Vector2D(($evt.x - Arpg2dGameStart.stagePos.x), ($evt.y - Arpg2dGameStart.stagePos.y))
-                var tx: number = $evt.x / MtlUiData.Scale
-                var ty: number = $evt.y / MtlUiData.Scale
-                var $oldScale: number = MtlUiData.Scale
-
-                var $addScale: number = $evt.wheelDelta > 0 ? +0.1 : -0.1;
-                MtlUiData.Scale += $addScale;
-
-                MtlUiData.Scale = Math.max(0.5, MtlUiData.Scale);
-                MtlUiData.Scale = Math.min(MtlUiData.Scale, 1.2);
-
-                var $se: number = (MtlUiData.Scale - $oldScale);
-               this.stageMoveTx(new Vector2D(-tx * $se / MtlUiData.Scale, -ty * $se / MtlUiData.Scale))
+                if ($slectUi.name == "modelPic") {
+                    Scene_data.cam3D.distance += ($evt.wheelDelta * Scene_data.cam3D.distance) / 1000;
+                } else {
+                    
+                }
 
             }
+          
          
+        }
+        private changeScalePanle($evt: MouseWheelEvent): void {
+
+            var $v2d: Vector2D = new Vector2D(($evt.x - Arpg2dGameStart.stagePos.x), ($evt.y - Arpg2dGameStart.stagePos.y))
+            var tx: number = $evt.x / MtlUiData.Scale
+            var ty: number = $evt.y / MtlUiData.Scale
+            var $oldScale: number = MtlUiData.Scale
+
+            var $addScale: number = $evt.wheelDelta > 0 ? +0.1 : -0.1;
+            MtlUiData.Scale += $addScale;
+
+            MtlUiData.Scale = Math.max(0.5, MtlUiData.Scale);
+            MtlUiData.Scale = Math.min(MtlUiData.Scale, 1.2);
+
+            var $se: number = (MtlUiData.Scale - $oldScale);
+            this.stageMoveTx(new Vector2D(-tx * $se / MtlUiData.Scale, -ty * $se / MtlUiData.Scale))
         }
   
            
