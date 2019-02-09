@@ -329,14 +329,7 @@
 
             if (!$slectUi || $slectUi.parent instanceof MtUiPanel) {
                 this.changeScalePanle($evt)
-            } else {
-                if ($slectUi.name == "modelPic") {
-                    Scene_data.cam3D.distance += ($evt.wheelDelta * Scene_data.cam3D.distance) / 1000;
-                } else {
-                    
-                }
-
-            }
+            }  
           
          
         }

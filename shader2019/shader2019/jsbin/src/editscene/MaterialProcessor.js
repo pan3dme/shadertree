@@ -20,7 +20,6 @@ var materialui;
     var UIManager = Pan3d.UIManager;
     var ModuleEventManager = Pan3d.ModuleEventManager;
     var KeyboardType = Pan3d.KeyboardType;
-    var Scene_data = Pan3d.Scene_data;
     var MouseType = Pan3d.MouseType;
     var Rectangle = Pan3d.Rectangle;
     var UIAtlas = Pan3d.UIAtlas;
@@ -282,13 +281,6 @@ var materialui;
             var $slectUi = UIManager.getInstance().getObjectsUnderPoint(new Vector2D($evt.x, $evt.y));
             if (!$slectUi || $slectUi.parent instanceof materialui.MtUiPanel) {
                 this.changeScalePanle($evt);
-            }
-            else {
-                if ($slectUi.name == "modelPic") {
-                    Scene_data.cam3D.distance += ($evt.wheelDelta * Scene_data.cam3D.distance) / 1000;
-                }
-                else {
-                }
             }
         };
         MaterialProcessor.prototype.changeScalePanle = function ($evt) {

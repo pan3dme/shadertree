@@ -16,7 +16,9 @@ var popmodel;
     var UIRenderComponent = Pan3d.UIRenderComponent;
     var InteractiveEvent = Pan3d.InteractiveEvent;
     var Rectangle = Pan3d.Rectangle;
+    var UIManager = Pan3d.UIManager;
     var UIConatiner = Pan3d.UIConatiner;
+    var MouseType = Pan3d.MouseType;
     var UIRenderOnlyPicComponent = Pan3d.UIRenderOnlyPicComponent;
     var ModelShowModel = left.ModelShowModel;
     var UIAtlas = Pan3d.UIAtlas;
@@ -147,6 +149,7 @@ var popmodel;
             Scene_data.uiStage.removeEventListener(InteractiveEvent.Move, this.stageMouseMove, this);
         };
         PopModelShowPanel.prototype.loadConfigCom = function () {
+            var _this = this;
             this._topRender.uiAtlas = this._bottomRender.uiAtlas;
             this.pageRect = new Rectangle(0, 0, 300, 300);
             this.a_bg = this.addEvntBut("a_bg", this._bottomRender);
@@ -160,15 +163,20 @@ var popmodel;
             this.a_right_bottom.addEventListener(InteractiveEvent.Down, this.tittleMouseDown, this);
             this.initView();
             this.refrishSize();
+            document.addEventListener(MouseType.MouseWheel, function ($evt) { _this.onMouseWheel($evt); });
+        };
+        PopModelShowPanel.prototype.onMouseWheel = function ($evt) {
+            var $slectUi = UIManager.getInstance().getObjectsUnderPoint(new Vector2D($evt.x, $evt.y));
+            if ($slectUi && $slectUi.parent == this) {
+                Scene_data.cam3D.distance += ($evt.wheelDelta * Scene_data.cam3D.distance) / 1000;
+            }
         };
         PopModelShowPanel.prototype.initView = function () {
             this.modelPic.uiAtlas = this._topRender.uiAtlas;
-            var $ui = this.addChild(this.modelPic.getComponent("a_empty"));
+            this.showModelPicUI = this.addChild(this.modelPic.getComponent("a_bg"));
             this.modelPic.setImgUrl("pan/marmoset/uilist/1024.jpg");
             ModelShowModel.getInstance()._bigPic = this.modelPic;
-            this.showModelPicUI = $ui;
-            this.showModelPicUI.x = 0;
-            this.showModelPicUI.y = this.a_win_tittle.height;
+            this.showModelPicUI.addEventListener(InteractiveEvent.Down, this.tittleMouseDown, this);
         };
         PopModelShowPanel.prototype.refrishSize = function () {
             this.pageRect.width = Math.max(300, this.pageRect.width);
@@ -201,6 +209,9 @@ var popmodel;
             switch (this.mouseMoveTaget) {
                 case this.a_win_tittle:
                     this.lastPagePos = new Vector2D(this.left, this.top);
+                    break;
+                case this.showModelPicUI:
+                    this.lastPagePos = new Vector2D(Scene_data.focus3D.rotationX, Scene_data.focus3D.rotationY);
                     break;
                 case this.a_rigth_line:
                 case this.a_bottom_line:
@@ -235,6 +246,10 @@ var popmodel;
                 case this.a_right_bottom:
                     this.pageRect.width = this.lastPagePos.x + (evt.x - this.lastMousePos.x);
                     this.pageRect.height = this.lastPagePos.y + (evt.y - this.lastMousePos.y);
+                    break;
+                case this.showModelPicUI:
+                    Scene_data.focus3D.rotationX = this.lastPagePos.x - (evt.y - this.lastMousePos.y);
+                    Scene_data.focus3D.rotationY = this.lastPagePos.y - (evt.x - this.lastMousePos.x);
                     break;
                 default:
                     console.log("nonono");
