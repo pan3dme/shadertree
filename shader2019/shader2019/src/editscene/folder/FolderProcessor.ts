@@ -43,7 +43,7 @@
             return "FolderProcessor";
         }
         private _folderPanel: OssFolderPanel
-        private _fff: basefolderwin.BaseFolderWindow
+ 
         protected receivedModuleEvent($event: BaseEvent): void {
             if ($event instanceof FolderEvent) {
                 var _folderEvent: FolderEvent = <FolderEvent>$event;

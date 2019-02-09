@@ -59,6 +59,8 @@
     <TypeScriptCompile Include="src\editscene\nodetype\NodeTreeTime.ts" />
     <TypeScriptCompile Include="src\editscene\nodetype\NodeTreeVec2.ts" />
     <TypeScriptCompile Include="src\editscene\nodetype\NodeTreeVec3.ts" />
+    <TypeScriptCompile Include="src\editscene\popmodel\PopModelShowPanel.ts" />
+    <TypeScriptCompile Include="src\editscene\popmodel\PopModelShowProcessor.ts" />
     <TypeScriptCompile Include="src\editscene\rightmenu\ComboBoxMenuPanel.ts" />
     <TypeScriptCompile Include="src\editscene\rightmenu\RightMenuPanel.ts" />
     <TypeScriptCompile Include="src\editscene\rightmenu\RightMenuProcessor.ts" />

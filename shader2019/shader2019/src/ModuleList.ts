@@ -23,6 +23,7 @@ class ModuleList {
             new left.LeftModule(),
             new folder.FolderModule(),
             new filemodel.FileModelModule(),
+            new popmodel.PopModelShowModule(),
             new colorview.ColorModule(),
 
         ];

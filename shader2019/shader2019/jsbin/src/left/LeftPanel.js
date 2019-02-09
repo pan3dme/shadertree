@@ -223,7 +223,7 @@ var left;
             this.modelPic.setImgUrl("pan/marmoset/uilist/1024.jpg");
             $ui.top = 10;
             $ui.left = 10;
-            left.ModelShowModel.getInstance()._bigPic = this.modelPic;
+            //       ModelShowModel.getInstance()._bigPic = this.modelPic;
             $ui.name = "modelPic";
             $ui.addEventListener(InteractiveEvent.Down, this.addStageMoveEvets, this);
             this.showModelPic = $ui;
