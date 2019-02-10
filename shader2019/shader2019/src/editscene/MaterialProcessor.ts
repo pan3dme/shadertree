@@ -327,7 +327,7 @@
             var $slectUi: UICompenent = UIManager.getInstance().getObjectsUnderPoint(new Vector2D($evt.x, $evt.y))
  
 
-            if (!$slectUi || $slectUi.parent instanceof MtUiPanel) {
+            if (!$slectUi || $slectUi.parent instanceof BaseMaterialNodeUI) {
                 this.changeScalePanle($evt)
             }  
           
@@ -357,9 +357,11 @@
    
             for (var i: number = 0; i < UIManager.getInstance()._containerList.length; i++) {
                 var $uiConatiner: UIConatiner = UIManager.getInstance()._containerList[i];
-                if ($uiConatiner instanceof MtUiPanel) {
+                if ($uiConatiner instanceof BaseMaterialNodeUI) {
                     $uiConatiner.left += $txy.x;
                     $uiConatiner.top += $txy.y;
+
+                    $uiConatiner.uiScale = MtlUiData.Scale;
                 }
             
             }

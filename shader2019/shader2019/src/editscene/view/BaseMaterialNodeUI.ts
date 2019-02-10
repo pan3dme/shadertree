@@ -7,18 +7,20 @@
     import TextAlign = Pan3d.TextAlign;
     import LabelTextFont = Pan3d.LabelTextFont;
     import InteractiveEvent = Pan3d.InteractiveEvent;
+    import UIRenderComponent = Pan3d.UIRenderComponent
     import ModuleEventManager = Pan3d.ModuleEventManager;
+ 
     import Scene_data = Pan3d.Scene_data;
 
 
 
-    export class BaseMaterialNodeUI extends MtUiPanel {
+    export class BaseMaterialNodeUI extends UIPanel{
 
 
-        public _bottomRender: MtUIRenderComponent;
-        public _midRender: MtUIRenderComponent;
-        public _labelRender: MtUIRenderComponent
-        public _topRender: MtUIRenderComponent;
+        public _bottomRender: UIRenderComponent;
+        public _midRender: UIRenderComponent;
+        public _labelRender: UIRenderComponent
+        public _topRender: UIRenderComponent;
 
 
         protected inPutItemVec:Array<ItemMaterialUI>;
@@ -38,16 +40,16 @@
             this.width = 200;
             this.height = 200;
 
-            this._bottomRender = new MtUIRenderComponent;
+            this._bottomRender = new UIRenderComponent;
             this.addRender(this._bottomRender);
 
-            this._midRender = new MtUIRenderComponent;
+            this._midRender = new UIRenderComponent;
             this.addRender(this._midRender);
 
-            this._labelRender = new MtUIRenderComponent;
+            this._labelRender = new UIRenderComponent;
             this.addRender(this._labelRender);
 
-            this._topRender = new MtUIRenderComponent;
+            this._topRender = new UIRenderComponent;
             this.addRender(this._topRender);
 
             this._bottomRender.uiAtlas = BaseMaterialNodeUI.baseUIAtlas;

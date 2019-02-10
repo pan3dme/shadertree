@@ -35,7 +35,18 @@ var Pan3d;
             this._needShowLoading = true;
             this._interfaceUI = false;
             this._layer = 100;
+            this._uiScale = 1;
         }
+        Object.defineProperty(UIConatiner.prototype, "uiScale", {
+            get: function () {
+                return this._uiScale;
+            },
+            set: function (val) {
+                this._uiScale = val;
+            },
+            enumerable: true,
+            configurable: true
+        });
         Object.defineProperty(UIConatiner.prototype, "layer", {
             get: function () {
                 return this._layer;
@@ -289,24 +300,31 @@ var Pan3d;
                 Pan3d.UIManager.getInstance().removeUI($uiRender);
             }
         };
+        Object.defineProperty(UIConatiner.prototype, "panelScale", {
+            get: function () {
+                return this.uiScale * Pan3d.UIData.Scale;
+            },
+            enumerable: true,
+            configurable: true
+        });
         UIConatiner.prototype.resize = function () {
             if (this._xType == 0) {
-                this._x = this._left * Pan3d.UIData.Scale;
+                this._x = this._left * this.panelScale;
             }
             else if (this._xType == 1) {
-                this._x = Pan3d.Scene_data.stageWidth - this._right * Pan3d.UIData.Scale - this.width * Pan3d.UIData.Scale;
+                this._x = Pan3d.Scene_data.stageWidth - this._right * this.panelScale - this.width * this.panelScale;
             }
             else if (this._xType == 2) {
-                this._x = this._center * Pan3d.UIData.Scale + Pan3d.Scene_data.stageWidth / 2 - this.width * Pan3d.UIData.Scale / 2;
+                this._x = this._center * this.panelScale + Pan3d.Scene_data.stageWidth / 2 - this.width * this.panelScale / 2;
             }
             if (this._yType == 0) {
-                this._y = this._top * Pan3d.UIData.Scale;
+                this._y = this._top * this.panelScale;
             }
             else if (this._yType == 1) {
-                this._y = Pan3d.Scene_data.stageHeight - this._bottom * Pan3d.UIData.Scale - this.height * Pan3d.UIData.Scale;
+                this._y = Pan3d.Scene_data.stageHeight - this._bottom * this.panelScale - this.height * this.panelScale;
             }
             else if (this._yType == 2) {
-                this._y = this._middle * Pan3d.UIData.Scale + Pan3d.Scene_data.stageHeight / 2 - this.height * Pan3d.UIData.Scale / 2;
+                this._y = this._middle * this.panelScale + Pan3d.Scene_data.stageHeight / 2 - this.height * this.panelScale / 2;
             }
             this.applyChild();
             this.resizeVirtualList();
@@ -326,7 +344,7 @@ var Pan3d;
             set: function (value) {
                 this._left = value;
                 this._xType = 0;
-                this._x = this._left * Pan3d.UIData.Scale;
+                this._x = this._left * this.panelScale;
                 this.applyChild();
             },
             enumerable: true,
@@ -339,7 +357,7 @@ var Pan3d;
             set: function (value) {
                 this._right = value;
                 this._xType = 1;
-                this._x = Pan3d.Scene_data.stageWidth - this._right * Pan3d.UIData.Scale - this.width * Pan3d.UIData.Scale;
+                this._x = Pan3d.Scene_data.stageWidth - this._right * this.panelScale - this.width * this.panelScale;
                 this.applyChild();
             },
             enumerable: true,
@@ -349,7 +367,7 @@ var Pan3d;
             set: function (value) {
                 this._center = value;
                 this._xType = 2;
-                this._x = this._center * Pan3d.UIData.Scale + Pan3d.Scene_data.stageWidth / 2 - this.width * Pan3d.UIData.Scale / 2;
+                this._x = this._center * this.panelScale + Pan3d.Scene_data.stageWidth / 2 - this.width * this.panelScale / 2;
                 this.applyChild();
             },
             enumerable: true,
@@ -362,7 +380,7 @@ var Pan3d;
             set: function (value) {
                 this._top = value;
                 this._yType = 0;
-                this._y = this._top * Pan3d.UIData.Scale;
+                this._y = this._top * this.panelScale;
                 this.applyChild();
             },
             enumerable: true,
@@ -375,7 +393,7 @@ var Pan3d;
             set: function (value) {
                 this._bottom = value;
                 this._yType = 1;
-                this._y = Pan3d.Scene_data.stageHeight - this._bottom * Pan3d.UIData.Scale - this.height * Pan3d.UIData.Scale;
+                this._y = Pan3d.Scene_data.stageHeight - this._bottom * this.panelScale - this.height * this.panelScale;
                 this.applyChild();
             },
             enumerable: true,
@@ -385,7 +403,7 @@ var Pan3d;
             set: function (value) {
                 this._middle = value;
                 this._yType = 2;
-                this._y = this._middle * Pan3d.UIData.Scale + Pan3d.Scene_data.stageHeight / 2 - this.height * Pan3d.UIData.Scale / 2;
+                this._y = this._middle * this.panelScale + Pan3d.Scene_data.stageHeight / 2 - this.height * this.panelScale / 2;
                 this.applyChild();
             },
             enumerable: true,

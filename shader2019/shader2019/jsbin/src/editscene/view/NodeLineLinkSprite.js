@@ -21,6 +21,7 @@ var materialui;
     var Matrix3D = Pan3d.Matrix3D;
     var InteractiveEvent = Pan3d.InteractiveEvent;
     var UIManager = Pan3d.UIManager;
+    var UIRenderComponent = Pan3d.UIRenderComponent;
     var ModuleEventManager = Pan3d.ModuleEventManager;
     var NodeLineLinkShader = /** @class */ (function (_super) {
         __extends(NodeLineLinkShader, _super);
@@ -165,7 +166,7 @@ var materialui;
             }
         };
         return NodeLineLinkComponent;
-    }(materialui.MtUIRenderComponent));
+    }(UIRenderComponent));
     materialui.NodeLineLinkComponent = NodeLineLinkComponent;
     var MaterialLineContainer = /** @class */ (function (_super) {
         __extends(MaterialLineContainer, _super);
@@ -248,7 +249,7 @@ var materialui;
             }
         };
         return MaterialLineContainer;
-    }(materialui.MtUiPanel));
+    }(UIPanel));
     materialui.MaterialLineContainer = MaterialLineContainer;
 })(materialui || (materialui = {}));
 //# sourceMappingURL=NodeLineLinkSprite.js.map

@@ -8,6 +8,7 @@ module materialui {
     import Matrix3D = Pan3d.Matrix3D;
     import InteractiveEvent = Pan3d.InteractiveEvent;
     import UIManager = Pan3d.UIManager;
+    import UIRenderComponent = Pan3d.UIRenderComponent
     import ModuleEventManager = Pan3d.ModuleEventManager;
 
 
@@ -58,7 +59,7 @@ module materialui {
         public applyRenderSize(): void {
         }
     }
-    export class NodeLineLinkComponent extends MtUIRenderComponent {
+    export class NodeLineLinkComponent extends UIRenderComponent {
         public constructor() {
             super();
             ProgrmaManager.getInstance().registe(NodeLineLinkShader.NodeLineLinkShader, new NodeLineLinkShader)
@@ -179,7 +180,7 @@ module materialui {
     }
 
 
-    export class MaterialLineContainer extends MtUiPanel {
+    export class MaterialLineContainer extends UIPanel {
 
 
       

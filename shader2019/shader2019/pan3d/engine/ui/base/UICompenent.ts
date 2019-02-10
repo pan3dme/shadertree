@@ -186,30 +186,32 @@
 
         public applyAbsolutePoint(): void {
             if (this.parent) {
-                //this.absoluteX = this._x * UIData.Scale + this.parent.x;
-                //this.absoluteY = this._y * UIData.Scale + this.parent.y;
+               
+                var uiscale: number = UIData.Scale * this.parent.uiScale
+ 
+
                 if (this._xType == -1) {
-                    this.absoluteX = this._x * UIData.Scale * this.scale + this.parent.x;
+                    this.absoluteX = this._x * uiscale * this.scale + this.parent.x;
                 } else if (this._xType == 0) {
-                    this.absoluteX = this._left * UIData.Scale;
+                    this.absoluteX = this._left * uiscale;
                 } else if (this._xType == 1) {
-                    this.absoluteX = Scene_data.stageWidth - this._right * UIData.Scale - this.width * UIData.Scale;
+                    this.absoluteX = Scene_data.stageWidth - this._right * uiscale - this.width * uiscale;
                 } else if (this._xType == 2) {
-                    this.absoluteX = this._center * UIData.Scale + Scene_data.stageWidth / 2 - this.width * UIData.Scale / 2;
+                    this.absoluteX = this._center * uiscale + Scene_data.stageWidth / 2 - this.width * uiscale / 2;
                 }
 
                 if (this._yType == -1) {
-                    this.absoluteY = this._y * UIData.Scale * this.scale + this.parent.y;
+                    this.absoluteY = this._y * uiscale * this.scale + this.parent.y;
                 } else if (this._yType == 0) {
-                    this.absoluteY = this._top * UIData.Scale;
+                    this.absoluteY = this._top * uiscale;
                 } else if (this._yType == 1) {
-                    this.absoluteY = Scene_data.stageHeight - this._bottom * UIData.Scale - this.height * UIData.Scale;
+                    this.absoluteY = Scene_data.stageHeight - this._bottom * uiscale - this.height * uiscale;
                 } else if (this._yType == 2) {
-                    this.absoluteY = this._middle * UIData.Scale + Scene_data.stageHeight / 2 - this.height * UIData.Scale / 2;
+                    this.absoluteY = this._middle * uiscale + Scene_data.stageHeight / 2 - this.height * uiscale / 2;
                 }
 
-                this.absoluteWidth = this.width * UIData.Scale;
-                this.absoluteHeight = this.height * UIData.Scale;
+                this.absoluteWidth = this.width * uiscale;
+                this.absoluteHeight = this.height * uiscale;
                 this.applyRenderSize();
             }
         }

@@ -279,7 +279,7 @@ var materialui;
         };
         MaterialProcessor.prototype.onMouseWheel = function ($evt) {
             var $slectUi = UIManager.getInstance().getObjectsUnderPoint(new Vector2D($evt.x, $evt.y));
-            if (!$slectUi || $slectUi.parent instanceof materialui.MtUiPanel) {
+            if (!$slectUi || $slectUi.parent instanceof materialui.BaseMaterialNodeUI) {
                 this.changeScalePanle($evt);
             }
         };
@@ -300,9 +300,10 @@ var materialui;
             Arpg2dGameStart.stagePos.y += $txy.y;
             for (var i = 0; i < UIManager.getInstance()._containerList.length; i++) {
                 var $uiConatiner = UIManager.getInstance()._containerList[i];
-                if ($uiConatiner instanceof materialui.MtUiPanel) {
+                if ($uiConatiner instanceof materialui.BaseMaterialNodeUI) {
                     $uiConatiner.left += $txy.x;
                     $uiConatiner.top += $txy.y;
+                    $uiConatiner.uiScale = materialui.MtlUiData.Scale;
                 }
             }
             UIManager.getInstance().resize();

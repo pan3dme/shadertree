@@ -149,34 +149,33 @@ var Pan3d;
         };
         UICompenent.prototype.applyAbsolutePoint = function () {
             if (this.parent) {
-                //this.absoluteX = this._x * UIData.Scale + this.parent.x;
-                //this.absoluteY = this._y * UIData.Scale + this.parent.y;
+                var uiscale = Pan3d.UIData.Scale * this.parent.uiScale;
                 if (this._xType == -1) {
-                    this.absoluteX = this._x * Pan3d.UIData.Scale * this.scale + this.parent.x;
+                    this.absoluteX = this._x * uiscale * this.scale + this.parent.x;
                 }
                 else if (this._xType == 0) {
-                    this.absoluteX = this._left * Pan3d.UIData.Scale;
+                    this.absoluteX = this._left * uiscale;
                 }
                 else if (this._xType == 1) {
-                    this.absoluteX = Pan3d.Scene_data.stageWidth - this._right * Pan3d.UIData.Scale - this.width * Pan3d.UIData.Scale;
+                    this.absoluteX = Pan3d.Scene_data.stageWidth - this._right * uiscale - this.width * uiscale;
                 }
                 else if (this._xType == 2) {
-                    this.absoluteX = this._center * Pan3d.UIData.Scale + Pan3d.Scene_data.stageWidth / 2 - this.width * Pan3d.UIData.Scale / 2;
+                    this.absoluteX = this._center * uiscale + Pan3d.Scene_data.stageWidth / 2 - this.width * uiscale / 2;
                 }
                 if (this._yType == -1) {
-                    this.absoluteY = this._y * Pan3d.UIData.Scale * this.scale + this.parent.y;
+                    this.absoluteY = this._y * uiscale * this.scale + this.parent.y;
                 }
                 else if (this._yType == 0) {
-                    this.absoluteY = this._top * Pan3d.UIData.Scale;
+                    this.absoluteY = this._top * uiscale;
                 }
                 else if (this._yType == 1) {
-                    this.absoluteY = Pan3d.Scene_data.stageHeight - this._bottom * Pan3d.UIData.Scale - this.height * Pan3d.UIData.Scale;
+                    this.absoluteY = Pan3d.Scene_data.stageHeight - this._bottom * uiscale - this.height * uiscale;
                 }
                 else if (this._yType == 2) {
-                    this.absoluteY = this._middle * Pan3d.UIData.Scale + Pan3d.Scene_data.stageHeight / 2 - this.height * Pan3d.UIData.Scale / 2;
+                    this.absoluteY = this._middle * uiscale + Pan3d.Scene_data.stageHeight / 2 - this.height * uiscale / 2;
                 }
-                this.absoluteWidth = this.width * Pan3d.UIData.Scale;
-                this.absoluteHeight = this.height * Pan3d.UIData.Scale;
+                this.absoluteWidth = this.width * uiscale;
+                this.absoluteHeight = this.height * uiscale;
                 this.applyRenderSize();
             }
         };

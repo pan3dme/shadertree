@@ -17,6 +17,8 @@
         protected _middle: number = 0;
         protected _yType: number = 0;
 
+
+
         protected _list: Array<UICompenent> = new Array;
 
         public renderList: Array<UIRenderComponent> = new Array;
@@ -35,11 +37,22 @@
         private _interfaceUI: boolean = false;
         private _layer: number = 100;
 
+        private _uiScale: number = 1;
+
+        public set uiScale(val: number) {
+            this._uiScale = val;
+        }
+        public get uiScale(): number {
+            return this._uiScale;
+        }
+
         public set layer(val: number) {
             this._layer = val;
             for (var i: number = 0; i < this.renderList.length; i++) {
                 this.renderList[i].sortnum = this._layer;
             }
+
+            
         }
         public get layer(): number {
             return this._layer;
@@ -296,24 +309,27 @@
                 UIManager.getInstance().removeUI($uiRender);
             }
         }
+        public get panelScale(): number {
+            return this.uiScale * UIData.Scale
+        }
 
-
-
+     
         public resize(): void {
+
             if (this._xType == 0) {
-                this._x = this._left * UIData.Scale;
+                this._x = this._left * this.panelScale;
             } else if (this._xType == 1) {
-                this._x = Scene_data.stageWidth - this._right * UIData.Scale - this.width * UIData.Scale;
+                this._x = Scene_data.stageWidth - this._right * this.panelScale - this.width * this.panelScale;
             } else if (this._xType == 2) {
-                this._x = this._center * UIData.Scale + Scene_data.stageWidth / 2 - this.width * UIData.Scale / 2;
+                this._x = this._center * this.panelScale + Scene_data.stageWidth / 2 - this.width * this.panelScale / 2;
             }
 
             if (this._yType == 0) {
-                this._y = this._top * UIData.Scale;
+                this._y = this._top * this.panelScale;
             } else if (this._yType == 1) {
-                this._y = Scene_data.stageHeight - this._bottom * UIData.Scale - this.height * UIData.Scale;
+                this._y = Scene_data.stageHeight - this._bottom * this.panelScale - this.height * this.panelScale;
             } else if (this._yType == 2) {
-                this._y = this._middle * UIData.Scale + Scene_data.stageHeight / 2 - this.height * UIData.Scale / 2;
+                this._y = this._middle * this.panelScale + Scene_data.stageHeight / 2 - this.height * this.panelScale / 2;
             }
 
             this.applyChild();
@@ -336,7 +352,7 @@
         public set left(value: number) {
             this._left = value;
             this._xType = 0;
-            this._x = this._left * UIData.Scale;
+            this._x = this._left * this.panelScale;
             this.applyChild();
         }
         public get left(): number {
@@ -347,7 +363,7 @@
         public set right(value: number) {
             this._right = value;
             this._xType = 1;
-            this._x = Scene_data.stageWidth - this._right * UIData.Scale - this.width * UIData.Scale;
+            this._x = Scene_data.stageWidth - this._right * this.panelScale - this.width * this.panelScale;
             this.applyChild();
         }
 
@@ -358,14 +374,14 @@
         public set center(value: number) {
             this._center = value;
             this._xType = 2;
-            this._x = this._center * UIData.Scale + Scene_data.stageWidth / 2 - this.width * UIData.Scale / 2;
+            this._x = this._center * this.panelScale + Scene_data.stageWidth / 2 - this.width * this.panelScale / 2;
             this.applyChild();
         }
 
         public set top(value: number) {
             this._top = value;
             this._yType = 0;
-            this._y = this._top * UIData.Scale;
+            this._y = this._top * this.panelScale;
             this.applyChild();
         }
         public get top(): number {
@@ -376,7 +392,7 @@
         public set bottom(value: number) {
             this._bottom = value;
             this._yType = 1;
-            this._y = Scene_data.stageHeight - this._bottom * UIData.Scale - this.height * UIData.Scale;
+            this._y = Scene_data.stageHeight - this._bottom * this.panelScale - this.height * this.panelScale;
             this.applyChild();
         }
 
@@ -387,7 +403,7 @@
         public set middle(value: number) {
             this._middle = value;
             this._yType = 2;
-            this._y = this._middle * UIData.Scale + Scene_data.stageHeight / 2 - this.height * UIData.Scale / 2;
+            this._y = this._middle * this.panelScale + Scene_data.stageHeight / 2 - this.height * this.panelScale / 2;
             this.applyChild();
         }
 

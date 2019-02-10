@@ -68,11 +68,7 @@
     <TypeScriptCompile Include="src\editscene\treedata\CompileTwo.ts" />
     <TypeScriptCompile Include="src\editscene\treedata\MaterialCompile.ts" />
     <TypeScriptCompile Include="src\editscene\treedata\RegisterItem.ts" />
-    <TypeScriptCompile Include="src\editscene\ui\MtFrameCompenent.ts" />
-    <TypeScriptCompile Include="src\editscene\ui\MtGrid9Compenent.ts" />
-    <TypeScriptCompile Include="src\editscene\ui\MtUICompenent.ts" />
     <TypeScriptCompile Include="src\editscene\ui\MtUiPanel.ts" />
-    <TypeScriptCompile Include="src\editscene\ui\MtUIRenderComponent.ts" />
     <TypeScriptCompile Include="src\editscene\view\BaseMaterialNodeUI.ts" />
     <TypeScriptCompile Include="src\editscene\view\constnum\ConstFloatNodeUI.ts" />
     <TypeScriptCompile Include="src\editscene\view\constnum\ConstVec2NodeUI.ts" />
